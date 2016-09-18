@@ -8,25 +8,9 @@ public class WebEventOrchestrator {
     private WebPageDownloader webPageDownloader = new WebPageDownloader();
     private WebPageProcessing webPageProcessing = new WebPageProcessing();
 
-    public WebPageDownloader getWebPageDownloader() {
-        return webPageDownloader;
-    }
-
-    public void setWebPageDownloader(WebPageDownloader webPageDownloader) {
-        this.webPageDownloader = webPageDownloader;
-    }
-
-    public WebPageProcessing getWebPageProcessing() {
-        return webPageProcessing;
-    }
-
-    public void setWebPageProcessing(WebPageProcessing webPageProcessing) {
-        this.webPageProcessing = webPageProcessing;
-    }
-
     public void executeProcess(){
-        webPageProcessing.executeProcess();
         webPageDownloader.executeProcess();
+        webPageProcessing.executeProcess();
     }
 
     public static void main(String[] args){

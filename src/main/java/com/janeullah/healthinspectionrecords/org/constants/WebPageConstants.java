@@ -9,11 +9,13 @@ import java.util.stream.Stream;
  * Date:  9/17/2016
  */
 public class WebPageConstants {
-    public final static String URL = System.getProperty("NEGA_BASE_URL","http://publichealthathens.com/healthscores/%s_county_restaurant_scores.html");
+    public final static String BASE_URL = System.getProperty("NEGA_BASE_URL","http://publichealthathens.com/healthscores/");
+    public final static String PAGE_URL = System.getProperty("NEGA_PAGE_URL","_county_restaurant_scores.html");
+    public final static String URL = System.getProperty("NEGA_FULL_URL",BASE_URL + "%s" + PAGE_URL);
     public final static String DEFAULT_LIST_OF_COUNTIES = "Clarke,Elbert,Barrow,Madison,Jackson,Oconee,Greene,Walton,Oglethorpe,Morgan";
     public final static String COUNTIES = System.getProperty("NEGA_COUNTIES",DEFAULT_LIST_OF_COUNTIES);
     public final static List<String> COUNTY_LIST = Stream.of(WebPageConstants.COUNTIES.split(",")).collect(Collectors.toList());
     public final static int NUMBER_OF_THREADS = COUNTY_LIST.size();
     public final static String DATA_EXPIRATION_IN_DAYS = System.getProperty("EXPIRATION_IN_DAYS","1");
-    public final static String PATH_TO_PAGE_STORAGE = "src/main/resources/downloads/webpages";
+    public final static String PATH_TO_PAGE_STORAGE = System.getProperty("PATH_TO_PAGE_STORAGE","src/main/resources/downloads/webpages");
 }

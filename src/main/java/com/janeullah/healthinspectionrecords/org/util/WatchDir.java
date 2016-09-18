@@ -31,14 +31,15 @@ package com.janeullah.healthinspectionrecords.org.util;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.common.net.MediaType;
+import com.google.common.collect.Maps;
+import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.org.web.WebPageProcessing;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.*;
@@ -50,15 +51,27 @@ import static java.nio.file.StandardWatchEventKinds.*;
 public class WatchDir {
 
     private final WatchService watcher;
-    private final Map<WatchKey,Path> keys;
+    private final ConcurrentMap<WatchKey,Path> keys;
     private final boolean recursive;
     private boolean trace = false;
     private final Path dir;
     private static final Logger logger = Logger.getLogger(WatchDir.class);
+    //private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.{html,text}");
 
     @SuppressWarnings("unchecked")
     static <T> WatchEvent<T> cast(WatchEvent<?> event) {
         return (WatchEvent<T>)event;
+    }
+
+    /**
+     * Returns dir if already set. otherwise, returns path in system property 'PATH_TO_PAGE_STORAGE'
+     * @return Path
+     */
+    public Path getPath(){
+        if (dir == null){
+            return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE);
+        }
+        return dir;
     }
 
     /**
@@ -101,7 +114,7 @@ public class WatchDir {
      */
     public WatchDir(Path dir, boolean recursive) throws IOException {
         this.watcher = FileSystems.getDefault().newWatchService();
-        this.keys = new HashMap<>();
+        this.keys = Maps.newConcurrentMap();
         this.recursive = recursive;
         this.dir = dir;
 
@@ -117,7 +130,7 @@ public class WatchDir {
         this.trace = true;
     }
 
-    public void processFileCreationEvents() {
+    public void executeProcess() {
         for (;;) {
 
             // wait for key to be signaled
@@ -136,24 +149,28 @@ public class WatchDir {
                 }
 
                 //The filename is the context of the event.
-                WatchEvent<Path> ev = (WatchEvent<Path>)event;
+                WatchEvent<Path> ev = cast(event);
                 Path filename = ev.context();
 
                 //Verify that the new file is a text file.
                 try {
+                    //String contentType = Files.probeContentType(child);
+                    //if (!contentType.equals(MediaType.HTML_UTF_8.toString())) {
                     Path child = dir.resolve(filename);
-                    if (!Files.probeContentType(child).equals(MediaType.HTML_UTF_8)) {
-                        System.err.format("New file '%s' is not a html.%n", filename);
+                    boolean matches = child.toString().toLowerCase().endsWith(WebPageConstants.PAGE_URL);
+                    if (!matches){
+                        logger.error(String.format("event=\"New file '%s' does not end in .html.\n\"", filename));
                         continue;
+                    }else{
+                        //TODO: kick off async task for parsing the file created
+                        System.out.format("%s created\n",filename);
+                        WebPageProcessing.asyncProcessFile(child);
                     }
-                } catch (IOException x) {
-                    System.err.println(x);
+                } catch (Exception x) {
+                    logger.error(x);
                     continue;
                 }
 
-                //Email the file to the specified email alias.
-                System.out.format("Emailing file %s%n", filename);
-                //Details left to reader....
             }
 
             //Reset the key -- this step is critical if you want to receive
@@ -161,6 +178,7 @@ public class WatchDir {
             //is inaccessible so exit the loop.
             boolean valid = key.reset();
             if (!valid) {
+                keys.remove(key);
                 break;
             }
         }

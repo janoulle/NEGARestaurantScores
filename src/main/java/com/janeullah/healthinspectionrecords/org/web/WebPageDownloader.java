@@ -57,7 +57,6 @@ public class WebPageDownloader {
                         ListenableFuture<InputStream> future = executorService.submit(new WebPageRequest(entry.getValue()));
                         Futures.addCallback(future, new FutureCallback<InputStream>() {
                             public void onSuccess(InputStream result) {
-                                //TODO: cache the data
                                 copyStreamToDisk(entry.getKey(), result);
                             }
 
@@ -81,10 +80,11 @@ public class WebPageDownloader {
 
     private void copyStreamToDisk(String name, InputStream reqStream) {
         try {
-            File destinationFile = new File("src/main/resources/downloads/webpages/" + name + ".html");
+            String fileName = name + WebPageConstants.PAGE_URL;
+            File destinationFile = new File("src/main/resources/downloads/webpages/" + fileName);
             FileUtils.copyInputStreamToFile(reqStream, destinationFile);
             if (destinationFile.exists()) {
-                logger.info("event=\"" + name + ".html file created\"");
+                logger.info("event=\"" + fileName + " created\"");
             }
         } catch (IOException e) {
             logger.error(e);
@@ -92,10 +92,10 @@ public class WebPageDownloader {
     }
 
     /**
-     * Hook this up to logic for checking age of either:
+     * TODO: Hook this up to logic for checking age of either:
      *  files on disk
      *  data in datastore
-     * @return
+     * @return boolean
      */
     public static boolean isDataExpired(){
         return true;
