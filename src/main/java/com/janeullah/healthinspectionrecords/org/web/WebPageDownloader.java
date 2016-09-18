@@ -1,7 +1,9 @@
 package com.janeullah.healthinspectionrecords.org.web;
 
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.janeullah.healthinspectionrecords.org.async.WebPageRequest;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import org.apache.commons.io.FileUtils;
@@ -12,7 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
+
+import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.executorService;
 
 /**
  * Author: jane
@@ -48,8 +51,6 @@ public class WebPageDownloader {
      * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
      */
     private void downloadWebPages() {
-        ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
-
         try {
             ConcurrentMap<String, String> urls = getUrls();
 
@@ -59,22 +60,14 @@ public class WebPageDownloader {
                             public void onSuccess(InputStream result) {
                                 copyStreamToDisk(entry.getKey(), result);
                             }
-
                             public void onFailure(Throwable thrown) {
                                 logger.error(thrown);
                             }
                         });
                     }
             );
-            executorService.shutdown();
         } catch (SecurityException e) {
             logger.error(e);
-        } finally {
-            if (!executorService.isTerminated()) {
-                logger.error("event=\"cancel non-finished tasks\"");
-                executorService.shutdownNow();
-            }
-            logger.info("event=\"shutdown finished\"");
         }
     }
 

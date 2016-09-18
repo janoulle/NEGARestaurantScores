@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class DatabaseUtil {
     public static void persistData(String county, List<Elements> elements){
-        System.out.format("got here for county: %s size: %d",county,elements.size());
+        System.out.format("got here for county: %s size: %d\n",county,elements.size());
     }
     public static void persistData(List<Elements> elements){
-        System.out.format("got here for size: %d",elements.size());
+        System.out.format("got here for size: %d\n",elements.size());
     }
 }

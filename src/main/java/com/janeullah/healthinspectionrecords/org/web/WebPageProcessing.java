@@ -1,7 +1,9 @@
 package com.janeullah.healthinspectionrecords.org.web;
 
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.janeullah.healthinspectionrecords.org.async.WebPageProcess;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.org.util.DatabaseUtil;
@@ -14,14 +16,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
+
+import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.executorService;
 
 /**
  * Author: jane
  * Date:  9/17/2016
  */
 public class WebPageProcessing {
-    final static ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
     private final static Logger logger = Logger.getLogger(WebPageProcessing.class);
     private WatchDir directoryWatcher;
 
@@ -46,6 +48,10 @@ public class WebPageProcessing {
         directoryWatcher.executeProcess();
     }
 
+    /**
+     * TODO: figure out best way to reuse executor and shut down when done
+     * @param fileName Path to downloaded file relative
+     */
     public static void asyncProcessFile(Path fileName){
         try {
             ListenableFuture<List<Elements>> future = executorService.submit(new WebPageProcess(fileName));
@@ -57,15 +63,8 @@ public class WebPageProcessing {
                     logger.error(thrown);
                 }
             });
-            executorService.shutdown();
         } catch (SecurityException e) {
             logger.error(e);
-        } finally {
-            if (!executorService.isTerminated()) {
-                logger.error("event=\"cancel non-finished tasks\"");
-                executorService.shutdownNow();
-            }
-            logger.info("event=\"shutdown finished\"");
         }
     }
 
