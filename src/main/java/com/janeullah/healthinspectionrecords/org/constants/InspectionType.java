@@ -1,4 +1,4 @@
-package com.janeullah.org.util.constants;
+package com.janeullah.healthinspectionrecords.org.constants;
 
 /**
  * Author: jane

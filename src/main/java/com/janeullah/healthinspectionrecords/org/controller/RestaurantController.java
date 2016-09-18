@@ -1,15 +1,17 @@
-package com.janeullah.org.controller;
+package com.janeullah.healthinspectionrecords.org.controller;
 
-import com.janeullah.org.model.InspectionReport;
-import com.janeullah.org.model.Restaurant;
-import com.janeullah.org.model.Violation;
-import com.janeullah.org.util.constants.InspectionType;
-import com.janeullah.org.util.constants.Severity;
+import com.janeullah.healthinspectionrecords.org.constants.InspectionType;
+import com.janeullah.healthinspectionrecords.org.constants.Severity;
+import com.janeullah.healthinspectionrecords.org.model.InspectionReport;
+import com.janeullah.healthinspectionrecords.org.model.Restaurant;
+import com.janeullah.healthinspectionrecords.org.model.Violation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Collections;

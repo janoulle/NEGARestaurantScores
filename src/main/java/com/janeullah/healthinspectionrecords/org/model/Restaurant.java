@@ -1,4 +1,4 @@
-package com.janeullah.org.model;
+package com.janeullah.healthinspectionrecords.org.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;

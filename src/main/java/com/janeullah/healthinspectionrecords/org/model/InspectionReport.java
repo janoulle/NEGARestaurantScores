@@ -1,6 +1,6 @@
-package com.janeullah.org.model;
+package com.janeullah.healthinspectionrecords.org.model;
 
-import com.janeullah.org.util.constants.InspectionType;
+import com.janeullah.healthinspectionrecords.org.constants.InspectionType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;

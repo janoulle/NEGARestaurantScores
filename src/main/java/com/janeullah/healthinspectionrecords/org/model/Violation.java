@@ -1,6 +1,6 @@
-package com.janeullah.org.model;
+package com.janeullah.healthinspectionrecords.org.model;
 
-import com.janeullah.org.util.constants.Severity;
+import com.janeullah.healthinspectionrecords.org.constants.Severity;
 
 import java.io.Serializable;
 

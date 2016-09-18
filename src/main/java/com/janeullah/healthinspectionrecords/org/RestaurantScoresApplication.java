@@ -1,4 +1,4 @@
-package com.janeullah.org;
+package com.janeullah.healthinspectionrecords.org;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
