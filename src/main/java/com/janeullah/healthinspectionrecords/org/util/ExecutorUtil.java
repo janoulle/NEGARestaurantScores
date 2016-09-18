@@ -6,6 +6,7 @@ import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Author: jane
@@ -16,9 +17,18 @@ public class ExecutorUtil {
     //public final static ExecutorCompletionService executorCompletionService = new ExecutorCompletionService(executorService);
     private final static Logger logger = Logger.getLogger(ExecutorUtil.class);
 
+    /**
+     * http://stackoverflow.com/questions/3269445/executorservice-how-to-wait-for-all-tasks-to-finish?rq=1
+     */
     public static void shutDown(){
-        if (!executorService.isTerminated()) {
-            logger.error("event=\"shutting down executor\"");
+        try {
+            if (!executorService.isTerminated()) {
+                logger.error("event=\"shutting down executor\"");
+                executorService.shutdown();
+                executorService.awaitTermination(5, TimeUnit.SECONDS);
+            }
+        }catch(InterruptedException e){
+            logger.error(e);
             executorService.shutdownNow();
         }
     }

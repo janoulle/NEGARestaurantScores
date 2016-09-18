@@ -23,5 +23,6 @@ public class WebEventOrchestrator {
         WebEventOrchestrator orchestrator = new WebEventOrchestrator();
         orchestrator.executeProcess();
         orchestrator.shutDownExecutor();
+        System.exit(0);
     }
 }
