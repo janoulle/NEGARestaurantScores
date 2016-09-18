@@ -36,7 +36,7 @@ public class RestaurantController {
         logger.info("getting restaurant id " + id);
 
         Violation violation = new Violation("17C", StringUtils.EMPTY, StringUtils.EMPTY, Severity.CRITICAL);
-        InspectionReport report = new InspectionReport(DateTime.now(), InspectionType.ROUTINE);
+        InspectionReport report = new InspectionReport(91,DateTime.parse("12/17/2015"), InspectionType.ROUTINE);
         report.setViolations(Collections.singletonList(violation));
         Restaurant restaurant = new Restaurant("364 E Broad St Athens GA, 30601");
         restaurant.setInspectionReports(Collections.singletonList(report));

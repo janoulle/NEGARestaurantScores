@@ -16,14 +16,24 @@ public class InspectionReport implements Serializable{
     private DateTime dateReported;
     private InspectionType inspectionType;
     private List<Violation> violations = new ArrayList<>();
+    private int score;
 
     public InspectionReport(){
 
     }
 
-    public InspectionReport(DateTime time, InspectionType type){
+    public InspectionReport(int score, DateTime time, InspectionType type){
+        setScore(score);
         setDateReported(time);
         setInspectionType(type);
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public DateTime getDateReported() {
