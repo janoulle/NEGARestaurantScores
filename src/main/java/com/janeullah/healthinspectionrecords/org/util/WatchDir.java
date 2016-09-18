@@ -34,6 +34,7 @@ package com.janeullah.healthinspectionrecords.org.util;
 import com.google.common.collect.Maps;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.org.web.WebPageProcessing;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -52,6 +53,7 @@ public class WatchDir {
 
     private final WatchService watcher;
     private final ConcurrentMap<WatchKey,Path> keys;
+    private static ConcurrentMap<String,Boolean> entriesBeingWatched;
     private final boolean recursive;
     private boolean trace = false;
     private final Path dir;
@@ -115,6 +117,7 @@ public class WatchDir {
     public WatchDir(Path dir, boolean recursive) throws IOException {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = Maps.newConcurrentMap();
+        entriesBeingWatched = Maps.newConcurrentMap();
         this.recursive = recursive;
         this.dir = dir;
 
@@ -157,21 +160,18 @@ public class WatchDir {
                     //String contentType = Files.probeContentType(child);
                     //if (!contentType.equals(MediaType.HTML_UTF_8.toString())) {
                     Path child = dir.resolve(filename);
-                    boolean matches = child.toString().toLowerCase().endsWith(WebPageConstants.PAGE_URL);
-                    if (!matches){
-                        logger.error(String.format("event=\"New file '%s' does not end in .html.\n\"", filename));
-                        continue;
-                    }else{
-                        if (Files.exists(child)) {
-                            System.out.format("%s exists on disk\n", filename);
-                            WebPageProcessing.asyncProcessFile(child);
-                        }
+                    System.out.format("%s exists on disk\n", filename);
+                    String friendlyname = FilenameUtils.getName(filename.getFileName().toString());
+                    boolean hasTaskKickedOff = entriesBeingWatched.get(friendlyname) != null && entriesBeingWatched.get(friendlyname);
+                    if (hasTaskKickedOff){
+                        logger.info(String.format("event=\"task has already been kicked off for filename %s",filename));
+                    }else {
+                        WebPageProcessing.asyncProcessFile(child,entriesBeingWatched);
                     }
                 } catch (Exception x) {
                     logger.error(x);
                     continue;
                 }
-
             }
 
             //Reset the key -- this step is critical if you want to receive

@@ -7,6 +7,7 @@ import com.janeullah.healthinspectionrecords.org.async.WebPageProcess;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.org.util.DatabaseUtil;
 import com.janeullah.healthinspectionrecords.org.util.WatchDir;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.select.Elements;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.executorService;
 
@@ -23,6 +25,7 @@ import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.execut
  */
 public class WebPageProcessing {
     private final static Logger logger = Logger.getLogger(WebPageProcessing.class);
+    private static ConcurrentMap<String,Boolean> entriesBeingWatched;
     private WatchDir directoryWatcher;
 
 
@@ -40,19 +43,17 @@ public class WebPageProcessing {
     }
 
     public void executeProcess(){
-        if (directoryWatcher == null) {
-            setupWatcher();
-        }
         directoryWatcher.executeProcess();
     }
 
     /**
      * TODO: figure out best way to reuse executor and shut down when done
-     * @param fileName Path to downloaded file relative
+     * @param file Path to downloaded file relative
      */
-    public static void asyncProcessFile(Path fileName){
+    public static void asyncProcessFile(Path file, ConcurrentMap<String,Boolean> mapOfEntriesBeingWatched){
         try {
-            ListenableFuture<List<Elements>> future = executorService.submit(new WebPageProcess(fileName));
+            ListenableFuture<List<Elements>> future = executorService.submit(new WebPageProcess(file));
+            mapOfEntriesBeingWatched.put(FilenameUtils.getName(file.getFileName().toString()),true);
             Futures.addCallback(future, new FutureCallback<List<Elements>>() {
                 public void onSuccess(List<Elements> result) {
                     DatabaseUtil.persistData(result);
