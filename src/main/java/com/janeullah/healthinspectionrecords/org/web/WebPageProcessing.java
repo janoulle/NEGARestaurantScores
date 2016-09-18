@@ -1,5 +1,7 @@
 package com.janeullah.healthinspectionrecords.org.web;
 
+import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.org.util.WatchDir;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -9,6 +11,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Author: jane
@@ -16,9 +20,25 @@ import java.io.InputStream;
  */
 public class WebPageProcessing {
     private final static Logger logger = Logger.getLogger(WebPageProcessing.class);
+    private WatchDir directoryWatcher;
 
     public WebPageProcessing(){
+        setupWatcher();
+    }
 
+    private void setupWatcher(){
+        try{
+            Path dir = Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE);
+            directoryWatcher = new WatchDir(dir, false);
+        }catch(IOException e){
+            logger.error(e);
+        }
+    }
+
+    public void executeProcess(){
+        if (directoryWatcher != null) {
+            directoryWatcher.processEventsDefault();
+        }
     }
 
     private void processWebRequest(InputStream stream, String urlString){
