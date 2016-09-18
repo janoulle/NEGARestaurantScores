@@ -7,11 +7,9 @@ import com.janeullah.org.util.constants.InspectionType;
 import com.janeullah.org.util.constants.Severity;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,18 +23,18 @@ import java.util.List;
 public class RestaurantController {
     private static final Logger logger = Logger.getLogger(RestaurantController.class);
 
-    @RequestMapping(value = "/all",method = RequestMethod.GET)
+    @RequestMapping(value = "/restaurants",method = RequestMethod.GET)
     public List<Restaurant> all(){
         logger.info("getting all restaurants");
         return new ArrayList<>();
     }
 
-    @RequestMapping(value = "/restaurant",method = RequestMethod.GET)
-    public Restaurant getRestaurantById(@RequestParam(value="id") long id){
+    @RequestMapping(value = "/restaurant/id/{id}",method = RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)
+    public Restaurant getRestaurantById(@PathVariable("id") int id){
         logger.info("getting restaurant id " + id);
 
         Violation violation = new Violation("17C", StringUtils.EMPTY, StringUtils.EMPTY, Severity.CRITICAL);
-        InspectionReport report = new InspectionReport(91,DateTime.parse("12/17/2015"), InspectionType.ROUTINE);
+        InspectionReport report = new InspectionReport(91,"12/17/2015", InspectionType.ROUTINE);
         report.setViolations(Collections.singletonList(violation));
         Restaurant restaurant = new Restaurant("364 E Broad St Athens GA, 30601");
         restaurant.setInspectionReports(Collections.singletonList(report));

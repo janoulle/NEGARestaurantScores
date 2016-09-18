@@ -2,6 +2,8 @@ package com.janeullah.org.model;
 
 import com.janeullah.org.util.constants.InspectionType;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,9 +24,9 @@ public class InspectionReport implements Serializable{
 
     }
 
-    public InspectionReport(int score, DateTime time, InspectionType type){
+    public InspectionReport(int score, String date, InspectionType type){
         setScore(score);
-        setDateReported(time);
+        setDateReported(date);
         setInspectionType(type);
     }
 
@@ -38,6 +40,17 @@ public class InspectionReport implements Serializable{
 
     public DateTime getDateReported() {
         return dateReported;
+    }
+
+    /**
+     * http://stackoverflow.com/questions/20331163/how-to-format-joda-time-datetime-to-only-mm-dd-yyyy
+     * @param date date inspection was conducted
+     */
+    private void setDateReported(String date){
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("MM/dd/yyyy");
+        DateTime dateConverted = dtf.parseDateTime(date);
+        setDateReported(dateConverted);
+        //System.out.println(dtfOut.print(jodatime));
     }
 
     public void setDateReported(DateTime dateReported) {
