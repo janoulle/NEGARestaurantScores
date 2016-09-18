@@ -162,9 +162,10 @@ public class WatchDir {
                         logger.error(String.format("event=\"New file '%s' does not end in .html.\n\"", filename));
                         continue;
                     }else{
-                        //TODO: kick off async task for parsing the file created
-                        System.out.format("%s created\n",filename);
-                        WebPageProcessing.asyncProcessFile(child);
+                        if (Files.exists(child)) {
+                            System.out.format("%s exists on disk\n", filename);
+                            WebPageProcessing.asyncProcessFile(child);
+                        }
                     }
                 } catch (Exception x) {
                     logger.error(x);

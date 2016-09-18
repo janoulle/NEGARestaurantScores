@@ -9,12 +9,17 @@ import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.OptionalLong;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
+import static com.janeullah.healthinspectionrecords.org.constants.WebPageConstants.DOWNLOAD_OVERRIDE;
 import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.executorService;
 
 /**
@@ -86,11 +91,32 @@ public class WebPageDownloader {
 
     /**
      * TODO: Hook this up to logic for checking age of either:
-     *  files on disk
-     *  data in datastore
+     *  i) first - files on disk
+     *  ii) second - data in datastore
      * @return boolean
      */
     public static boolean isDataExpired(){
-        return true;
+        return DOWNLOAD_OVERRIDE || !areFilesMoreRecentThanLimit();
+    }
+
+    /**
+     * http://stackoverflow.com/questions/2064694/how-do-i-find-the-last-modified-file-in-a-directory-in-java
+     * @return boolean
+     */
+    private static boolean areFilesMoreRecentThanLimit(){
+        try {
+            DateTime cal = DateTime.now().minus(WebPageConstants.DATA_EXPIRATION_IN_MILLIS.get());
+            //Files.newInputStream(pathToDir);
+            File dir = Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE).toFile();
+            File[] files = dir.listFiles();
+            if (files == null || files.length == 0) {
+                return false;
+            }
+            OptionalLong result = Stream.of(files).mapToLong(File::lastModified).filter(lastModification -> Long.compare(lastModification, cal.getMillis()) > 0).findAny();
+            return result.isPresent();
+        }catch(Exception e){
+            logger.error(e);
+        }
+        return false;
     }
 }

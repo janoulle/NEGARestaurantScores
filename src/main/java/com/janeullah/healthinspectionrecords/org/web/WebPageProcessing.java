@@ -1,6 +1,5 @@
 package com.janeullah.healthinspectionrecords.org.web;
 
-import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.executorService;
 
@@ -66,21 +64,5 @@ public class WebPageProcessing {
         } catch (SecurityException e) {
             logger.error(e);
         }
-    }
-
-    private ConcurrentMap<String,Path> getDownloadedFiles(){
-        ConcurrentMap<String,Path> filePaths = Maps.newConcurrentMap();
-
-        try{
-            Path pathToDir = directoryWatcher.getPath();
-            WebPageConstants.COUNTY_LIST.forEach(county -> {
-                Path newPath = pathToDir.resolve(county + ".html");
-                filePaths.put(county,newPath);
-            });
-
-        }catch(Exception e) {
-            logger.error(e);
-        }
-        return filePaths;
     }
 }
