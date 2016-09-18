@@ -1,6 +1,7 @@
 package com.janeullah.healthinspectionrecords.org.web;
 
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.*;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,25 +25,24 @@ import java.util.stream.Stream;
  */
 public class WebPageDownloader {
     private final static Logger logger = Logger.getLogger(WebPageDownloader.class);
+    public final static List<String> COUNTY_LIST = Stream.of(WebPageConstants.COUNTIES.split(",")).collect(Collectors.toList());
+    public final static int NUMBER_OF_THREADS = COUNTY_LIST.size();
 
-    public WebPageDownloader(){
+    public WebPageDownloader() {
         logger.info("event=\"WebPageDownloader initialized\"");
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         WebPageDownloader dwld = new WebPageDownloader();
         dwld.downloadWebPages();
+        System.exit(0);
     }
 
-    private static List<String> getCounties(){
-        return Stream.of(WebPageConstants.COUNTIES.split(",")).collect(Collectors.toList());
-    }
-
-    private static ConcurrentMap<String,String> getUrls(){
-        ConcurrentMap<String,String> results = Maps.newConcurrentMap();
-        if (StringUtils.isNotBlank(WebPageConstants.COUNTIES) && StringUtils.isNotBlank(WebPageConstants.URL)){
-            getCounties().forEach(entry ->
-                    results.put(entry,String.format(WebPageConstants.URL,entry))
+    private static ConcurrentMap<String, String> getUrls() {
+        ConcurrentMap<String, String> results = Maps.newConcurrentMap();
+        if (StringUtils.isNotBlank(WebPageConstants.COUNTIES) && StringUtils.isNotBlank(WebPageConstants.URL)) {
+            COUNTY_LIST.forEach(entry ->
+                    results.put(entry, String.format(WebPageConstants.URL, entry))
             );
         }
         return results;
@@ -47,47 +50,57 @@ public class WebPageDownloader {
 
     /**
      * http://stackoverflow.com/questions/4524063/make-simultaneous-web-requests-in-java
+     * http://nohack.eingenetzt.com/java/java-executorservice-and-threadpoolexecutor-tutorial/
+     * http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
+     * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
      */
-    public void downloadWebPages(){
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    public void downloadWebPages() {
+        ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(NUMBER_OF_THREADS));
+
         try {
-            ConcurrentMap<String,String> urls = getUrls();
-            ConcurrentMap<String,Future<InputStream>> requestStreams = Maps.newConcurrentMap();
-            //ConcurrentMap<String, WebPageRequest> futures = Maps.newConcurrentMap();
+            ConcurrentMap<String, String> urls = getUrls();
 
             urls.entrySet().forEach(entry -> {
-                WebPageRequest request = new WebPageRequest(entry.getValue());
-                requestStreams.put(entry.getKey(), executorService.submit(request));
-                //futures.put(entry.getKey(),request);
+                        ListenableFuture<InputStream> future = executorService.submit(new WebPageRequest(entry.getValue()));
+                        Futures.addCallback(future, new FutureCallback<InputStream>() {
+                            public void onSuccess(InputStream result) {
+                                //cache the data
+                                copyStreamToDisk(entry.getKey(), result);
+                            }
+
+                            public void onFailure(Throwable thrown) {
+                                logger.error(thrown);
+                            }
+                        });
                     }
             );
 
-            requestStreams.entrySet().forEach(stream -> {
-                Future<InputStream> req = stream.getValue();
-                if (req.isDone()){
-                    try (InputStream reqStream = req.get()) {
-                        File destinationFile = new File("downloads/webpages/" + stream.getKey()+".html");
-                        FileUtils.copyInputStreamToFile(reqStream, destinationFile);
-                        if (destinationFile.exists()){
-                            System.out.println("file created");
-                        }
-                    }catch(IOException | InterruptedException | ExecutionException e){
-                        logger.error(e);
-                    }
-                }
-            });
 
             executorService.shutdown();
             executorService.awaitTermination(5, TimeUnit.SECONDS);
-        }catch(SecurityException | InterruptedException | IllegalArgumentException e){
+        } catch (SecurityException | InterruptedException | IllegalArgumentException e) {
             logger.error(e);
-        }finally {
+        } finally {
             if (!executorService.isTerminated()) {
                 System.err.println("cancel non-finished tasks");
             }
             executorService.shutdownNow();
             System.out.println("shutdown finished");
         }
+    }
+
+    private void copyStreamToDisk(String name, InputStream reqStream) {
+
+        try {
+            File destinationFile = new File("src/main/resources/downloads/webpages/" + name + ".html");
+            FileUtils.copyInputStreamToFile(reqStream, destinationFile);
+            if (destinationFile.exists()) {
+                System.out.println(name + ".html file created");
+            }
+        } catch (IOException e) {
+            logger.error(e);
+        }
+
     }
 
     /*DoubleFunction sine = (double x) -> {
