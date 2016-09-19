@@ -28,8 +28,8 @@ import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.execut
  */
 public class WebPageProcessing {
     private final static Logger logger = Logger.getLogger(WebPageProcessing.class);
-    private static ConcurrentMap<String,Boolean> entriesBeingWatched = Maps.newConcurrentMap();
-    private static ConcurrentMap<String,List<Restaurant>> restaurantsByCounties = Maps.newConcurrentMap();
+    private static ConcurrentMap<String,List<Restaurant>> restaurantsByCounties;
+    private static ConcurrentMap<String,Boolean> entriesBeingWatched;
     private WatchDir directoryWatcher;
 
 
@@ -55,24 +55,6 @@ public class WebPageProcessing {
         }
     }
 
-
-
-    public static ConcurrentMap<String, Boolean> getEntriesBeingWatched() {
-        return entriesBeingWatched;
-    }
-
-    public static void setEntriesBeingWatched(ConcurrentMap<String, Boolean> entriesBeingWatched) {
-        WebPageProcessing.entriesBeingWatched = entriesBeingWatched;
-    }
-
-    public static ConcurrentMap<String, List<Restaurant>> getRestaurantsByCounties() {
-        return restaurantsByCounties;
-    }
-
-    public static void setRestaurantsByCounties(ConcurrentMap<String, List<Restaurant>> restaurantsByCounties) {
-        WebPageProcessing.restaurantsByCounties = restaurantsByCounties;
-    }
-
     public WatchDir getDirectoryWatcher() {
         return directoryWatcher;
     }
@@ -93,7 +75,7 @@ public class WebPageProcessing {
             mapOfEntriesBeingWatched.put(countyFile,true);
             Futures.addCallback(future, new FutureCallback<List<Restaurant>>() {
                 public void onSuccess(List<Restaurant> result) {
-                    restaurantsByCounties.put(countyFile,result);
+                    getRestaurantsByCounties().put(countyFile,result);
                     DatabaseUtil.persistData(countyFile,result);
                 }
                 public void onFailure(Throwable thrown) {
@@ -105,19 +87,32 @@ public class WebPageProcessing {
         }
     }
 
-    private ConcurrentMap<String,Path> processAlreadyDownloadedFiles(){
-        ConcurrentMap<String,Path> filePaths = Maps.newConcurrentMap();
+    private void processAlreadyDownloadedFiles(){
         try{
+
             File dir = directoryWatcher.getPath().toFile();
             File[] files = dir.listFiles();
             if (files != null) {
                 Stream.of(files).forEach(file ->
-                    asyncProcessFile(file.toPath(), entriesBeingWatched)
+                    asyncProcessFile(file.toPath(), getEntriesBeingWatched())
                 );
             }
         }catch(Exception e) {
             logger.error(e);
         }
-        return filePaths;
+    }
+
+    public static ConcurrentMap<String,Boolean> getEntriesBeingWatched(){
+        if (entriesBeingWatched == null){
+            entriesBeingWatched = Maps.newConcurrentMap();
+        }
+        return entriesBeingWatched;
+    }
+
+    public static ConcurrentMap<String,List<Restaurant>> getRestaurantsByCounties(){
+        if (restaurantsByCounties == null){
+            restaurantsByCounties = Maps.newConcurrentMap();
+        }
+        return restaurantsByCounties;
     }
 }
