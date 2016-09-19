@@ -8,11 +8,11 @@ import java.util.concurrent.Callable;
  * Author: jane
  * Date:  9/18/2016
  */
-public class WebPageRequest implements Callable<InputStream> {
+public class WebPageRequestAsync implements Callable<InputStream> {
 
     private String url;
 
-    public WebPageRequest(String url) {
+    public WebPageRequestAsync(String url) {
         this.url = url;
     }
 

@@ -19,10 +19,10 @@ public class WebEventOrchestrator {
         ExecutorUtil.shutDown();
     }
 
-    public static void main(String[] args){
-        WebEventOrchestrator orchestrator = new WebEventOrchestrator();
-        orchestrator.executeProcess();
-        orchestrator.shutDownExecutor();
-        System.exit(0);
-    }
+//    public static void main(String[] args){
+//        WebEventOrchestrator orchestrator = new WebEventOrchestrator();
+//        orchestrator.executeProcess();
+//        orchestrator.shutDownExecutor();
+//        System.exit(0);
+//    }
 }

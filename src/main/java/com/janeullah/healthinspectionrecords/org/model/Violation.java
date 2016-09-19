@@ -13,6 +13,7 @@ public class Violation  implements Serializable {
     private Severity severity;
     private String code;
     private String section;
+    private String summary;
     private String notes;
 
     public Violation(){
@@ -57,5 +58,14 @@ public class Violation  implements Serializable {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
 
 }

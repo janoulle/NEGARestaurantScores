@@ -7,5 +7,6 @@ package com.janeullah.healthinspectionrecords.org.constants;
 public enum Severity {
     LOW,
     MEDIUM,
+    NONCRITICAL,
     CRITICAL
 }

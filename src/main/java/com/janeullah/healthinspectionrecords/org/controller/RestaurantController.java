@@ -2,6 +2,7 @@ package com.janeullah.healthinspectionrecords.org.controller;
 
 import com.janeullah.healthinspectionrecords.org.constants.InspectionType;
 import com.janeullah.healthinspectionrecords.org.constants.Severity;
+import com.janeullah.healthinspectionrecords.org.model.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.org.model.InspectionReport;
 import com.janeullah.healthinspectionrecords.org.model.Restaurant;
 import com.janeullah.healthinspectionrecords.org.model.Violation;
@@ -38,7 +39,8 @@ public class RestaurantController {
         Violation violation = new Violation("17C", StringUtils.EMPTY, StringUtils.EMPTY, Severity.CRITICAL);
         InspectionReport report = new InspectionReport(91,"12/17/2015", InspectionType.ROUTINE);
         report.setViolations(Collections.singletonList(violation));
-        Restaurant restaurant = new Restaurant("364 E Broad St Athens GA, 30601");
+        Restaurant restaurant = new Restaurant();
+        restaurant.setEstablishmentInfo(new EstablishmentInfo());
         restaurant.setInspectionReports(Collections.singletonList(report));
         return restaurant;
     }

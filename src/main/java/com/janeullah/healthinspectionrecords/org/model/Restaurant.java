@@ -12,14 +12,10 @@ public class Restaurant implements Serializable {
 
     private static final long serialVersionUID = -7700847544993366495L;
     private List<InspectionReport> inspectionReports = new ArrayList<>();
-    private String address;
+    private EstablishmentInfo establishmentInfo;
 
     public Restaurant(){
 
-    }
-
-    public Restaurant(String address){
-        setAddress(address);
     }
 
     public List<InspectionReport> getInspectionReports() {
@@ -30,12 +26,16 @@ public class Restaurant implements Serializable {
         this.inspectionReports = inspectionReports;
     }
 
-    public String getAddress() {
-        return address;
+    public void addInspectionReport(InspectionReport report){
+        this.inspectionReports.add(report);
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public EstablishmentInfo getEstablishmentInfo() {
+        return establishmentInfo;
+    }
+
+    public void setEstablishmentInfo(EstablishmentInfo establishmentInfo) {
+        this.establishmentInfo = establishmentInfo;
     }
 
 }

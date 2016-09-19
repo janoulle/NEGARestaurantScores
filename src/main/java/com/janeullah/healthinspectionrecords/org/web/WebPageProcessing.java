@@ -3,13 +3,13 @@ package com.janeullah.healthinspectionrecords.org.web;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.janeullah.healthinspectionrecords.org.async.WebPageProcess;
+import com.janeullah.healthinspectionrecords.org.async.WebPageProcessAsync;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.org.model.Restaurant;
 import com.janeullah.healthinspectionrecords.org.util.DatabaseUtil;
 import com.janeullah.healthinspectionrecords.org.util.WatchDir;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -52,10 +52,10 @@ public class WebPageProcessing {
      */
     public static void asyncProcessFile(Path file, ConcurrentMap<String,Boolean> mapOfEntriesBeingWatched){
         try {
-            ListenableFuture<List<Elements>> future = executorService.submit(new WebPageProcess(file));
+            ListenableFuture<List<Restaurant>> future = executorService.submit(new WebPageProcessAsync(file));
             mapOfEntriesBeingWatched.put(FilenameUtils.getName(file.getFileName().toString()),true);
-            Futures.addCallback(future, new FutureCallback<List<Elements>>() {
-                public void onSuccess(List<Elements> result) {
+            Futures.addCallback(future, new FutureCallback<List<Restaurant>>() {
+                public void onSuccess(List<Restaurant> result) {
                     DatabaseUtil.persistData(result);
                 }
                 public void onFailure(Throwable thrown) {

@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.janeullah.healthinspectionrecords.org.async.WebPageRequest;
+import com.janeullah.healthinspectionrecords.org.async.WebPageRequestAsync;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +60,7 @@ public class WebPageDownloader {
             ConcurrentMap<String, String> urls = getUrls();
 
             urls.entrySet().forEach(entry -> {
-                        ListenableFuture<InputStream> future = executorService.submit(new WebPageRequest(entry.getValue()));
+                        ListenableFuture<InputStream> future = executorService.submit(new WebPageRequestAsync(entry.getValue()));
                         Futures.addCallback(future, new FutureCallback<InputStream>() {
                             public void onSuccess(InputStream result) {
                                 copyStreamToDisk(entry.getKey(), result);
