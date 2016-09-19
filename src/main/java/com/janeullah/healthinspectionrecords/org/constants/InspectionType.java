@@ -18,4 +18,12 @@ public enum InspectionType {
     String getValue(){
         return value;
     }
+
+    public static InspectionType asInspectionType(String str) {
+        for (InspectionType me : InspectionType.values()) {
+            if (me.getValue().equalsIgnoreCase(str))
+                return me;
+        }
+        return null;
+    }
 }

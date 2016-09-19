@@ -43,12 +43,20 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
         return restaurantsInFile;
     }
 
+    private void setHiddenDivs(Document doc){
+        try{
+            //var hiddenDiv = $("div").filter(":hidden")
+            //https://api.jquery.com/hidden-selector/
+            hiddenDivs = doc.select("div[style=\"hidden:none\"]");
+        }catch(Selector.SelectorParseException e){
+            System.err.println(e);
+        }
+    }
+
     private Elements processFile(){
         try (InputStream in = Files.newInputStream(url)) {
             Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
-            //var hiddenDiv = $("div").filter(":hidden")
-            //https://api.jquery.com/hidden-selector/
-            hiddenDivs = doc.select(WebSelectorConstants.HIDDEN_DIVS);
+            setHiddenDivs(doc);
             return doc.select(WebSelectorConstants.ALL_ROW);
         } catch (Selector.SelectorParseException | IOException e) {
             System.err.println(e);

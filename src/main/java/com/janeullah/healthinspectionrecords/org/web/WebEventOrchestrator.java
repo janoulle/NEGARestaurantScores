@@ -10,19 +10,22 @@ public class WebEventOrchestrator {
     private WebPageDownloader webPageDownloader = new WebPageDownloader();
     private WebPageProcessing webPageProcessing = new WebPageProcessing();
 
-    public void executeProcess(){
+    private void executeProcess() {
         webPageDownloader.executeProcess();
         webPageProcessing.executeProcess();
     }
 
-    public void shutDownExecutor(){
+    private void shutDownExecutor() {
         ExecutorUtil.shutDown();
     }
 
-//    public static void main(String[] args){
-//        WebEventOrchestrator orchestrator = new WebEventOrchestrator();
-//        orchestrator.executeProcess();
-//        orchestrator.shutDownExecutor();
-//        System.exit(0);
-//    }
+    public void run() {
+        executeProcess();
+        shutDownExecutor();
+    }
+
+    public static void main(String[] args){
+        WebEventOrchestrator orch = new WebEventOrchestrator();
+        orch.run();
+    }
 }

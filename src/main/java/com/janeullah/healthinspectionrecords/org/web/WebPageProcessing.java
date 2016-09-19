@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.org.web;
 
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -11,11 +12,13 @@ import com.janeullah.healthinspectionrecords.org.util.WatchDir;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
 import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.executorService;
 
@@ -25,11 +28,12 @@ import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.execut
  */
 public class WebPageProcessing {
     private final static Logger logger = Logger.getLogger(WebPageProcessing.class);
-    private static ConcurrentMap<String,Boolean> entriesBeingWatched;
+    private static ConcurrentMap<String,Boolean> entriesBeingWatched = Maps.newConcurrentMap();
     private WatchDir directoryWatcher;
 
 
     public WebPageProcessing(){
+        logger.info("event=\"WebPageProcessing initialized\"");
         setupWatcher();
     }
 
@@ -43,7 +47,11 @@ public class WebPageProcessing {
     }
 
     public void executeProcess(){
-        directoryWatcher.executeProcess();
+        if (WebPageConstants.SET_WATCHER) {
+            directoryWatcher.executeProcess();
+        }else{
+            processAlreadyDownloadedFiles();
+        }
     }
 
     /**
@@ -65,5 +73,21 @@ public class WebPageProcessing {
         } catch (SecurityException e) {
             logger.error(e);
         }
+    }
+
+    private ConcurrentMap<String,Path> processAlreadyDownloadedFiles(){
+        ConcurrentMap<String,Path> filePaths = Maps.newConcurrentMap();
+        try{
+            File dir = directoryWatcher.getPath().toFile();
+            File[] files = dir.listFiles();
+            if (files != null) {
+                Stream.of(files).forEach(file ->
+                    asyncProcessFile(file.toPath(), entriesBeingWatched)
+                );
+            }
+        }catch(Exception e) {
+            logger.error(e);
+        }
+        return filePaths;
     }
 }

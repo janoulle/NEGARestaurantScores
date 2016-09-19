@@ -23,5 +23,6 @@ public class WebPageConstants {
     public final static String DATA_EXPIRATION_IN_DAYS = System.getProperty("EXPIRATION_IN_DAYS","1");
     public final static AtomicLong DATA_EXPIRATION_IN_MILLIS = new AtomicLong(Ints.tryParse(DATA_EXPIRATION_IN_DAYS) * DateTimeConstants.MILLIS_PER_DAY);
     public final static String PATH_TO_PAGE_STORAGE = System.getProperty("PATH_TO_PAGE_STORAGE","src/main/resources/downloads/webpages");
-    public final static boolean DOWNLOAD_OVERRIDE = Boolean.parseBoolean(System.getProperty("DOWNLOAD_OVERRIDE","true"));
+    public final static boolean DOWNLOAD_OVERRIDE = Boolean.parseBoolean(System.getProperty("DOWNLOAD_OVERRIDE","false"));
+    public static boolean SET_WATCHER = Boolean.parseBoolean(System.getProperty("SET_WATCHER","false"));
 }

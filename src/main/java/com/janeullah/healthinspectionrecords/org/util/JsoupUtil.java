@@ -1,6 +1,5 @@
 package com.janeullah.healthinspectionrecords.org.util;
 
-import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import com.janeullah.healthinspectionrecords.org.constants.InspectionType;
 import com.janeullah.healthinspectionrecords.org.constants.Severity;
@@ -21,7 +20,6 @@ import org.jsoup.select.Selector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,10 +36,10 @@ public class JsoupUtil {
         Element name = rowElement.select(WebSelectorConstants.RESTAURANT_NAME_SELECTOR).first();
         EstablishmentInfo info = new EstablishmentInfo();
         if (name != null && StringUtils.isNotBlank(name.text())) {
-            info.setName(name.text());
+            info.setName(name.text().trim());
         }
         if (address != null && StringUtils.isNotBlank(address.text())) {
-            info.setAddress(address.text());
+            info.setAddress(address.text().trim());
         }
         return info;
     }
@@ -54,7 +52,7 @@ public class JsoupUtil {
                 if (type.text().contains("/")) {
                     return InspectionType.RE_INSPECTION;
                 }
-                return InspectionType.valueOf(type.text());
+                return InspectionType.asInspectionType(type.text().trim());
             }
         } catch (Exception e) {
             logger.error(e);
@@ -94,8 +92,8 @@ public class JsoupUtil {
         try {
             if (when != null && StringUtils.isNotBlank(when.text())) {
                 DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
-                if (when.text().contains("/")) {
-                    String[] splitTimes = when.text().split("/");
+                if (when.text().length() > 10) {
+                    String[] splitTimes = when.text().split(" / ");
                     Optional<DateTime> tentativeResult = Stream.of(splitTimes)
                             .map(entry -> DateTime.parse(entry, fmt))
                             .max(DateTime::compareTo);
@@ -112,37 +110,26 @@ public class JsoupUtil {
         return null;
     }
 
-    /*private static ConcurrentMap<String, List<Violation>> extractViolations(Element rowElement) throws Selector.SelectorParseException {
-        Element sixthCell = rowElement.select(WebSelectorConstants.ALL_VIOLATIONS).first();
-        ConcurrentMap<String, List<Violation>> results = Maps.newConcurrentMap();
-        try {
-
-        } catch (IllegalArgumentException e) {
-            logger.error(e);
-        }
-        return results;
-    }*/
-
-    private static List<Violation> extractViolations(Element cellElement, Elements hiddenDiv){
+    private static List<Violation> extractViolations(Element cellElement, Elements hiddenDiv) {
         List<Violation> violations = new ArrayList<>();
-        violations.addAll(extractViolations(WebSelectorConstants.CRITICAL, Severity.CRITICAL,cellElement,hiddenDiv));
-        violations.addAll(extractViolations(WebSelectorConstants.NOT_CRITICAL,Severity.NONCRITICAL,cellElement,hiddenDiv));
+        violations.addAll(extractViolations(WebSelectorConstants.CRITICAL, Severity.CRITICAL, cellElement, hiddenDiv));
+        violations.addAll(extractViolations(WebSelectorConstants.NOT_CRITICAL, Severity.NONCRITICAL, cellElement, hiddenDiv));
         return violations;
     }
 
     private static List<Violation> extractViolations(String selector, Severity severity, Element cellElement, Elements hiddenDivs) {
         return cellElement.select(selector)
                 .stream()
-                .map(entry -> extractViolationPOJO(entry.id(),severity,entry,hiddenDivs))
+                .map(entry -> extractViolationPOJO(entry.id(), severity, entry, hiddenDivs))
                 .collect(Collectors.toList());
     }
 
-    private static Violation extractViolationPOJO(String hrefId, Severity severity, Element element, Elements hiddenDivs){
+    private static Violation extractViolationPOJO(String hrefId, Severity severity, Element element, Elements hiddenDivs) {
         Violation v = new Violation();
         v.setSeverity(severity);
         v.setSummary(element.text());
         String violationHrefId = "";
-        switch(severity){
+        switch (severity) {
             case NONCRITICAL:
                 violationHrefId = hrefId.substring(WebSelectorConstants.NON_CRITICAL_HREF_ID_PREFIX.length() - 1);
                 break;
@@ -155,27 +142,35 @@ public class JsoupUtil {
         return v;
     }
 
-    private static String extractHiddenTextForViolation(String idForViolation, Elements hiddenDivs){
-        Element hiddenDiv = hiddenDivs.select("div#"+idForViolation).first();
-        return hiddenDiv != null ? hiddenDiv.text():StringUtils.EMPTY;
+    private static String extractHiddenTextForViolation(String idForViolation, Elements hiddenDivs) {
+        if (hiddenDivs != null) {
+            Element hiddenDiv = hiddenDivs.select("div#" + idForViolation).first();
+            return hiddenDiv != null ? hiddenDiv.text() : StringUtils.EMPTY;
+        }
+        return StringUtils.EMPTY;
     }
 
     public static Restaurant assemblePOJO(Element rowElement, Elements hiddenDivs) {
-        EstablishmentInfo info = extractEstablishmentInfoFromElement(rowElement);
-        int score = extractScoreFromElement(rowElement);
-        DateTime when = extractMostRecentDateFromElement(rowElement);
-        InspectionType typeOfInspection = extractInspectionTypeFromElement(rowElement);
-        List<Violation> violations = extractViolations(rowElement,hiddenDivs);
+        try {
+            EstablishmentInfo info = extractEstablishmentInfoFromElement(rowElement);
+            int score = extractScoreFromElement(rowElement);
+            DateTime when = extractMostRecentDateFromElement(rowElement);
+            InspectionType typeOfInspection = extractInspectionTypeFromElement(rowElement);
+            List<Violation> violations = extractViolations(rowElement, hiddenDivs);
 
-        InspectionReport report = new InspectionReport();
-        report.setScore(score);
-        report.setDateReported(when);
-        report.setInspectionType(typeOfInspection);
-        report.setViolations(violations);
+            InspectionReport report = new InspectionReport();
+            report.setScore(score);
+            report.setDateReported(when);
+            report.setInspectionType(typeOfInspection);
+            report.setViolations(violations);
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setEstablishmentInfo(info);
-        restaurant.addInspectionReport(report);
-        return restaurant;
+            Restaurant restaurant = new Restaurant();
+            restaurant.setEstablishmentInfo(info);
+            restaurant.addInspectionReport(report);
+            return restaurant;
+        } catch (Exception e) {
+            logger.error(e);
+        }
+        return null;
     }
 }
