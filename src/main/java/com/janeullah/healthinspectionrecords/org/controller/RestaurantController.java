@@ -26,7 +26,7 @@ import java.util.List;
 public class RestaurantController {
     private static final Logger logger = Logger.getLogger(RestaurantController.class);
 
-    @RequestMapping(value = "/restaurants",method = RequestMethod.GET)
+    @RequestMapping(value = "/restaurants",method = {RequestMethod.GET})
     public List<Restaurant> all(){
         logger.info("getting all restaurants");
         WebEventOrchestrator orchestrator = new WebEventOrchestrator();
