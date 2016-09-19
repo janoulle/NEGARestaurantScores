@@ -13,8 +13,7 @@ public class WebSelectorConstants {
     public final static String ALL_ROW = "table.sorted > tbody > tr";
     public final static String ALL_VIOLATIONS = "tr td:nth-child(6)";
     public final static String HIDDEN_DIVS = "div:hidden";
-    public final static String CRITICAL = ".crit a";
-    public final static String NOT_CRITICAL = ".ncrit a";
-    public final static String CRITICAL_HREF_ID_PREFIX = "crit_";
-    public final static String NON_CRITICAL_HREF_ID_PREFIX = "noncrita_";
+    public final static String CRITICAL = "div.crit a";
+    public final static String NOT_CRITICAL = "div.ncrit a";
+    public final static String HREF_PREFIX_FOR_VIOLATIONS = "crit_";
 }

@@ -120,6 +120,7 @@ public class JsoupUtil {
     private static List<Violation> extractViolations(String selector, Severity severity, Element cellElement, Elements hiddenDivs) {
         return cellElement.select(selector)
                 .stream()
+                .filter(entry -> StringUtils.isNotBlank(entry.id()))
                 .map(entry -> extractViolationPOJO(entry.id(), severity, entry, hiddenDivs))
                 .collect(Collectors.toList());
     }
@@ -129,15 +130,18 @@ public class JsoupUtil {
         v.setSeverity(severity);
         v.setSummary(element.text());
         String violationHrefId = "";
-        switch (severity) {
-            case NONCRITICAL:
-                violationHrefId = hrefId.substring(WebSelectorConstants.NON_CRITICAL_HREF_ID_PREFIX.length() - 1);
-                break;
-            case CRITICAL:
-                violationHrefId = hrefId.substring(WebSelectorConstants.CRITICAL_HREF_ID_PREFIX.length() - 1);
-                break;
+        String hiddenText = "";
+        if (StringUtils.isNotBlank(hrefId)) {
+            switch (severity) {
+                case NONCRITICAL:
+                case CRITICAL:
+                    if (hrefId.length() > WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length()) {
+                        violationHrefId = hrefId.substring(WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length());
+                        hiddenText = extractHiddenTextForViolation(violationHrefId, hiddenDivs);
+                    }
+                    break;
+            }
         }
-        String hiddenText = extractHiddenTextForViolation(violationHrefId, hiddenDivs);
         v.setNotes(hiddenText);
         return v;
     }
