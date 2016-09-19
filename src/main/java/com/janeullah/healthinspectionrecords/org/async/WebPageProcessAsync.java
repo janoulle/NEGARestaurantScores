@@ -34,10 +34,12 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     private List<Restaurant> ingestJsoupData(){
         List<Restaurant> restaurantsInFile = Lists.newArrayList();
         Elements jsoupList = processFile();
-        jsoupList.forEach(entry -> {
-            Restaurant r = JsoupUtil.assemblePOJO(entry,hiddenDivs);
-            restaurantsInFile.add(r);
-        });
+        if (jsoupList != null) {
+            jsoupList.forEach(entry -> {
+                Restaurant r = JsoupUtil.assemblePOJO(entry, hiddenDivs);
+                restaurantsInFile.add(r);
+            });
+        }
         return restaurantsInFile;
     }
 

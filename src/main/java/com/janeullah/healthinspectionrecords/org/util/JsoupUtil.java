@@ -67,7 +67,7 @@ public class JsoupUtil {
      *
      * @param rowElement Represents a row in the tabular doc
      * @return score as int
-     * @throws Selector.SelectorParseException
+     * @throws Selector.SelectorParseException selector used is invalid
      */
     private static int extractScoreFromElement(Element rowElement) throws Selector.SelectorParseException {
         Element score = rowElement.select(WebSelectorConstants.SCORE_SELECTOR).first();
@@ -112,7 +112,7 @@ public class JsoupUtil {
         return null;
     }
 
-    private static ConcurrentMap<String, List<Violation>> extractViolations(Element rowElement) throws Selector.SelectorParseException {
+    /*private static ConcurrentMap<String, List<Violation>> extractViolations(Element rowElement) throws Selector.SelectorParseException {
         Element sixthCell = rowElement.select(WebSelectorConstants.ALL_VIOLATIONS).first();
         ConcurrentMap<String, List<Violation>> results = Maps.newConcurrentMap();
         try {
@@ -121,7 +121,7 @@ public class JsoupUtil {
             logger.error(e);
         }
         return results;
-    }
+    }*/
 
     private static List<Violation> extractViolations(Element cellElement, Elements hiddenDiv){
         List<Violation> violations = new ArrayList<>();
@@ -131,11 +131,10 @@ public class JsoupUtil {
     }
 
     private static List<Violation> extractViolations(String selector, Severity severity, Element cellElement, Elements hiddenDivs) {
-        List<Violation> violations  = cellElement.select(selector)
+        return cellElement.select(selector)
                 .stream()
                 .map(entry -> extractViolationPOJO(entry.id(),severity,entry,hiddenDivs))
                 .collect(Collectors.toList());
-        return violations;
     }
 
     private static Violation extractViolationPOJO(String hrefId, Severity severity, Element element, Elements hiddenDivs){
