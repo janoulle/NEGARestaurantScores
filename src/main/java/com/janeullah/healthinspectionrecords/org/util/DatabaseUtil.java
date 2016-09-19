@@ -1,7 +1,6 @@
 package com.janeullah.healthinspectionrecords.org.util;
 
 import com.janeullah.healthinspectionrecords.org.model.Restaurant;
-import org.jsoup.select.Elements;
 
 import java.util.List;
 
@@ -10,10 +9,7 @@ import java.util.List;
  * Date:  9/18/2016
  */
 public class DatabaseUtil {
-    public static void persistData(String county, List<Elements> elements){
-        System.out.format("got here for county: %s size: %d\n",county,elements.size());
-    }
-    public static void persistData(List<Restaurant> elements){
-        System.out.format("got here for size: %d\n",elements.size());
+    public static void persistData(String countyFile, List<Restaurant> elements){
+        System.out.format("got here for county: %s size: %d\n",countyFile,elements.size());
     }
 }

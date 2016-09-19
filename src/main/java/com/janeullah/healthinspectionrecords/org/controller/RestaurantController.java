@@ -6,6 +6,7 @@ import com.janeullah.healthinspectionrecords.org.model.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.org.model.InspectionReport;
 import com.janeullah.healthinspectionrecords.org.model.Restaurant;
 import com.janeullah.healthinspectionrecords.org.model.Violation;
+import com.janeullah.healthinspectionrecords.org.web.WebEventOrchestrator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +29,8 @@ public class RestaurantController {
     @RequestMapping(value = "/restaurants",method = RequestMethod.GET)
     public List<Restaurant> all(){
         logger.info("getting all restaurants");
-        return new ArrayList<>();
+        WebEventOrchestrator orchestrator = new WebEventOrchestrator();
+        return orchestrator.getAllRestaurants();
     }
 
     @RequestMapping(value = "/restaurant/id/{id}",method = RequestMethod.GET, produces= MediaType.APPLICATION_JSON_VALUE)

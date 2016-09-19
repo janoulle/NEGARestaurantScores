@@ -6,6 +6,7 @@ import com.janeullah.healthinspectionrecords.org.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.org.model.Restaurant;
 import com.janeullah.healthinspectionrecords.org.util.JsoupUtil;
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -17,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * Author: jane
@@ -47,7 +49,12 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
         try{
             //var hiddenDiv = $("div").filter(":hidden")
             //https://api.jquery.com/hidden-selector/
-            hiddenDivs = doc.select("div[style=\"hidden:none\"]");
+            //hiddenDivs = doc.select("div[style=\"hidden:none\"]");
+            //:not([class])
+            hiddenDivs = doc.select("div:not([class])")
+                    .stream()
+                    .filter(entry -> StringUtils.isNumeric(entry.id()))
+                    .collect(Collectors.toCollection(Elements::new));
         }catch(Selector.SelectorParseException e){
             System.err.println(e);
         }

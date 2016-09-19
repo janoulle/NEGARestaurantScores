@@ -29,6 +29,7 @@ import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.execut
 public class WebPageProcessing {
     private final static Logger logger = Logger.getLogger(WebPageProcessing.class);
     private static ConcurrentMap<String,Boolean> entriesBeingWatched = Maps.newConcurrentMap();
+    private static ConcurrentMap<String,List<Restaurant>> restaurantsByCounties = Maps.newConcurrentMap();
     private WatchDir directoryWatcher;
 
 
@@ -54,6 +55,33 @@ public class WebPageProcessing {
         }
     }
 
+
+
+    public static ConcurrentMap<String, Boolean> getEntriesBeingWatched() {
+        return entriesBeingWatched;
+    }
+
+    public static void setEntriesBeingWatched(ConcurrentMap<String, Boolean> entriesBeingWatched) {
+        WebPageProcessing.entriesBeingWatched = entriesBeingWatched;
+    }
+
+    public static ConcurrentMap<String, List<Restaurant>> getRestaurantsByCounties() {
+        return restaurantsByCounties;
+    }
+
+    public static void setRestaurantsByCounties(ConcurrentMap<String, List<Restaurant>> restaurantsByCounties) {
+        WebPageProcessing.restaurantsByCounties = restaurantsByCounties;
+    }
+
+    public WatchDir getDirectoryWatcher() {
+        return directoryWatcher;
+    }
+
+    public void setDirectoryWatcher(WatchDir directoryWatcher) {
+        this.directoryWatcher = directoryWatcher;
+    }
+
+
     /**
      * TODO: figure out best way to reuse executor and shut down when done
      * @param file Path to downloaded file relative
@@ -61,10 +89,12 @@ public class WebPageProcessing {
     public static void asyncProcessFile(Path file, ConcurrentMap<String,Boolean> mapOfEntriesBeingWatched){
         try {
             ListenableFuture<List<Restaurant>> future = executorService.submit(new WebPageProcessAsync(file));
-            mapOfEntriesBeingWatched.put(FilenameUtils.getName(file.getFileName().toString()),true);
+            String countyFile = FilenameUtils.getName(file.getFileName().toString());
+            mapOfEntriesBeingWatched.put(countyFile,true);
             Futures.addCallback(future, new FutureCallback<List<Restaurant>>() {
                 public void onSuccess(List<Restaurant> result) {
-                    DatabaseUtil.persistData(result);
+                    restaurantsByCounties.put(countyFile,result);
+                    DatabaseUtil.persistData(countyFile,result);
                 }
                 public void onFailure(Throwable thrown) {
                     logger.error(thrown);

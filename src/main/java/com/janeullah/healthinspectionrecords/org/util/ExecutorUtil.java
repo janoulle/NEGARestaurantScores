@@ -22,8 +22,8 @@ public class ExecutorUtil {
      */
     public static void shutDown(){
         try {
-            if (!executorService.isTerminated()) {
-                logger.error("event=\"shutting down executor\"");
+            if (!executorService.isShutdown() || !executorService.isTerminated()) {
+                logger.info("event=\"shutting down executor\"");
                 executorService.shutdown();
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
             }
