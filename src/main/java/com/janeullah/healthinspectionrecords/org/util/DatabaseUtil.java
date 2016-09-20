@@ -10,6 +10,6 @@ import java.util.List;
  */
 public class DatabaseUtil {
     public static void persistData(String countyFile, List<Restaurant> restaurants){
-        System.out.format("got here for county: %s size: %d\n",countyFile,restaurants.size());
+        System.out.format("Web Page Processing completed for county: %s size: %d\n",countyFile,restaurants.size());
     }
 }

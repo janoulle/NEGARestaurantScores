@@ -1,5 +1,7 @@
 package com.janeullah.healthinspectionrecords.org.web;
 
+import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.org.exceptions.config.IncompatibleConfigurationException;
 import com.janeullah.healthinspectionrecords.org.model.Restaurant;
 import com.janeullah.healthinspectionrecords.org.util.ExecutorUtil;
 import org.apache.log4j.Logger;
@@ -19,7 +21,18 @@ public class WebEventOrchestrator {
     private WebPageProcessing webPageProcessing = new WebPageProcessing();
 
     private void executeProcess() {
-        webPageDownloader.executeProcess();
+        logger.info("event=\"tasks for downloading webpage kicked off\"");
+        boolean downloadKickedOff = webPageDownloader.executeProcess();
+        if (downloadKickedOff){
+            try {
+                logger.info("event=\"waiting for threads to complete downloading\"");
+                webPageDownloader.getDoneSignal().await();
+                logger.info("event=\"await completed for threads involved in downloading\"");
+            }catch (InterruptedException e){
+                logger.error(e);
+            }
+        }
+        logger.info("event=\"tasks for processing downloaded webpages kicked off\"");
         webPageProcessing.executeProcess();
     }
 
@@ -36,17 +49,32 @@ public class WebEventOrchestrator {
         return webPageProcessing.getDoneSignal();
     }
 
+    public CountDownLatch getSignalForDownloads(){
+        return webPageDownloader.getDoneSignal();
+    }
+
     public List<Restaurant> getAllRestaurants(){
         try {
-            webPageProcessing.executeProcess();
+            if (WebPageConstants.SET_WATCHER){
+                throw new IncompatibleConfigurationException("SET_WATCHER must always be false");
+            }
+
+            executeProcess();
+
+            logger.info("event=\"waiting for threads to complete processing\"");
+            getSignalForProcessing().await();
+            logger.info("event=\"await completed for threads involved in processing\"");
+
+            //shut down
+            shutDownExecutor();
+
             List<Restaurant> result = new ArrayList<>();
             ConcurrentMap<String, List<Restaurant>> restaurants = WebPageProcessing.getRestaurantsByCounties();
             restaurants.entrySet().forEach(entry ->
                     result.addAll(entry.getValue())
             );
-            getSignalForProcessing().await();
             return result;
-        }catch (InterruptedException e){
+        }catch (IncompatibleConfigurationException | InterruptedException e){
             logger.error(e);
         }
         return new ArrayList<>();

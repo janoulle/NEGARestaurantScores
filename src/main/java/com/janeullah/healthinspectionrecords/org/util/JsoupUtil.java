@@ -3,6 +3,7 @@ package com.janeullah.healthinspectionrecords.org.util;
 import com.google.common.primitives.Ints;
 import com.janeullah.healthinspectionrecords.org.constants.InspectionType;
 import com.janeullah.healthinspectionrecords.org.constants.Severity;
+import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.org.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.org.model.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.org.model.InspectionReport;
@@ -129,6 +130,7 @@ public class JsoupUtil {
         Violation v = new Violation();
         v.setSeverity(severity);
         v.setSummary(element.text());
+        v.setCode(extractCodeFromSummary(v.getSummary()));
         String violationHrefId = "";
         String hiddenText = "";
         if (StringUtils.isNotBlank(hrefId)) {
@@ -144,6 +146,20 @@ public class JsoupUtil {
         }
         v.setNotes(hiddenText);
         return v;
+    }
+
+    private static String extractCodeFromSummary(String violationSummary) {
+        if (StringUtils.isNotEmpty(violationSummary)) {
+            if (violationSummary.length() > (WebPageConstants.VIOLATION_CODE_PREFIX.length() + WebPageConstants.VIOLATION_CODE_SUFFIX.length())) {
+                int startingIndex = violationSummary.indexOf(WebPageConstants.VIOLATION_CODE_PREFIX) + WebPageConstants.VIOLATION_CODE_PREFIX.length();
+                int suffixIndex = violationSummary.indexOf(WebPageConstants.VIOLATION_CODE_SUFFIX);
+                if (suffixIndex > startingIndex) {
+                    String code = violationSummary.substring(startingIndex,suffixIndex);
+                    return StringUtils.isNotBlank(code) ? code.trim() : StringUtils.EMPTY;
+                }
+            }
+        }
+        return StringUtils.EMPTY;
     }
 
     private static String extractHiddenTextForViolation(String idForViolation, Elements hiddenDivs) {

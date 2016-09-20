@@ -6,17 +6,18 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.janeullah.healthinspectionrecords.org.async.WebPageRequestAsync;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.org.util.ExecutorUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.OptionalLong;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
 
 import static com.janeullah.healthinspectionrecords.org.constants.WebPageConstants.DOWNLOAD_OVERRIDE;
@@ -28,15 +29,22 @@ import static com.janeullah.healthinspectionrecords.org.util.ExecutorUtil.execut
  */
 public class WebPageDownloader {
     private final static Logger logger = Logger.getLogger(WebPageDownloader.class);
+    static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
 
     public WebPageDownloader() {
         logger.info("event=\"WebPageDownloader initialized\"");
     }
 
-    public void executeProcess(){
+    protected CountDownLatch getDoneSignal(){
+        return doneSignal;
+    }
+
+    public boolean executeProcess(){
         if (isDataExpired()) {
             downloadWebPages();
+            return true;
         }
+        return false;
     }
 
     private static ConcurrentMap<String, String> getUrls() {
@@ -58,12 +66,11 @@ public class WebPageDownloader {
     private void downloadWebPages() {
         try {
             ConcurrentMap<String, String> urls = getUrls();
-
             urls.entrySet().forEach(entry -> {
-                        ListenableFuture<InputStream> future = executorService.submit(new WebPageRequestAsync(entry.getValue()));
-                        Futures.addCallback(future, new FutureCallback<InputStream>() {
-                            public void onSuccess(InputStream result) {
-                                copyStreamToDisk(entry.getKey(), result);
+                        ListenableFuture<String> future = executorService.submit(new WebPageRequestAsync(entry.getValue(),entry.getKey(),doneSignal));
+                        Futures.addCallback(future, new FutureCallback<String>() {
+                            public void onSuccess(String result) {
+                                logger.info("event=\"" + result + " successfully written to disk\"");
                             }
                             public void onFailure(Throwable thrown) {
                                 logger.error(thrown);
@@ -72,19 +79,6 @@ public class WebPageDownloader {
                     }
             );
         } catch (SecurityException e) {
-            logger.error(e);
-        }
-    }
-
-    private void copyStreamToDisk(String name, InputStream reqStream) {
-        try {
-            String fileName = name + WebPageConstants.PAGE_URL;
-            File destinationFile = new File("src/main/resources/downloads/webpages/" + fileName);
-            FileUtils.copyInputStreamToFile(reqStream, destinationFile);
-            if (destinationFile.exists()) {
-                logger.info("event=\"" + fileName + " created\"");
-            }
-        } catch (IOException e) {
             logger.error(e);
         }
     }
@@ -106,9 +100,7 @@ public class WebPageDownloader {
     private static boolean areFilesMoreRecentThanLimit(){
         try {
             DateTime cal = DateTime.now().minus(WebPageConstants.DATA_EXPIRATION_IN_MILLIS.get());
-            //Files.newInputStream(pathToDir);
-            File dir = Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE).toFile();
-            File[] files = dir.listFiles();
+            File[] files = getFilesInDirectory();
             if (files == null || files.length == 0) {
                 return false;
             }
@@ -118,5 +110,20 @@ public class WebPageDownloader {
             logger.error(e);
         }
         return false;
+    }
+
+    private static void touchFiles(){
+        try {
+            com.google.common.io.Files.touch(Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE).toFile());
+            //ile[] files = getFilesInDirectory();
+            //if (files != null) Stream.of(files).forEach(file -> com.google.common.io.Files.touch(file));
+        }catch(Exception e){
+            logger.error(e);
+        }
+    }
+
+    private static File[] getFilesInDirectory(){
+        File dir = Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE).toFile();
+        return dir.listFiles();
     }
 }

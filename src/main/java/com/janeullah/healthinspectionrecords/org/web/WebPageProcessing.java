@@ -32,7 +32,6 @@ public class WebPageProcessing {
     private final static Logger logger = Logger.getLogger(WebPageProcessing.class);
     private static ConcurrentMap<String,List<Restaurant>> restaurantsByCounties;
     private static ConcurrentMap<String,Boolean> entriesBeingWatched;
-    //CountDownLatch startSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
     static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
 
     private WatchDir directoryWatcher;
@@ -53,11 +52,7 @@ public class WebPageProcessing {
     }
 
     public void executeProcess(){
-        if (WebPageConstants.SET_WATCHER) {
-            directoryWatcher.executeProcess();
-        }else{
-            processAlreadyDownloadedFiles();
-        }
+        processAlreadyDownloadedFiles();
     }
 
     protected CountDownLatch getDoneSignal(){
@@ -98,7 +93,6 @@ public class WebPageProcessing {
 
     private void processAlreadyDownloadedFiles(){
         try{
-
             File dir = directoryWatcher.getPath().toFile();
             File[] files = dir.listFiles();
             if (files != null) {
