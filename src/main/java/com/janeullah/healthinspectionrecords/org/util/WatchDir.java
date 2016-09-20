@@ -34,13 +34,19 @@ package com.janeullah.healthinspectionrecords.org.util;
 import com.google.common.collect.Maps;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.org.web.WebPageProcessing;
+import com.sun.beans.util.Cache;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.*;
@@ -76,11 +82,32 @@ public class WatchDir {
         return dir;
     }
 
+    public static WatchEvent.Kind[] getWatchableEvents(){
+        try {
+            String[] eventsToWatchFor = WebPageConstants.WATCHABLE_EVENTS.split(",");
+            if (eventsToWatchFor.length > 0) {
+                WatchEvent.Kind[] events = new WatchEvent.Kind[eventsToWatchFor.length];
+                for (int i = 0; i < eventsToWatchFor.length; i++) {
+                    if ("ENTRY_CREATE".equalsIgnoreCase(eventsToWatchFor[i])) {
+                        events[i] = ENTRY_CREATE;
+                    } else if ("ENTRY_MODIFY".equalsIgnoreCase(eventsToWatchFor[i])) {
+                        events[i] = ENTRY_MODIFY;
+                    } else if ("ENTRY_DELETE".equalsIgnoreCase(eventsToWatchFor[i])) {
+                        events[i] = ENTRY_DELETE;
+                    }
+                }
+                return events;
+            }
+        }catch(Exception e){
+            logger.error(e);
+        }
+        return new WatchEvent.Kind[]{ENTRY_CREATE};
+    }
     /**
      * Register the given directory with the WatchService
      */
     private void register(Path dir) throws IOException {
-        WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+        WatchKey key = dir.register(watcher, getWatchableEvents());
         if (trace) {
             Path prev = keys.get(key);
             if (prev == null) {
@@ -160,13 +187,15 @@ public class WatchDir {
                     //String contentType = Files.probeContentType(child);
                     //if (!contentType.equals(MediaType.HTML_UTF_8.toString())) {
                     Path child = dir.resolve(filename);
-                    System.out.format("%s exists on disk\n", filename);
                     String friendlyname = FilenameUtils.getName(filename.getFileName().toString());
-                    boolean hasTaskKickedOff = entriesBeingWatched.get(friendlyname) != null && entriesBeingWatched.get(friendlyname);
-                    if (hasTaskKickedOff){
-                        logger.info(String.format("event=\"task has already been kicked off for filename %s",filename));
-                    }else {
-                        WebPageProcessing.asyncProcessFile(child,entriesBeingWatched);
+                    if (StringUtils.isNotBlank(friendlyname) && friendlyname.endsWith(".html")) {
+                        boolean hasTaskKickedOff = entriesBeingWatched.get(friendlyname) != null && entriesBeingWatched.get(friendlyname);
+                        if (hasTaskKickedOff) {
+                            logger.info(String.format("event=\"async task has already been kicked off for filename %s", filename));
+                        } else {
+                            logger.info(String.format("event=\"async task is being kicked off for filename %s", filename));
+                            WebPageProcessing.asyncProcessFile(child, entriesBeingWatched);
+                        }
                     }
                 } catch (Exception x) {
                     logger.error(x);
@@ -181,6 +210,13 @@ public class WatchDir {
             if (!valid) {
                 keys.remove(key);
                 break;
+            }else{
+                //if processing is completed, terminate
+                //TODO: figure logic for ensuring all files started with are present
+                /*if (entriesBeingWatched.entrySet().stream().filter(Map.Entry::getValue).count() == entriesBeingWatched.size()){
+                    keys.remove(key);
+                    break;
+                }*/
             }
         }
     }
