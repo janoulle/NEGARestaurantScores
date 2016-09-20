@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -27,13 +28,19 @@ import java.util.stream.Collectors;
 public class WebPageProcessAsync implements Callable<List<Restaurant>> {
 
     private Path url;
-    Elements hiddenDivs;
+    private Elements hiddenDivs;
+    //private final CountDownLatch startSignal;
+    private final CountDownLatch doneSignal;
 
-    public WebPageProcessAsync(Path url) {
+
+    public WebPageProcessAsync(Path url, CountDownLatch doneSignal) {
+        //this.startSignal = startSignal;
+        this.doneSignal = doneSignal;
         this.url = url;
     }
 
     private List<Restaurant> ingestJsoupData(){
+        //startSignal.countDown();
         List<Restaurant> restaurantsInFile = Lists.newArrayList();
         Elements jsoupList = processFile();
         if (jsoupList != null) {
@@ -42,6 +49,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
                 restaurantsInFile.add(r);
             });
         }
+        doneSignal.countDown();
         return restaurantsInFile;
     }
 

@@ -32,4 +32,8 @@ public class ExecutorUtil {
             executorService.shutdownNow();
         }
     }
+
+    public static int getThreadCount(){
+        return WebPageConstants.NUMBER_OF_THREADS;
+    }
 }

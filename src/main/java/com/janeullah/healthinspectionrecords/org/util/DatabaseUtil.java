@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.org.util;
 import com.janeullah.healthinspectionrecords.org.model.Restaurant;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Author: jane
