@@ -98,7 +98,6 @@ public class WebPageProcessing {
 
     private void processAlreadyDownloadedFiles(){
         try{
-
             File dir = directoryWatcher.getPath().toFile();
             File[] files = dir.listFiles();
             if (files != null) {
