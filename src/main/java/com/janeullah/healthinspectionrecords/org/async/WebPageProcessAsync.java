@@ -29,18 +29,15 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
 
     private Path url;
     private Elements hiddenDivs;
-    //private final CountDownLatch startSignal;
     private final CountDownLatch doneSignal;
 
 
     public WebPageProcessAsync(Path url, CountDownLatch doneSignal) {
-        //this.startSignal = startSignal;
         this.doneSignal = doneSignal;
         this.url = url;
     }
 
     private List<Restaurant> ingestJsoupData(){
-        //startSignal.countDown();
         List<Restaurant> restaurantsInFile = Lists.newArrayList();
         Elements jsoupList = processFile();
         if (jsoupList != null) {
@@ -55,10 +52,6 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
 
     private void setHiddenDivs(Document doc){
         try{
-            //var hiddenDiv = $("div").filter(":hidden")
-            //https://api.jquery.com/hidden-selector/
-            //hiddenDivs = doc.select("div[style=\"hidden:none\"]");
-            //:not([class])
             hiddenDivs = doc.select("div:not([class])")
                     .stream()
                     .filter(entry -> StringUtils.isNumeric(entry.id()))

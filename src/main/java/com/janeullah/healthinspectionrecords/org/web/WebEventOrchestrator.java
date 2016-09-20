@@ -21,14 +21,19 @@ public class WebEventOrchestrator {
     private WebPageProcessing webPageProcessing = new WebPageProcessing();
 
     private void executeProcess() {
-        if (!WebPageConstants.SET_WATCHER ){
-            webPageProcessing.executeProcess();
-        }else{
-            logger.info("event=\"tasks for downloading webpage kicked off\"");
-            webPageDownloader.executeProcess();
-            logger.info("event=\"tasks for prcessing downloaded webpages kicked off\"");
-            webPageProcessing.executeProcess();
+        logger.info("event=\"tasks for downloading webpage kicked off\"");
+        boolean downloadKickedOff = webPageDownloader.executeProcess();
+        if (downloadKickedOff){
+            try {
+                logger.info("event=\"waiting for threads to complete downloading\"");
+                webPageDownloader.getDoneSignal().await();
+                logger.info("event=\"await completed for threads involved in downloading\"");
+            }catch (InterruptedException e){
+                logger.error(e);
+            }
         }
+        logger.info("event=\"tasks for processing downloaded webpages kicked off\"");
+        webPageProcessing.executeProcess();
     }
 
     private void shutDownExecutor() {
@@ -44,10 +49,14 @@ public class WebEventOrchestrator {
         return webPageProcessing.getDoneSignal();
     }
 
+    public CountDownLatch getSignalForDownloads(){
+        return webPageDownloader.getDoneSignal();
+    }
+
     public List<Restaurant> getAllRestaurants(){
         try {
-            if (WebPageConstants.SET_WATCHER && !WebPageConstants.DOWNLOAD_OVERRIDE){
-                throw new IncompatibleConfigurationException("SET_WATCHER=true requires DOWNLOAD_OVERRIDE=true");
+            if (WebPageConstants.SET_WATCHER){
+                throw new IncompatibleConfigurationException("SET_WATCHER must always be false");
             }
 
             executeProcess();
