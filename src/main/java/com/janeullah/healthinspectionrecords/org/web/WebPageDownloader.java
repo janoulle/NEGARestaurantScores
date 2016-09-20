@@ -7,13 +7,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.janeullah.healthinspectionrecords.org.async.WebPageRequestAsync;
 import com.janeullah.healthinspectionrecords.org.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.org.util.ExecutorUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.OptionalLong;
 import java.util.concurrent.ConcurrentMap;
