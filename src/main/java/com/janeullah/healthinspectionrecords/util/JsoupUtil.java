@@ -1,5 +1,7 @@
 package com.janeullah.healthinspectionrecords.util;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
 import com.google.common.primitives.Ints;
 import com.janeullah.healthinspectionrecords.constants.InspectionType;
 import com.janeullah.healthinspectionrecords.constants.Severity;
@@ -11,7 +13,6 @@ import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
 import org.slf4j.Logger;
@@ -21,6 +22,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,6 +33,7 @@ import java.util.stream.Stream;
  */
 public class JsoupUtil {
     private final static Logger logger = LoggerFactory.getLogger(JsoupUtil.class);
+    private static final Pattern leadingDigitMatcher = Pattern.compile("^[0-9]+");
 
     private static EstablishmentInfo extractEstablishmentInfoFromElement(Element rowElement) throws Selector.SelectorParseException {
         Element address = rowElement.select(WebSelectorConstants.RESTAURANT_ADDRESS_SELECTOR).first();
@@ -62,6 +66,7 @@ public class JsoupUtil {
 
     /**
      * Return the numeric score and defaults to 0 if an error occurs
+     * http://www.baeldung.com/guava-string-charmatcher
      *
      * @param rowElement Represents a row in the tabular doc
      * @return score as int
@@ -71,10 +76,23 @@ public class JsoupUtil {
         Elements potentialScore = rowElement.select(WebSelectorConstants.SCORE_SELECTOR);
         try {
             if (potentialScore != null){
-                potentialScore.select("div").forEach(Node::remove);
-                Element score = potentialScore.first();
-                if  (StringUtils.isNumeric(score.text())) {
-                    Integer scoreVal = Ints.tryParse(score.text());
+                List<String> splits = new ArrayList<>();
+                Splitter.on(CharMatcher.WHITESPACE)
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .split(potentialScore.first().text())
+                        .forEach(splits::add);
+
+                String lastDigitMatched = "";
+                for (String split : splits) {
+                    Matcher matcher = leadingDigitMatcher.matcher(split);
+                    if (matcher.lookingAt()) {
+                        lastDigitMatched = matcher.group();
+                    }
+                }
+
+                if  (StringUtils.isNumeric(lastDigitMatched)) {
+                    Integer scoreVal = Ints.tryParse(lastDigitMatched);
                     return scoreVal != null ? scoreVal : 0;
                 }
             }
