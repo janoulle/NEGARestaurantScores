@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <!-- http://www.mkyong.com/logging/logback-xml-example/ -->
-    <!--<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
-        <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
-            <!--<Pattern>-->
-                <!--%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n-->
-            <!--</Pattern>-->
-        <!--</layout>-->
-    <!--</appender>-->
+<configuration scan="true">
+    <!-- http://www.mkyong.com/logging/logback-xml-example/,
+    https://examples.javacodegeeks.com/enterprise-java/logback/logback-rollingfileappender-example/,
+    https://gist.github.com/jcraane/5921329,
+    https://www.mkyong.com/logging/logback-xml-example/ -->
+    <appender name="STDOUT_EXTRA" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</Pattern>
+        </encoder>
+    </appender>
 
     <!-- definition of appender STDOUT -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -16,16 +26,35 @@
         </encoder>
     </appender>
 
-    <logger name="org.springframework" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>C:\Users\jane\Repositories\Logs\application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover. Make sure the path matches the one in the file element or else
+             the rollover logs are placed in the working directory. -->
+            <fileNamePattern>C:\Users\jane\Repositories\Logs\application_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 
-    <logger name="com.janeullah.healthinspectionrecords" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+            <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+                <!--11-->
+                <!--<maxFileSize>1KB</maxFileSize>-->
+                <!--12-->
+            <!--</triggeringPolicy>-->
 
-    <root level="error">
-        <appender-ref ref="STDOUT" />
+
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE_APPENDER" />
+        <appender-ref ref="FILE"/>
     </root>
-
 </configuration>
