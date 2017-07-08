@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Author: jane
+ * Author: Jane Ullah
  * Date:  9/20/2016
  */
 @RestController
@@ -24,19 +24,19 @@ public class ViolationsController {
     private static final Logger logger = LoggerFactory.getLogger(ViolationsController.class);
 
     @Autowired
-    ViolationRepository violationRepository;
+    private ViolationRepository violationRepository;
 
     @Cacheable("violationsById")
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Violation getViolationById(@PathVariable("id") long id ) {
-        logger.info("getting violation id " + id);
+        logger.info("getting violation id {}", id);
         return violationRepository.findOne(id);
     }
 
     @Cacheable("violationsByCategory")
     @RequestMapping(value = "/category/{category}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Violation> getViolationsByCode(@PathVariable("category") String category) {
-        logger.info("getting violations by code " + category);
+        logger.info("getting violations by code {}", category);
         return violationRepository.findByCategory(category);
     }
 }
