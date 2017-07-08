@@ -12,7 +12,8 @@ public enum StringUtilities {
     APOSTROPHE("'"),
     FORBIDDEN_SEQUENCE("/.#$[]"),
     HYPHEN("-"),
-    UNDERSCORE("_");
+    UNDERSCORE("_"),
+    FORWARD_SLASH("/");
 
     String value;
 

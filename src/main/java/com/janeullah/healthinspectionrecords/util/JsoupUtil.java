@@ -14,7 +14,6 @@ import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.jsoup.select.Selector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +34,8 @@ public class JsoupUtil {
     private static final Logger logger = LoggerFactory.getLogger(JsoupUtil.class);
     private static final Pattern leadingDigitMatcher = Pattern.compile("^[0-9]+");
     private static final String DIV = "div#";
+    public static final String FWD_SLASH = " / ";
+    public static final int DATE_CHAR_COUNT = 10;
 
     private JsoupUtil(){}
 
@@ -56,7 +57,7 @@ public class JsoupUtil {
         try {
             if (type != null && StringUtils.isNotBlank(type.text())) {
                 //TODO: verify this logic
-                if (type.text().contains("/")) {
+                if (type.text().contains(StringUtilities.FORWARD_SLASH.getValue())) {
                     return InspectionType.RE_INSPECTION;
                 }
                 return InspectionType.asInspectionType(type.text().trim());
@@ -73,7 +74,6 @@ public class JsoupUtil {
      *
      * @param rowElement Represents a row in the tabular doc
      * @return score as int
-     * @throws Selector.SelectorParseException selector used is invalid
      */
     private static int extractScoreFromElement(Element rowElement){
         Elements potentialScore = rowElement.select(WebSelectorConstants.SCORE_SELECTOR);
@@ -110,15 +110,14 @@ public class JsoupUtil {
      *
      * @param rowElement Represents a row in the tabular doc
      * @return JodaTime DateTime object representing the date the inspection was conducted
-     * @throws Selector.SelectorParseException parsing exception from Jsoup
      */
     private static LocalDate extractMostRecentDateFromElement(Element rowElement){
         Element when = rowElement.select(WebSelectorConstants.DATE_SELECTOR).first();
         try {
             if (when != null && StringUtils.isNotBlank(when.text())) {
                 //TODO: remove this magic number. 10 represents the count of chars in a date e.g. mm/dd/yyyy has exactly 10 chars
-                if (when.text().length() > 10) {
-                    String[] splitTimes = when.text().split(" / ");
+                if (when.text().length() > DATE_CHAR_COUNT) {
+                    String[] splitTimes = when.text().split(FWD_SLASH);
                     Optional<LocalDate> tentativeResult = Stream.of(splitTimes)
                             .map(entry -> LocalDate.parse(entry, InspectionReport.MMddYYYY_PATTERN))
                             .max(LocalDate::compareTo);
