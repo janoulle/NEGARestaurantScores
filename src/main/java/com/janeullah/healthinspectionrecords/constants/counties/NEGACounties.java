@@ -1,6 +1,5 @@
 package com.janeullah.healthinspectionrecords.constants.counties;
 
-import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,20 +10,30 @@ import java.util.stream.Stream;
  * Date:  3/26/2017
  */
 public enum NEGACounties {
-    CLARKE,
-    ELBERT,
-    BARROW,
-    MADISON,
-    JACKSON,
-    OCONEE,
-    GREENE,
-    WALTON,
-    OGLETHORPE,
-    MORGAN;
+    CLARKE("Clarke"),
+    ELBERT("Elbert"),
+    BARROW("Barrow"),
+    MADISON("Madison"),
+    JACKSON("Jackson"),
+    OCONEE("Oconee"),
+    GREENE("Greene"),
+    WALTON("Walton"),
+    OGLETHORPE("Oglethorpe"),
+    MORGAN("Morgan");
+
+    String normalizedName;
+
+    NEGACounties(String normalizedName){
+        this.normalizedName = normalizedName;
+    }
+
+    public String getNormalizedName(){
+        return normalizedName;
+    }
 
     public static List<String> getAllNEGACounties(){
         return Stream.of(NEGACounties.values())
-                .map(enumVal -> WordUtils.capitalize(enumVal.toString().toLowerCase()))
+                .map(NEGACounties::getNormalizedName)
                 .collect(Collectors.toList());
     }
 }

@@ -32,10 +32,13 @@ import java.util.stream.Stream;
  * Date:  9/18/2016
  */
 public class JsoupUtil {
-    private final static Logger logger = LoggerFactory.getLogger(JsoupUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsoupUtil.class);
     private static final Pattern leadingDigitMatcher = Pattern.compile("^[0-9]+");
+    private static final String DIV = "div#";
 
-    private static EstablishmentInfo extractEstablishmentInfoFromElement(Element rowElement) throws Selector.SelectorParseException {
+    private JsoupUtil(){}
+
+    private static EstablishmentInfo extractEstablishmentInfoFromElement(Element rowElement){
         Element address = rowElement.select(WebSelectorConstants.RESTAURANT_ADDRESS_SELECTOR).first();
         Element name = rowElement.select(WebSelectorConstants.RESTAURANT_NAME_SELECTOR).first();
         EstablishmentInfo info = new EstablishmentInfo();
@@ -48,7 +51,7 @@ public class JsoupUtil {
         return info;
     }
 
-    private static InspectionType extractInspectionTypeFromElement(Element rowElement) throws Selector.SelectorParseException {
+    private static InspectionType extractInspectionTypeFromElement(Element rowElement) {
         Element type = rowElement.select(WebSelectorConstants.INSPECTION_TYPE_SELECTOR).first();
         try {
             if (type != null && StringUtils.isNotBlank(type.text())) {
@@ -72,7 +75,7 @@ public class JsoupUtil {
      * @return score as int
      * @throws Selector.SelectorParseException selector used is invalid
      */
-    private static int extractScoreFromElement(Element rowElement) throws Selector.SelectorParseException {
+    private static int extractScoreFromElement(Element rowElement){
         Elements potentialScore = rowElement.select(WebSelectorConstants.SCORE_SELECTOR);
         try {
             if (potentialScore != null){
@@ -109,7 +112,7 @@ public class JsoupUtil {
      * @return JodaTime DateTime object representing the date the inspection was conducted
      * @throws Selector.SelectorParseException parsing exception from Jsoup
      */
-    private static LocalDate extractMostRecentDateFromElement(Element rowElement) throws Selector.SelectorParseException {
+    private static LocalDate extractMostRecentDateFromElement(Element rowElement){
         Element when = rowElement.select(WebSelectorConstants.DATE_SELECTOR).first();
         try {
             if (when != null && StringUtils.isNotBlank(when.text())) {
@@ -151,38 +154,41 @@ public class JsoupUtil {
         v.setCategory(extractCategoryFromSummary(v.getSummary()));
         String violationHrefId;
         String hiddenText = "";
-        if (StringUtils.isNotBlank(hrefId)) {
-            switch (severity) {
-                case NONCRITICAL:
-                case CRITICAL:
-                    if (hrefId.length() > WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length()) {
-                        violationHrefId = hrefId.substring(WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length());
-                        hiddenText = extractHiddenTextForViolation(violationHrefId, hiddenDivs);
-                    }
-                    break;
-            }
+        if (hasViolationHrefId(hrefId, severity)) {
+            violationHrefId = hrefId.substring(WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length());
+            hiddenText = extractHiddenTextForViolation(violationHrefId, hiddenDivs);
         }
+
         v.setNotes(hiddenText);
         return v;
     }
 
+    private static boolean hasViolationHrefId(String hrefId, Severity severity) {
+        return StringUtils.isNotBlank(hrefId) &&
+                (severity == Severity.NONCRITICAL || severity == Severity.CRITICAL) &&
+                hrefId.length() > WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length();
+    }
+
     private static String extractCategoryFromSummary(String violationSummary) {
-        if (StringUtils.isNotEmpty(violationSummary)) {
-            if (violationSummary.length() > (WebPageConstants.VIOLATION_CODE_PREFIX.length() + WebPageConstants.VIOLATION_CODE_SUFFIX.length())) {
-                int startingIndex = violationSummary.indexOf(WebPageConstants.VIOLATION_CODE_PREFIX) + WebPageConstants.VIOLATION_CODE_PREFIX.length();
-                int suffixIndex = violationSummary.indexOf(WebPageConstants.VIOLATION_CODE_SUFFIX);
-                if (suffixIndex > startingIndex) {
-                    String code = violationSummary.substring(startingIndex,suffixIndex);
-                    return StringUtils.isNotBlank(code) ? code.trim() : StringUtils.EMPTY;
-                }
+        if (hasViolationSummary(violationSummary)) {
+            int startingIndex = violationSummary.indexOf(WebPageConstants.VIOLATION_CODE_PREFIX) + WebPageConstants.VIOLATION_CODE_PREFIX.length();
+            int suffixIndex = violationSummary.indexOf(WebPageConstants.VIOLATION_CODE_SUFFIX);
+            if (suffixIndex > startingIndex) {
+                String code = violationSummary.substring(startingIndex, suffixIndex);
+                return StringUtils.isNotBlank(code) ? code.trim() : StringUtils.EMPTY;
             }
         }
         return StringUtils.EMPTY;
     }
 
+    private static boolean hasViolationSummary(String violationSummary) {
+        return StringUtils.isNotEmpty(violationSummary) &&
+                violationSummary.length() > (WebPageConstants.VIOLATION_CODE_PREFIX.length() + WebPageConstants.VIOLATION_CODE_SUFFIX.length());
+    }
+
     private static String extractHiddenTextForViolation(String idForViolation, Elements hiddenDivs) {
         if (hiddenDivs != null) {
-            Element hiddenDiv = hiddenDivs.select("div#" + idForViolation).first();
+            Element hiddenDiv = hiddenDivs.select(DIV + idForViolation).first();
             return hiddenDiv != null ? hiddenDiv.text() : StringUtils.EMPTY;
         }
         return StringUtils.EMPTY;

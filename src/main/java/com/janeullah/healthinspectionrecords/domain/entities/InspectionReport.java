@@ -2,6 +2,7 @@ package com.janeullah.healthinspectionrecords.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.janeullah.healthinspectionrecords.constants.InspectionType;
+import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -133,7 +134,7 @@ public class InspectionReport implements Serializable{
             return StringUtils.EMPTY;
         }
         return violations.stream().map(Violation::toString)
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(StringUtilities.COMMA.getValue()));
     }
 
     @Override

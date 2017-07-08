@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Converter(autoApply = true)
 public class LocalDateAttributeConverter implements AttributeConverter<LocalDate, Date> {
 
-    private final static Logger logger = LoggerFactory.getLogger(LocalDateAttributeConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalDateAttributeConverter.class);
 
     @Override
     public Date convertToDatabaseColumn(LocalDate attribute) {

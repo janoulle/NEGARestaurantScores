@@ -27,13 +27,13 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.executorSe
  */
 @Component
 public class WebPageDownloader {
-    private final static Logger logger = LoggerFactory.getLogger(WebPageDownloader.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebPageDownloader.class);
     private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
-    private final static List<WebPageRequestAsync> callablePageRequests = Collections.synchronizedList(populateListOfAsyncWebRequestToBeMade());
-    private final static CompletionService<String> webPageDownloadCompletionService = new ExecutorCompletionService<>(executorService);
+    private static final List<WebPageRequestAsync> callablePageRequests = Collections.synchronizedList(populateListOfAsyncWebRequestToBeMade());
+    private static final CompletionService<String> webPageDownloadCompletionService = new ExecutorCompletionService<>(executorService);
 
     @Autowired
-    WebPageProcessing webPageProcessing;
+    private WebPageProcessing webPageProcessing;
 
     public void initiateDownloadsAndProcessFiles(){
         waitForCompletion(asyncDownloadWebPages());

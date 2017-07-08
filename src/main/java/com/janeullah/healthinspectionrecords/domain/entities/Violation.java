@@ -28,10 +28,10 @@ public class Violation  implements Serializable {
     @Column(name = "section")
     private String section;
 
-    @Column(name="summary",columnDefinition = "varchar(1000)")
+    @Column(name="summary",columnDefinition = "varchar(10000)")
     private String summary;
 
-    @Column(name="notes",columnDefinition = "varchar(1000)")
+    @Column(name="notes",columnDefinition = "varchar(10000)")
     private String notes;
 
     @JsonIgnore

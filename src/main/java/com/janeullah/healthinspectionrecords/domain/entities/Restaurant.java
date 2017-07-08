@@ -28,10 +28,6 @@ public class Restaurant implements Serializable {
     @JoinColumn(name = "establishment_info_id", foreignKey = @ForeignKey(name = "FK_establishment_info_id"))
     private EstablishmentInfo establishmentInfo;
 
-    public Restaurant(){
-
-    }
-
     public List<InspectionReport> getInspectionReports() {
         return inspectionReports;
     }

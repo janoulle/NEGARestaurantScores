@@ -31,10 +31,12 @@ public class WebPageRequestAsync implements Callable<String> {
         this.doneSignal = doneSignal;
     }
 
-    public boolean writeFileToDisk(InputStream reqStream) {
+    //https://stackoverflow.com/questions/2417485/file-separator-vs-slash-in-paths
+    //https://stackoverflow.com/questions/5971964/file-separator-or-file-pathseparator
+    private boolean writeFileToDisk(InputStream reqStream) {
         try {
             String fileName = name + WebPageConstants.PAGE_URL;
-            File destinationFile = new File(WebPageConstants.PATH_TO_PAGE_STORAGE + "/" + fileName);
+            File destinationFile = new File(WebPageConstants.PATH_TO_PAGE_STORAGE + File.separator + fileName);
             FileUtils.copyInputStreamToFile(reqStream, destinationFile);
             return true;
         } catch (IOException e) {

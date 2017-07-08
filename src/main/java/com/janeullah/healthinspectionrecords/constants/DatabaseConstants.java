@@ -7,7 +7,9 @@ package com.janeullah.healthinspectionrecords.constants;
 public class DatabaseConstants {
     public static final String ID_COL_NAME = getIdColName();
 
-    public final static String getIdColName(){
+    private DatabaseConstants(){}
+
+    public static String getIdColName(){
         String profile = System.getenv("spring.profiles.active");
         if ("sqlite".equalsIgnoreCase(profile)){
             return "_id";

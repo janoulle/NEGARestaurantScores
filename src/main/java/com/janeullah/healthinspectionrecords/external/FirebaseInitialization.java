@@ -105,37 +105,9 @@ public class FirebaseInitialization {
 
     public boolean readRecordsFromLocalAndWriteToRemote() {
         try {
-            DatabaseReference countiesRef = database.child("counties");
-            Map<String, List<Restaurant>> mapOfCountiesToRestaurants = new HashMap<>();
-            Map<String, County> countiesAndRestaurants = firebaseDataProcessing.createAndRetrieveMapOfCounties(mapOfCountiesToRestaurants);
-            countiesRef.setValue(countiesAndRestaurants, (databaseError, databaseReference) -> {
-                if (databaseError != null) {
-                    logger.error("Data  for child (counties) could not be saved - {}", databaseError.getMessage());
-                } else {
-                    logger.info("Data for child (counties of size {}) saved successfully.",countiesAndRestaurants.size());
-                }
-            });
-
-            DatabaseReference restaurantsRef = database.child("restaurants");
-            Map<String,FlattenedRestaurant> restaurantData = firebaseDataProcessing.flattenMapOfRestaurants(mapOfCountiesToRestaurants);
-            restaurantsRef.setValue(restaurantData, (databaseError, databaseReference) -> {
-                if (databaseError != null) {
-                    logger.error("Data  for child (restaurants) could not be saved - {}", databaseError.getMessage());
-                } else {
-                    logger.info("Data for child (restaurants of size {}) saved successfully.",restaurantData.size());
-                }
-            });
-
-            DatabaseReference violationsRef = database.child("violations");
-            Map<String,FlattenedInspectionReport> violationsData = firebaseDataProcessing.createAndRetrieveViolations(restaurantData);
-            violationsRef.setValue(violationsData, (databaseError, databaseReference) -> {
-                if (databaseError != null) {
-                    logger.error("Data  for child (violations) could not be saved - {}", databaseError.getMessage());
-                } else {
-                    logger.info("Data for child (violations of size {}) saved successfully.",violationsData.size());
-                }
-            });
-
+            Map<String, List<Restaurant>> mapOfCountiesToRestaurants = saveFlattenedCounties();
+            Map<String, FlattenedRestaurant> restaurantData = saveFlattenedRestaurants(mapOfCountiesToRestaurants);
+            saveFlattenedViolations(restaurantData);
             return true;
         } catch (Exception e) {
             logger.error("Exception encountered during readRecordsFromLocalAndWriteToRemote",e);
@@ -143,17 +115,57 @@ public class FirebaseInitialization {
         return false;
     }
 
+    private void saveFlattenedViolations(Map<String, FlattenedRestaurant> restaurantData) {
+        DatabaseReference violationsRef = database.child("violations");
+        Map<String,FlattenedInspectionReport> violationsData = firebaseDataProcessing.createAndRetrieveViolations(restaurantData);
+        violationsRef.setValue(violationsData, (databaseError, databaseReference) -> {
+            if (databaseError != null) {
+                logger.error("Data  for child (violations) could not be saved - {}", databaseError.getMessage());
+            } else {
+                logger.info("Data for child (violations of size {}) saved successfully.",violationsData.size());
+            }
+        });
+    }
+
+    private Map<String, List<Restaurant>> saveFlattenedCounties() {
+        DatabaseReference countiesRef = database.child("counties");
+        Map<String, List<Restaurant>> mapOfCountiesToRestaurants = new HashMap<>();
+        Map<String, County> countiesAndRestaurants = firebaseDataProcessing.createAndRetrieveMapOfCounties(mapOfCountiesToRestaurants);
+        countiesRef.setValue(countiesAndRestaurants, (databaseError, databaseReference) -> {
+            if (databaseError != null) {
+                logger.error("Data  for child (counties) could not be saved - {}", databaseError.getMessage());
+            } else {
+                logger.info("Data for child (counties of size {}) saved successfully.",countiesAndRestaurants.size());
+            }
+        });
+        return mapOfCountiesToRestaurants;
+    }
+
+    private Map<String, FlattenedRestaurant> saveFlattenedRestaurants(Map<String, List<Restaurant>> mapOfCountiesToRestaurants) {
+        DatabaseReference restaurantsRef = database.child("restaurants");
+        Map<String,FlattenedRestaurant> restaurantData = firebaseDataProcessing.flattenMapOfRestaurants(mapOfCountiesToRestaurants);
+        restaurantsRef.setValue(restaurantData, (databaseError, databaseReference) -> {
+            if (databaseError != null) {
+                logger.error("Data  for child (restaurants) could not be saved - {}", databaseError.getMessage());
+            } else {
+                logger.info("Data for child (restaurants of size {}) saved successfully.",restaurantData.size());
+            }
+        });
+        return restaurantData;
+    }
+
     public void printCounties(){
-        if (getDatabase().isPresent()){
-            final DatabaseReference negaChildDBReference = getDatabase().get().child("counties");
+        getDatabase().ifPresent(databaseReference -> {
+            final DatabaseReference negaChildDBReference = databaseReference.child("counties");
             negaChildDBReference.orderByKey().addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                     County county = dataSnapshot.getValue(County.class);
-                    logger.info("County: {}", county.getName());
-                    logger.info("County Restaurant Size: {}", county.getRestaurants().size());
-                    logger.info("Key: {}", dataSnapshot.getKey());
-                    logger.info("Snapshot size: {}", dataSnapshot.getChildrenCount());
+                    logger.debug("County: {}, County Restaurant Size: {}, Key: {}, Snapshot size: {}",
+                            county.getName(),
+                            county.getRestaurants().size(),
+                            dataSnapshot.getKey(),
+                            dataSnapshot.getChildrenCount());
                 }
 
                 @Override
@@ -176,6 +188,6 @@ public class FirebaseInitialization {
 
                 }
             });
-        }
+        });
     }
 }

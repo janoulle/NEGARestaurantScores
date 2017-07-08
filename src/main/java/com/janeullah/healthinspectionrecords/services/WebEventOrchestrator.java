@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WebEventOrchestrator {
-    private final static Logger logger = LoggerFactory.getLogger(WebEventOrchestrator.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebEventOrchestrator.class);
 
     @Autowired
-    WebPageDownloader webPageDownloader;
+    private WebPageDownloader webPageDownloader;
 
     @Autowired
-    WebPageProcessing webPageProcessing;
+    private WebPageProcessing webPageProcessing;
 
     public void processAndSaveAllRestaurants(){
         try {
@@ -28,7 +28,7 @@ public class WebEventOrchestrator {
                 webPageProcessing.startProcessingOfDownloadedFiles();
             }
         }catch (Exception e){
-            logger.error("Exception in getAndSaveAllRestaurants",e);
+            logger.error("Exception in processAndSaveAllRestaurants",e);
         }
     }
 }

@@ -2,15 +2,11 @@ package com.janeullah.healthinspectionrecords.util;
 
 
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,22 +16,16 @@ import java.nio.file.Paths;
  * Date:  9/17/2016
  */
 public class FilesUtil {
-    private final static Logger logger = LoggerFactory.getLogger(FilesUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(FilesUtil.class);
 
-    private static void touchFiles(){
-        try {
-            com.google.common.io.Files.touch(Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE).toFile());
-        }catch(Exception e){
-            logger.error("Exception while touching files",e);
-        }
-    }
+    private FilesUtil(){}
 
     public static File[] getFilesInDirectory(String path){
         try {
             File dir = Paths.get(path).toFile();
             return dir.listFiles();
         }catch(InvalidPathException | SecurityException e){
-            logger.error("Unable to retrieve list of files");
+            logger.error("Unable to retrieve list of files",e);
         }
         return new File[0];
     }
@@ -54,20 +44,7 @@ public class FilesUtil {
         return StringUtils.EMPTY;
     }
 
-    public static void parseCsv(String fileName, String path){
-        try(Reader in = new FileReader(path+"/"+fileName)) {
-            Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(in);
-            for (CSVRecord record : records) {
-                String subject = record.get("Subject");
-                String lastName = record.get("Last Name");
-                String firstName = record.get("First Name");
-            }
-        }catch(Exception e){
-            logger.error(e.getMessage(),e);
-        }
-    }
-
     public static Path getFilePath(String relativePathName) {
-        return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE + "/" + relativePathName);
+        return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE + File.separator + relativePathName);
     }
 }

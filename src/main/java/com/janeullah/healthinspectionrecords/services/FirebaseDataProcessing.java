@@ -12,6 +12,7 @@ import com.janeullah.healthinspectionrecords.domain.entities.InspectionReport;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
+import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class FirebaseDataProcessing {
     }
 
     private String replaceInvalidCharsInKey(String key) {
-        return CharMatcher.anyOf("/.#$[]").replaceFrom(key, StringUtils.EMPTY);
+        return CharMatcher.anyOf(StringUtilities.FORBIDDEN_SEQUENCE.getValue()).replaceFrom(key, StringUtils.EMPTY);
     }
 
     public Map<String, County> createAndRetrieveMapOfCounties(Map<String, List<Restaurant>> mapOfCountiesToRestaurants) {
@@ -59,17 +60,17 @@ public class FirebaseDataProcessing {
      * http://www.baeldung.com/guava-string-charmatcher
      */
     private Function<Restaurant, String> createUniqueKey = restaurant -> {
-        String nameAndId = restaurant.getEstablishmentInfo().getName() + "-" + restaurant.getId();
+        String nameAndId = restaurant.getEstablishmentInfo().getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
         return replaceInvalidCharsInKey(nameAndId);
     };
 
     private Function<FlattenedRestaurant,String> createUniqueKeyFromFlattenedRestaurant = restaurant -> {
-        String nameAndId = restaurant.getName() + "-" + restaurant.getId();
+        String nameAndId = restaurant.getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
         return replaceInvalidCharsInKey(nameAndId);
     };
 
     private Function<FlattenedInspectionReport,String> createUniqueKeyFromFlattenedInspectionReport = flattenedInspectionReport -> {
-        String nameAndId = flattenedInspectionReport.getName() + "-" + flattenedInspectionReport.getId();
+        String nameAndId = flattenedInspectionReport.getName() + StringUtilities.HYPHEN.getValue() + flattenedInspectionReport.getId();
         return replaceInvalidCharsInKey(nameAndId);
     };
 

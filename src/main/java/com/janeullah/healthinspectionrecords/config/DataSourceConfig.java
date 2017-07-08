@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
  * https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-java
  */
 @Configuration
-public class MainConfig {
+public class DataSourceConfig {
 
     @Bean
     public DataSource dataSource() throws URISyntaxException {

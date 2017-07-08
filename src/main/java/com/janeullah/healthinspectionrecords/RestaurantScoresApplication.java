@@ -1,5 +1,7 @@
 package com.janeullah.healthinspectionrecords;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,17 +15,17 @@ import java.util.Arrays;
 @SpringBootApplication
 @EnableCaching
 public class RestaurantScoresApplication {
+	private static final Logger logger = LoggerFactory.getLogger(RestaurantScoresApplication.class);
 
 	@Autowired
 	ApplicationContext applicationContext;
 
 	public static void main(String[] args) {
-
 		ApplicationContext ctx = SpringApplication.run(RestaurantScoresApplication.class, args);
-		System.out.println("Beans provided by the Restaurant Scores application");
+		logger.debug("Beans provided by the Restaurant Scores application");
 
 		Arrays.stream(ctx.getBeanDefinitionNames())
 				.sorted()
-				.forEach(System.out::println);
+				.forEach(logger::debug);
 	}
 }

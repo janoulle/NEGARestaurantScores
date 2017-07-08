@@ -16,8 +16,10 @@ import java.util.concurrent.TimeUnit;
  * Date:  9/18/2016
  */
 public class ExecutorUtil {
-    public final static ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
-    private final static Logger logger = LoggerFactory.getLogger(ExecutorUtil.class);
+    public static final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorUtil.class);
+
+    private ExecutorUtil(){}
 
     /**
      * http://stackoverflow.com/questions/3269445/executorservice-how-to-wait-for-all-tasks-to-finish?rq=1
@@ -30,8 +32,8 @@ public class ExecutorUtil {
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
             }
         }catch(InterruptedException e){
-            logger.error("InterruptedExceptin during executor shut down",e);
-            executorService.shutdownNow();
+            logger.error("InterruptedException during executor shut down",e);
+            Thread.currentThread().interrupt();
         }
     }
 
