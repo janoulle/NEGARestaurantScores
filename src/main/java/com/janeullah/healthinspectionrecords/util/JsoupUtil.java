@@ -53,20 +53,20 @@ public class JsoupUtil {
         return info;
     }
 
-    private static InspectionType extractInspectionTypeFromElement(Element rowElement) {
+    private static Optional<InspectionType> extractInspectionTypeFromElement(Element rowElement) {
         Element type = rowElement.select(WebSelectorConstants.INSPECTION_TYPE_SELECTOR).first();
         try {
             if (type != null && StringUtils.isNotBlank(type.text())) {
                 //TODO: verify this logic
                 if (type.text().contains(StringUtilities.FORWARD_SLASH.getValue())) {
-                    return InspectionType.RE_INSPECTION;
+                    return Optional.of(InspectionType.RE_INSPECTION);
                 }
-                return InspectionType.asInspectionType(type.text().trim());
+                return Optional.of(InspectionType.asInspectionType(type.text().trim()));
             }
         } catch (Exception e) {
             logger.error("Exception while extracting inspection type from Element {}",rowElement.toString(),e);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -112,23 +112,22 @@ public class JsoupUtil {
      * @param rowElement Represents a row in the tabular doc
      * @return JodaTime DateTime object representing the date the inspection was conducted
      */
-    private static LocalDate extractMostRecentDateFromElement(Element rowElement){
+    private static Optional<LocalDate> extractMostRecentDateFromElement(Element rowElement){
         Element when = rowElement.select(WebSelectorConstants.DATE_SELECTOR).first();
         try {
             if (when != null && StringUtils.isNotBlank(when.text())) {
                 if (when.text().length() > DATE_CHAR_COUNT) {
                     String[] splitTimes = when.text().split(FWD_SLASH);
-                    Optional<LocalDate> tentativeResult = Stream.of(splitTimes)
+                    return Stream.of(splitTimes)
                             .map(entry -> LocalDate.parse(entry, InspectionReport.MMddYYYY_PATTERN))
                             .max(LocalDate::compareTo);
-                    return tentativeResult.orElse(null);
                 }
-                return LocalDate.parse(when.text(), InspectionReport.MMddYYYY_PATTERN);
+                return Optional.of(LocalDate.parse(when.text(), InspectionReport.MMddYYYY_PATTERN));
             }
         } catch (UnsupportedOperationException | IllegalArgumentException e) {
             logger.error("Exception while extracting and parsing the most recent date of an inspection from rowElement {}",rowElement.toString(),e);
         }
-        return null;
+        return Optional.empty();
     }
 
     private static List<Violation> extractViolations(Element cellElement, Elements hiddenDiv) {
@@ -197,14 +196,14 @@ public class JsoupUtil {
         try {
             EstablishmentInfo info = extractEstablishmentInfoFromElement(rowElement);
             int score = extractScoreFromElement(rowElement);
-            LocalDate when = extractMostRecentDateFromElement(rowElement);
-            InspectionType typeOfInspection = extractInspectionTypeFromElement(rowElement);
+            Optional<LocalDate> when = extractMostRecentDateFromElement(rowElement);
+            Optional<InspectionType> typeOfInspection = extractInspectionTypeFromElement(rowElement);
             List<Violation> violations = extractViolations(rowElement, hiddenDivs);
 
             InspectionReport report = new InspectionReport();
             report.setScore(score);
-            report.setDateReported(when);
-            report.setInspectionType(typeOfInspection);
+            when.ifPresent(report::setDateReported);
+            typeOfInspection.ifPresent(report::setInspectionType);
             report.addViolations(violations);
 
             Restaurant restaurant = new Restaurant();
