@@ -34,8 +34,9 @@ public class JsoupUtil {
     private static final Logger logger = LoggerFactory.getLogger(JsoupUtil.class);
     private static final Pattern leadingDigitMatcher = Pattern.compile("^[0-9]+");
     private static final String DIV = "div#";
-    public static final String FWD_SLASH = " / ";
-    public static final int DATE_CHAR_COUNT = 10;
+    private static final String FWD_SLASH = " / ";
+    //10 represents the count of chars in a date e.g. mm/dd/yyyy has exactly 10 chars
+    private static final int DATE_CHAR_COUNT = 10;
 
     private JsoupUtil(){}
 
@@ -115,7 +116,6 @@ public class JsoupUtil {
         Element when = rowElement.select(WebSelectorConstants.DATE_SELECTOR).first();
         try {
             if (when != null && StringUtils.isNotBlank(when.text())) {
-                //TODO: remove this magic number. 10 represents the count of chars in a date e.g. mm/dd/yyyy has exactly 10 chars
                 if (when.text().length() > DATE_CHAR_COUNT) {
                     String[] splitTimes = when.text().split(FWD_SLASH);
                     Optional<LocalDate> tentativeResult = Stream.of(splitTimes)
