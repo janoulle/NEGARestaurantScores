@@ -23,7 +23,11 @@ public class FlattenedRestaurant {
     @JsonIgnore
     private FlattenedInspectionReport inspectionReport;
 
-    public FlattenedRestaurant(){}
+    public FlattenedRestaurant(){
+        /*
+        Default constructor
+         */
+    }
 
     public Long getId() {
         return id;

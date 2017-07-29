@@ -2,9 +2,7 @@ package com.janeullah.healthinspectionrecords.controller;
 
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import com.janeullah.healthinspectionrecords.repository.HealthRecordRepository;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import com.janeullah.healthinspectionrecords.repository.ViolationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +22,12 @@ import java.util.List;
 @RequestMapping("/restaurants")
 public class RestaurantController {
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
-
-    @Autowired
-    private ViolationRepository violationRepository;
-
-    @Autowired
-    private HealthRecordRepository healthRecordRepository;
-
-    @Autowired
     private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    public RestaurantController(RestaurantRepository restaurantRepository){
+        this.restaurantRepository = restaurantRepository;
+    }
 
     @Cacheable("allRestaurants")
     @RequestMapping(value = "/all", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)

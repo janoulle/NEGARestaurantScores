@@ -36,11 +36,15 @@ public class FirebaseInitialization {
     private static final Logger logger = LoggerFactory.getLogger(FirebaseInitialization.class);
     private static DatabaseReference database;
 
-    @Autowired
     private FirebaseDataProcessing firebaseDataProcessing;
 
+    @Autowired
+    public FirebaseInitialization(FirebaseDataProcessing firebaseDataProcessing){
+        this.firebaseDataProcessing = firebaseDataProcessing;
+    }
+
     @EventListener(ContextRefreshedEvent.class)
-    private void connectToFirebaseApp() {
+    private static void connectToFirebaseApp() {
         try (InputStream is = getInputStreamFromAWS()) {
             FirebaseOptions options = getFirebaseOptions(is);
             FirebaseApp.initializeApp(options);
@@ -79,7 +83,7 @@ public class FirebaseInitialization {
                 : Optional.empty();
     }
 
-    private FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
+    private static FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
         return new FirebaseOptions.Builder()
                 .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
                 .setDatabaseUrl(System.getenv("NEGA_FIREBASE_DB"))
@@ -92,7 +96,7 @@ public class FirebaseInitialization {
      *
      * @return InputStream of the item from S3
      */
-    private InputStream getInputStreamFromAWS() {
+    private static InputStream getInputStreamFromAWS() {
         String bucketName = System.getenv("NEGA_BUCKET_NAME_READONLY");
         String bucketKey = System.getenv("NEGA_BUCKET_KEY");
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard()

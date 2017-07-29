@@ -1,5 +1,7 @@
 package com.janeullah.healthinspectionrecords.constants;
 
+import java.util.Arrays;
+
 /**
  * Author: Jane Ullah
  * Date:  9/17/2016
@@ -20,10 +22,8 @@ public enum InspectionType {
     }
 
     public static InspectionType asInspectionType(String str) {
-        for (InspectionType me : InspectionType.values()) {
-            if (me.getValue().equalsIgnoreCase(str))
-                return me;
-        }
-        return null;
+        return Arrays.stream(InspectionType.values())
+                .filter(me -> me.getValue().equalsIgnoreCase(str))
+                .findFirst().orElse(null);
     }
 }

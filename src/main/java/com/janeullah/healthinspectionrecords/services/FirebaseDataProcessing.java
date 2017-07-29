@@ -17,9 +17,9 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,7 +33,7 @@ public class FirebaseDataProcessing {
     private static final Logger logger = LoggerFactory.getLogger(FirebaseDataProcessing.class);
     private RestaurantRepository restaurantRepository;
 
-    @Inject
+    @Autowired
     public FirebaseDataProcessing(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }

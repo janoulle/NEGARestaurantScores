@@ -1,6 +1,5 @@
 package com.janeullah.healthinspectionrecords.async;
 
-import com.google.common.collect.Lists;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.EstablishmentInfo;
@@ -46,7 +45,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     }
 
     private List<Restaurant> ingestJsoupData(){
-        List<Restaurant> restaurantsInFile = Lists.newArrayList();
+        List<Restaurant> restaurantsInFile = new ArrayList<>();
         Optional<Elements> jsoupList = processFile();
         jsoupList.ifPresent(iterable -> iterable.forEach(entry -> {
             Optional<Restaurant> restaurant = JsoupUtil.assemblePOJO(entry, hiddenDivs);

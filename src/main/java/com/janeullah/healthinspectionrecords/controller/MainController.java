@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+    private WebEventOrchestrator webEventOrchestrator;
+    private FirebaseInitialization firebaseInitialization;
 
     @Autowired
-    WebEventOrchestrator webEventOrchestrator;
-
-    @Autowired
-    FirebaseInitialization firebaseInitialization;
+    public MainController(WebEventOrchestrator webEventOrchestrator, FirebaseInitialization firebaseInitialization){
+        this.webEventOrchestrator = webEventOrchestrator;
+        this.firebaseInitialization = firebaseInitialization;
+    }
 
     @RequestMapping(value = "/initializeLocalDB", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
