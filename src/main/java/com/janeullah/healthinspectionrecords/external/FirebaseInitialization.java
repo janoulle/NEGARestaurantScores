@@ -83,6 +83,7 @@ public class FirebaseInitialization {
                 : Optional.empty();
     }
 
+    //https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
     private static FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
         return new FirebaseOptions.Builder()
                 .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))

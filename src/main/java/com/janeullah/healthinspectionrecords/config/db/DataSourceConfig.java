@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.config;
+package com.janeullah.healthinspectionrecords.config.db;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
@@ -19,7 +19,6 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource dataSource() throws URISyntaxException {
-        URI dbUri = new URI(System.getenv("DATABASE_URL"));
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         String profile = System.getenv("spring.profiles.active");
         if ("h2".equalsIgnoreCase(profile)) {
@@ -35,6 +34,7 @@ public class DataSourceConfig {
                     .url("jdbc:sqlite:"+System.getProperty("SQLITE_DB_PATH","nega_inspections.db"))
                     .build();
         }else {
+            URI dbUri = new URI(System.getenv("DATABASE_URL"));
             String[] userInfo = dbUri.getUserInfo().split(":");
             String prefix = "mysql".equalsIgnoreCase(profile) ? "mysql" : "postgresql";
             String dbUrl = String.format("jdbc:%s://%s:%d%s", prefix,dbUri.getHost(),dbUri.getPort(),dbUri.getPath());

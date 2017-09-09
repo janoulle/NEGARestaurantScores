@@ -31,7 +31,7 @@ public class Violation  implements Serializable {
     @Column(name="summary",columnDefinition = "varchar(10000)")
     private String summary;
 
-    @Column(name="notes",columnDefinition = "varchar(10000)")
+    @Column(name="notes",columnDefinition = "varchar(50000)")
     private String notes;
 
     @JsonIgnore

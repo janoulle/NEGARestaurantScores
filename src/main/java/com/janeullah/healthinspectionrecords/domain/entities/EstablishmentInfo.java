@@ -18,13 +18,13 @@ public class EstablishmentInfo implements Serializable{
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name="address",columnDefinition = "varchar(1000)")
+    @Column(name="address",columnDefinition = "varchar(10000)")
     private String address;
 
     @Column(name="county",columnDefinition = "varchar(500)")
     private String county;
 
-    @Column(name="name",columnDefinition = "varchar(500)")
+    @Column(name="name",columnDefinition = "varchar(1000)")
     private String name;
 
     @JsonIgnore
