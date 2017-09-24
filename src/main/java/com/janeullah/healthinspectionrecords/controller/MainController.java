@@ -1,6 +1,8 @@
 package com.janeullah.healthinspectionrecords.controller;
 
+import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.external.FirebaseInitialization;
+import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.WebEventOrchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +25,15 @@ public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
     private WebEventOrchestrator webEventOrchestrator;
     private FirebaseInitialization firebaseInitialization;
+    private ElasticSearchDocumentService elasticSearchDocumentService;
+    private RestaurantController restaurantController;
 
     @Autowired
-    public MainController(WebEventOrchestrator webEventOrchestrator, FirebaseInitialization firebaseInitialization){
+    public MainController(WebEventOrchestrator webEventOrchestrator, FirebaseInitialization firebaseInitialization, ElasticSearchDocumentService elasticSearchDocumentService, RestaurantController restaurantController){
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
+        this.elasticSearchDocumentService = elasticSearchDocumentService;
+        this.restaurantController = restaurantController;
     }
 
     @RequestMapping(value = "/initializeLocalDB", method = RequestMethod.PUT)
@@ -49,6 +55,18 @@ public class MainController {
         return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+    }
+
+    @RequestMapping(value = "/seedElasticSearchDB", method = RequestMethod.POST)
+    public ResponseEntity<HttpStatus> seedElasticSearchDB(){
+        Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
+        for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+            ResponseEntity<String> status = elasticSearchDocumentService.addDocument(flattenedRestaurant.getId(),flattenedRestaurant);
+            if (!status.getStatusCode().is2xxSuccessful()){
+                logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getBody());
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/printCountiesFromFirebase", method = RequestMethod.GET)

@@ -1,6 +1,7 @@
 package com.janeullah.healthinspectionrecords.repository;
 
 
+import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +33,7 @@ public interface  RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     @Query("select r from Violation v inner join v.inspectionReport ir inner join ir.restaurant r where v.severity = 3")
     List<Restaurant> findRestaurantsWithCriticalViolations();
+
+    @Query(value = "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant(r.id,0,0,0,'',r.establishmentInfo.name,r.establishmentInfo.address,r.establishmentInfo.county) from Restaurant r ORDER BY r.establishmentInfo.name ASC")
+    List<FlattenedRestaurant> findAllFlattenedRestaurants();
 }

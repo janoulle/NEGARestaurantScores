@@ -2,7 +2,10 @@ package com.janeullah.healthinspectionrecords.domain.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.ToString;
+
+import static com.janeullah.healthinspectionrecords.services.FirebaseDataProcessing.replaceInvalidCharsInKey;
 
 /**
  * Author: Jane Ullah
@@ -27,6 +30,17 @@ public class FlattenedRestaurant {
         /*
         Default constructor
          */
+    }
+
+    public FlattenedRestaurant(Long id, int score, int criticalViolations, int nonCriticalViolations, String lastDateReported, String name, String address, String county){
+        this.id = id;
+        this.score = score;
+        this.criticalViolations = criticalViolations;
+        this.nonCriticalViolations = nonCriticalViolations;
+        this.name = name;
+        this.dateReported = lastDateReported;
+        this.address = address;
+        this.county = county;
     }
 
     public Long getId() {
@@ -99,5 +113,10 @@ public class FlattenedRestaurant {
 
     public void setInspectionReport(FlattenedInspectionReport flattenedInspectionReport) {
         this.inspectionReport = flattenedInspectionReport;
+    }
+
+    public String getNameKey(){
+        String nameAndId = name + StringUtilities.HYPHEN.getValue() + id;
+        return replaceInvalidCharsInKey(nameAndId);
     }
 }

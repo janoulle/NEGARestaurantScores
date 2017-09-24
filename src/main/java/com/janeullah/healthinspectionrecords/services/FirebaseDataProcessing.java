@@ -38,7 +38,7 @@ public class FirebaseDataProcessing {
         this.restaurantRepository = restaurantRepository;
     }
 
-    private String replaceInvalidCharsInKey(String key) {
+    public static String replaceInvalidCharsInKey(String key) {
         return CharMatcher.anyOf(StringUtilities.FORBIDDEN_SEQUENCE.getValue()).replaceFrom(key, StringUtils.EMPTY);
     }
 

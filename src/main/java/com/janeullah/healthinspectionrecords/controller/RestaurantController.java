@@ -1,6 +1,7 @@
 package com.janeullah.healthinspectionrecords.controller;
 
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import org.slf4j.Logger;
@@ -27,6 +28,12 @@ public class RestaurantController {
     @Autowired
     public RestaurantController(RestaurantRepository restaurantRepository){
         this.restaurantRepository = restaurantRepository;
+    }
+
+    @Cacheable("allFlattenedRestaurants")
+    @RequestMapping(value = "/allFlattened", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Iterable<FlattenedRestaurant> fetchAllFlattened() {
+        return restaurantRepository.findAllFlattenedRestaurants();
     }
 
     @Cacheable("allRestaurants")
