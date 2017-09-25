@@ -11,15 +11,30 @@ import java.net.URI;
 import java.util.Map;
 
 /**
+ * http://docs.aws.amazon.com/general/latest/gr/signature-v4-examples.html
  * Author: jane
  * Date:  9/23/2017
  */
 @Service
 public class ElasticSearchDocumentService {
-    private static final RestTemplate restTemplate = new RestTemplate();
+
+    private RestClientTemplateBuilder restTemplateBuilder;
+    protected RestTemplate restTemplate;
+    protected RestTemplate restTemplateHttps;
+
+    public ElasticSearchDocumentService(){}
+
+    public ElasticSearchDocumentService(RestClientTemplateBuilder restTemplateBuilder){
+        this.restTemplateBuilder = restTemplateBuilder;
+        this.restTemplate =  restTemplateBuilder.httpRestTemplate();
+        this.restTemplateHttps = restTemplateBuilder.httpsRestTemplate();
+    }
+
     //private static final String herokuUrlTemplate = System.getenv("BONSAI_URL");
+
     private static final String baseUrlTemplate = "http://localhost:9200/restaurants/restaurant/{id}";
     private static final String deleteRestaurantIndexUrl = "http://localhost:9200/restaurants";
+
 
     public ResponseEntity<String> addDocument(Long id, FlattenedRestaurant flattenedRestaurant) {
         Map<String, Long> vars = ImmutableMap.of("id",id);

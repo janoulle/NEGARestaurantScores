@@ -1,7 +1,10 @@
 package com.janeullah.healthinspectionrecords.controller;
 
+import com.amazonaws.Response;
+import com.amazonaws.http.HttpResponse;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.external.FirebaseInitialization;
+import com.janeullah.healthinspectionrecords.services.AwsElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.WebEventOrchestrator;
 import org.slf4j.Logger;
@@ -26,14 +29,20 @@ public class MainController {
     private WebEventOrchestrator webEventOrchestrator;
     private FirebaseInitialization firebaseInitialization;
     private ElasticSearchDocumentService elasticSearchDocumentService;
+    private AwsElasticSearchDocumentService awsElasticSearchDocumentService;
     private RestaurantController restaurantController;
 
     @Autowired
-    public MainController(WebEventOrchestrator webEventOrchestrator, FirebaseInitialization firebaseInitialization, ElasticSearchDocumentService elasticSearchDocumentService, RestaurantController restaurantController){
+    public MainController(WebEventOrchestrator webEventOrchestrator,
+                          FirebaseInitialization firebaseInitialization,
+                          ElasticSearchDocumentService elasticSearchDocumentService,
+                          RestaurantController restaurantController,
+                          AwsElasticSearchDocumentService awsElasticSearchDocumentService){
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
         this.elasticSearchDocumentService = elasticSearchDocumentService;
         this.restaurantController = restaurantController;
+        this.awsElasticSearchDocumentService = awsElasticSearchDocumentService;
     }
 
     @RequestMapping(value = "/initializeLocalDB", method = RequestMethod.PUT)
@@ -57,13 +66,25 @@ public class MainController {
                 : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
     }
 
-    @RequestMapping(value = "/seedElasticSearchDB", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> seedElasticSearchDB(){
+    @RequestMapping(value = "/seedElasticSearchDBLocal", method = RequestMethod.POST)
+    public ResponseEntity<HttpStatus> seedElasticSearchDBLocal(){
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
         for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
             ResponseEntity<String> status = elasticSearchDocumentService.addDocument(flattenedRestaurant.getId(),flattenedRestaurant);
             if (!status.getStatusCode().is2xxSuccessful()){
                 logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getBody());
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/seedElasticSearchDBAWS", method = RequestMethod.POST)
+    public ResponseEntity<HttpStatus> seedElasticSearchDBAWS(){
+        Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
+        for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+            Response<HttpResponse> status = awsElasticSearchDocumentService.addDocumentToAWS(flattenedRestaurant.getId(),flattenedRestaurant);
+            if (status.getHttpResponse().getStatusCode() < 200 || status.getHttpResponse().getStatusCode() >= 300){
+                logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getHttpResponse().getStatusCode());
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);
