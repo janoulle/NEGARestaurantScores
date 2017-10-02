@@ -39,4 +39,10 @@ public class ViolationsController {
         logger.info("getting violations by code {}", category);
         return violationRepository.findByCategory(category);
     }
+
+    @Cacheable("violationsByRestaurant")
+    @RequestMapping(value = "/restaurantId/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Violation> findViolationsByRestaurantId(@PathVariable("id") Long id){
+        return violationRepository.findViolationsByRestaurantId(id);
+    }
 }

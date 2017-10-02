@@ -34,6 +34,7 @@ public interface  RestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query("select r from Violation v inner join v.inspectionReport ir inner join ir.restaurant r where v.severity = 3")
     List<Restaurant> findRestaurantsWithCriticalViolations();
 
-    @Query(value = "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant(r.id,0,0,0,'',r.establishmentInfo.name,r.establishmentInfo.address,r.establishmentInfo.county) from Restaurant r ORDER BY r.establishmentInfo.name ASC")
+    @Query(value = "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant(r.id,ir.score,0,0,ir.dateReported,r.establishmentInfo.name,r.establishmentInfo.address,r.establishmentInfo.county) " +
+            "from InspectionReport ir inner join ir.restaurant r ORDER BY r.establishmentInfo.name ASC")
     List<FlattenedRestaurant> findAllFlattenedRestaurants();
 }

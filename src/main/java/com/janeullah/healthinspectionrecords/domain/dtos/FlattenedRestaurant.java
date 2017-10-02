@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.ToString;
 
+import java.time.LocalDate;
+
 import static com.janeullah.healthinspectionrecords.services.FirebaseDataProcessing.replaceInvalidCharsInKey;
 
 /**
@@ -30,6 +32,11 @@ public class FlattenedRestaurant {
         /*
         Default constructor
          */
+    }
+
+    //added for use in repository
+    public FlattenedRestaurant(Long id, int score, int criticalViolations, int nonCriticalViolations, LocalDate lastDateReported, String name, String address, String county) {
+        this(id, score, criticalViolations, nonCriticalViolations, lastDateReported.toString(), name, address, county);
     }
 
     public FlattenedRestaurant(Long id, int score, int criticalViolations, int nonCriticalViolations, String lastDateReported, String name, String address, String county){

@@ -2,11 +2,14 @@ package com.janeullah.healthinspectionrecords.controller;
 
 import com.amazonaws.Response;
 import com.amazonaws.http.HttpResponse;
+import com.janeullah.healthinspectionrecords.constants.Severity;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
+import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import com.janeullah.healthinspectionrecords.external.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.services.AwsElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.WebEventOrchestrator;
+import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * TODO: add auth for this controller class
@@ -31,18 +38,21 @@ public class MainController {
     private ElasticSearchDocumentService elasticSearchDocumentService;
     private AwsElasticSearchDocumentService awsElasticSearchDocumentService;
     private RestaurantController restaurantController;
+    private ViolationsController violationsController;
 
     @Autowired
     public MainController(WebEventOrchestrator webEventOrchestrator,
                           FirebaseInitialization firebaseInitialization,
                           ElasticSearchDocumentService elasticSearchDocumentService,
                           RestaurantController restaurantController,
+                          ViolationsController violationsController,
                           AwsElasticSearchDocumentService awsElasticSearchDocumentService){
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
         this.elasticSearchDocumentService = elasticSearchDocumentService;
         this.restaurantController = restaurantController;
         this.awsElasticSearchDocumentService = awsElasticSearchDocumentService;
+        this.violationsController = violationsController;
     }
 
     @RequestMapping(value = "/initializeLocalDB", method = RequestMethod.PUT)
@@ -70,6 +80,7 @@ public class MainController {
     public ResponseEntity<HttpStatus> seedElasticSearchDBLocal(){
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
         for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+            updateViolationInformation(flattenedRestaurant);
             ResponseEntity<String> status = elasticSearchDocumentService.addDocument(flattenedRestaurant.getId(),flattenedRestaurant);
             if (!status.getStatusCode().is2xxSuccessful()){
                 logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getBody());
@@ -78,10 +89,20 @@ public class MainController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    //todo: update hibernate query to fetch this info
+    private void updateViolationInformation(FlattenedRestaurant restaurant){
+        List<Violation> allViolations = violationsController.findViolationsByRestaurantId(restaurant.getId());
+        Map<Severity, Long> mapOfSeverityToViolations = allViolations.stream()
+                .collect(Collectors.groupingBy(Violation::getSeverity, Collectors.counting()));
+        restaurant.setCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations,Severity.CRITICAL,0));
+        restaurant.setNonCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations,Severity.NONCRITICAL,0));
+    }
+
     @RequestMapping(value = "/seedElasticSearchDBAWS", method = RequestMethod.POST)
     public ResponseEntity<HttpStatus> seedElasticSearchDBAWS(){
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
         for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+            updateViolationInformation(flattenedRestaurant);
             Response<HttpResponse> status = awsElasticSearchDocumentService.addDocumentToAWS(flattenedRestaurant.getId(),flattenedRestaurant);
             if (status.getHttpResponse().getStatusCode() < 200 || status.getHttpResponse().getStatusCode() >= 300){
                 logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getHttpResponse().getStatusCode());
