@@ -55,7 +55,7 @@ public class WatchDir {
 
     private final WatchService watcher;
     private final ConcurrentMap<WatchKey,Path> keys;
-    private static ConcurrentMap<String,Boolean> entriesBeingWatched;
+    private static ConcurrentMap<String,Boolean> entriesBeingWatched = Maps.newConcurrentMap();
     private final boolean recursive;
     private boolean trace = false;
     private final Path dir;
@@ -107,10 +107,10 @@ public class WatchDir {
         if (trace) {
             Path prev = keys.get(key);
             if (prev == null) {
-                logger.info(String.format("register_path=\"%s\n\"", dir));
+                logger.info(String.format("register_path=\"%s%n\"", dir));
             } else {
                 if (!dir.equals(prev)) {
-                    logger.info(String.format("update_path=\"%s -> %s\n\"", prev, dir));
+                    logger.info(String.format("update_path=\"%s -> %s%n\"", prev, dir));
                 }
             }
         }
@@ -140,12 +140,11 @@ public class WatchDir {
     public WatchDir(Path dir, boolean recursive) throws IOException {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = Maps.newConcurrentMap();
-        entriesBeingWatched = Maps.newConcurrentMap();
         this.recursive = recursive;
         this.dir = dir;
 
         if (recursive) {
-            logger.info(String.format("event=\"Scanning %s ...\n\"", dir));
+            logger.info(String.format("event=\"Scanning %s ...%n\"", dir));
             registerAll(dir);
             logger.info("event=\"scanning done\"");
         } else {
@@ -244,7 +243,7 @@ public class WatchDir {
                 Path child = dir.resolve(name);
 
                 // print out event
-                System.out.format("%s: %s\n", event.kind().name(), child);
+                System.out.format("%s: %s%n", event.kind().name(), child);
 
                 // if directory is created, and watching recursively, then
                 // register it and its sub-directories

@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.services;
 
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -10,6 +11,7 @@ import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.ExecutorUtil;
 import com.janeullah.healthinspectionrecords.util.FilesUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,7 @@ public class WebPageProcessing {
     public Optional<ListenableFuture<List<Restaurant>>> asyncProcessFile(Path file) {
         try {
             String countyFile = FilenameUtils.getName(file.getFileName().toString());
+            Preconditions.checkArgument(StringUtils.isNotBlank(countyFile),"Failed to find county file="+file.getFileName());
             ListenableFuture<List<Restaurant>> future = executorService.submit(new WebPageProcessAsync(FilesUtil.extractCounty(file), file, doneSignal));
             registerCallbackForFuture(countyFile, future);
             return Optional.of(future);

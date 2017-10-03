@@ -22,17 +22,12 @@ import java.util.Map;
  */
 @ControllerAdvice
 public class BaseExceptionHandler {
-    private static Logger logger;
+    private static Logger logger = LoggerFactory.getLogger(BaseExceptionHandler.class);;
     private final Map<Class, ExceptionMapping> exceptionMappings = new HashMap<>();
     private static final ExceptionMapping DEFAULT_ERROR = new ExceptionMapping(
             "INTERNAL_SERVER_ERROR",
             "Unhandled exception encountered",
             HttpStatus.INTERNAL_SERVER_ERROR);
-
-
-    public BaseExceptionHandler() {
-        logger = LoggerFactory.getLogger(getClass());
-    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Throwable.class)

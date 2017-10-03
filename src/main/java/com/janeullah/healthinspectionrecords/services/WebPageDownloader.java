@@ -120,7 +120,7 @@ public class WebPageDownloader {
 
     private static AtomicLong getMaxExpirationDate() {
         int daysToExpire = Integer.parseInt(WebPageConstants.DATA_EXPIRATION_IN_DAYS);
-        return new AtomicLong(daysToExpire * DateTimeConstants.MILLIS_PER_DAY);
+        return new AtomicLong((long)daysToExpire * DateTimeConstants.MILLIS_PER_DAY);
     }
 
 }

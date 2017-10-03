@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService {
     private static final String AWS_ES_SERVICE_NAME = "es";
     private static final String AWS_REGION_NAME = "us-east-1";
-    private static final String AWS_ES_URL = System.getenv("AWS_ES_URL").concat("/restaurants/restaurant/{id}");
 
     public AwsElasticSearchDocumentService(){}
 
