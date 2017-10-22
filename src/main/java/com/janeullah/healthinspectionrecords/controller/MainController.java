@@ -1,13 +1,13 @@
 package com.janeullah.healthinspectionrecords.controller;
 
-import com.amazonaws.Response;
-import com.amazonaws.http.HttpResponse;
+
 import com.janeullah.healthinspectionrecords.constants.Severity;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import com.janeullah.healthinspectionrecords.external.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.services.AwsElasticSearchDocumentService;
-import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.HerokuBonsaiElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.LocalhostElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.WebEventOrchestrator;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
@@ -35,7 +35,8 @@ public class MainController {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
     private WebEventOrchestrator webEventOrchestrator;
     private FirebaseInitialization firebaseInitialization;
-    private ElasticSearchDocumentService elasticSearchDocumentService;
+    private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
+    private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     private AwsElasticSearchDocumentService awsElasticSearchDocumentService;
     private RestaurantController restaurantController;
     private ViolationsController violationsController;
@@ -43,16 +44,18 @@ public class MainController {
     @Autowired
     public MainController(WebEventOrchestrator webEventOrchestrator,
                           FirebaseInitialization firebaseInitialization,
-                          ElasticSearchDocumentService elasticSearchDocumentService,
                           RestaurantController restaurantController,
                           ViolationsController violationsController,
-                          AwsElasticSearchDocumentService awsElasticSearchDocumentService){
+                          AwsElasticSearchDocumentService awsElasticSearchDocumentService,
+                          LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService,
+                          HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService){
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
-        this.elasticSearchDocumentService = elasticSearchDocumentService;
         this.restaurantController = restaurantController;
         this.awsElasticSearchDocumentService = awsElasticSearchDocumentService;
         this.violationsController = violationsController;
+        this.localhostElasticSearchDocumentService = localhostElasticSearchDocumentService;
+        this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
     }
 
     @RequestMapping(value = "/initializeLocalDB", method = RequestMethod.PUT)
@@ -81,7 +84,7 @@ public class MainController {
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
         for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
             updateViolationInformation(flattenedRestaurant);
-            ResponseEntity<String> status = elasticSearchDocumentService.addDocument(flattenedRestaurant.getId(),flattenedRestaurant);
+            ResponseEntity<String> status = localhostElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(),flattenedRestaurant);
             if (!status.getStatusCode().is2xxSuccessful()){
                 logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getBody());
             }
@@ -103,9 +106,23 @@ public class MainController {
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
         for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
             updateViolationInformation(flattenedRestaurant);
-            Response<HttpResponse> status = awsElasticSearchDocumentService.addDocumentToAWS(flattenedRestaurant.getId(),flattenedRestaurant);
-            if (status.getHttpResponse().getStatusCode() < 200 || status.getHttpResponse().getStatusCode() >= 300){
-                logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getHttpResponse().getStatusCode());
+            ResponseEntity<HttpStatus> resp = awsElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(),flattenedRestaurant);
+            if (!resp.getStatusCode().is2xxSuccessful()){
+                logger.error("Failed to write data about restaurant={} to the db",flattenedRestaurant);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //todo: consolidate into single method with clean method of swapping implementation server (aws, heroku, local)
+    @RequestMapping(value = "/seedElasticSearchDBHeroku", method = RequestMethod.POST)
+    public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku(){
+        Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
+        for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+            updateViolationInformation(flattenedRestaurant);
+            ResponseEntity<String> resp = herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(),flattenedRestaurant);
+            if (!resp.getStatusCode().is2xxSuccessful()){
+                logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,resp);
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);

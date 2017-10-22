@@ -13,8 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * https://github.com/nielsutrecht/controller-advice-exception-handler/blob/master/examples/src/main/java/com/nibado/example/errorhandlers/example4/BaseExceptionHandler.java
@@ -22,8 +20,7 @@ import java.util.Map;
  */
 @ControllerAdvice
 public class BaseExceptionHandler {
-    private static Logger logger = LoggerFactory.getLogger(BaseExceptionHandler.class);;
-    private final Map<Class, ExceptionMapping> exceptionMappings = new HashMap<>();
+    private static Logger logger = LoggerFactory.getLogger(BaseExceptionHandler.class);
     private static final ExceptionMapping DEFAULT_ERROR = new ExceptionMapping(
             "INTERNAL_SERVER_ERROR",
             "Unhandled exception encountered",
@@ -34,7 +31,7 @@ public class BaseExceptionHandler {
     @ResponseBody
     public ErrorResponse handleThrowable(final Throwable ex) {
         logger.error("Unhandled exception encountered", ex);
-        return new ErrorResponse(DEFAULT_ERROR.code,DEFAULT_ERROR.message);
+        return new ErrorResponse(DEFAULT_ERROR.code,DEFAULT_ERROR.message,ex);
     }
 
     /**
@@ -51,8 +48,7 @@ public class BaseExceptionHandler {
      * @throws Exception
      */
     @ExceptionHandler(IncompatibleConfigurationException.class)
-    public ModelAndView handleError(HttpServletRequest req, Exception exception)
-            throws Exception {
+    public ModelAndView handleError(HttpServletRequest req, Exception exception) throws Exception {
 
         // Rethrow annotated exceptions or they will be processed here instead.
         if (AnnotationUtils.findAnnotation(exception.getClass(), ResponseStatus.class) != null)

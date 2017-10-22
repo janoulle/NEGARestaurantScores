@@ -1,14 +1,9 @@
 package com.janeullah.healthinspectionrecords.services;
 
-import com.google.common.collect.ImmutableMap;
-import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.util.Map;
 
 /**
  * http://docs.aws.amazon.com/general/latest/gr/signature-v4-examples.html
@@ -16,37 +11,42 @@ import java.util.Map;
  * Date:  9/23/2017
  */
 @Service
-public class ElasticSearchDocumentService {
+public abstract class ElasticSearchDocumentService{
 
-    private RestClientTemplateBuilder restTemplateBuilder;
-    protected RestTemplate restTemplate;
-    protected RestTemplate restTemplateHttps;
+    protected RemoteRestClient restClient;
 
     public ElasticSearchDocumentService(){}
 
-    public ElasticSearchDocumentService(RestClientTemplateBuilder restTemplateBuilder){
-        this.restTemplateBuilder = restTemplateBuilder;
-        this.restTemplate =  restTemplateBuilder.httpRestTemplate();
-        this.restTemplateHttps = restTemplateBuilder.httpsRestTemplate();
+    @Autowired
+    public ElasticSearchDocumentService(RemoteRestClient restClient){
+        this.restClient = restClient;
     }
 
-    //private static final String herokuUrlTemplate = System.getenv("BONSAI_URL");
 
-    private static final String baseUrlTemplate = "http://localhost:9200/restaurants/restaurant/{id}";
-    private static final String deleteRestaurantIndexUrl = "http://localhost:9200/restaurants";
+    /*private static final String HEROKU_BONSAI_URL = System.getenv("BONSAI_URL").concat("/restaurants/restaurant/{id}");
+    private static final String LOCALHOST_ELASTICSEARCH_TYPE_URL = "http://localhost:9200/restaurants/restaurant/{id}";
+    private static final String LOCALHOST_ELASTICSEARCH_INDEX_URL = "http://localhost:9200/restaurants";
 
-
+    //replace pathvariable with map value
     public ResponseEntity<String> addDocument(Long id, FlattenedRestaurant flattenedRestaurant) {
         Map<String, Long> vars = ImmutableMap.of("id",id);
-        return restTemplate.postForEntity(baseUrlTemplate, flattenedRestaurant, String.class, vars);
+        return restTemplate.postForEntity(getUrlByProfile(), flattenedRestaurant, String.class, vars);
+    }
+
+    private String getUrlByProfile(){
+        if ("Y".equalsIgnoreCase(System.getenv("RUN_HEROKU_INSERTS")) ||
+                Arrays.stream(env.getActiveProfiles()).anyMatch("heroku"::equalsIgnoreCase)){
+            return HEROKU_BONSAI_URL;
+        }
+        return LOCALHOST_ELASTICSEARCH_TYPE_URL;
     }
 
     public ResponseEntity<HttpStatus> deleteRestaurantIndex(){
         try {
-            restTemplate.delete(new URI(deleteRestaurantIndexUrl));
+            restTemplate.delete(new URI(LOCALHOST_ELASTICSEARCH_INDEX_URL));
             return new ResponseEntity<>(HttpStatus.OK);
         }catch(Exception e){
             throw new IllegalArgumentException(e);
         }
-    }
+    }*/
 }

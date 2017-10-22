@@ -8,10 +8,12 @@ package com.janeullah.healthinspectionrecords.domain.notifications;
 public class ErrorResponse {
     private String code;
     private String message;
+    private Throwable throwable;
 
-    public ErrorResponse(String code, String message){
+    public ErrorResponse(String code, String message, Throwable throwable){
         this.code = code;
         this.message = message;
+        this.throwable = throwable;
     }
 
     public String getCode() {
@@ -30,4 +32,11 @@ public class ErrorResponse {
         this.message = message;
     }
 
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
 }
