@@ -35,11 +35,10 @@ import java.util.*;
 public class FirebaseInitialization {
     private static final Logger logger = LoggerFactory.getLogger(FirebaseInitialization.class);
     private static DatabaseReference database;
-
     private FirebaseDataProcessing firebaseDataProcessing;
 
     @Autowired
-    public FirebaseInitialization(FirebaseDataProcessing firebaseDataProcessing){
+    public FirebaseInitialization(FirebaseDataProcessing firebaseDataProcessing) {
         this.firebaseDataProcessing = firebaseDataProcessing;
     }
 
@@ -73,16 +72,6 @@ public class FirebaseInitialization {
         }
     }
 
-    public boolean isDatabaseInitialized() {
-        return getDatabase().isPresent();
-    }
-
-    private Optional<DatabaseReference> getDatabase() {
-        return Objects.nonNull(database)
-                ? Optional.of(database)
-                : Optional.empty();
-    }
-
     //https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
     private static FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
         return new FirebaseOptions.Builder()
@@ -105,8 +94,18 @@ public class FirebaseInitialization {
                 .build();
 
         S3Object object = s3Client.getObject(new GetObjectRequest(bucketName, bucketKey));
-        logger.info("Content-Type: {}",object.getObjectMetadata().getContentType());
+        logger.info("Content-Type: {}", object.getObjectMetadata().getContentType());
         return object.getObjectContent();
+    }
+
+    public boolean isDatabaseInitialized() {
+        return getDatabase().isPresent();
+    }
+
+    private Optional<DatabaseReference> getDatabase() {
+        return Objects.nonNull(database)
+                ? Optional.of(database)
+                : Optional.empty();
     }
 
     public boolean readRecordsFromLocalAndWriteToRemote() {
@@ -116,15 +115,15 @@ public class FirebaseInitialization {
             saveFlattenedViolations(restaurantData);
             return true;
         } catch (Exception e) {
-            logger.error("Exception encountered during readRecordsFromLocalAndWriteToRemote",e);
+            logger.error("Exception encountered during readRecordsFromLocalAndWriteToRemote", e);
         }
         return false;
     }
 
     private void saveFlattenedViolations(Map<String, FlattenedRestaurant> restaurantData) {
         DatabaseReference violationsRef = database.child(FirebaseNodeNames.VIOLATIONS.getNodeName());
-        Map<String,FlattenedInspectionReport> violationsData = firebaseDataProcessing.createAndRetrieveViolations(restaurantData);
-        DatabaseReference.CompletionListener listener = getCompletionListener(FirebaseNodeNames.VIOLATIONS.getNodeName(),violationsData);
+        Map<String, FlattenedInspectionReport> violationsData = firebaseDataProcessing.createAndRetrieveViolations(restaurantData);
+        DatabaseReference.CompletionListener listener = getCompletionListener(FirebaseNodeNames.VIOLATIONS.getNodeName(), violationsData);
         violationsRef.setValue(violationsData, listener);
     }
 
@@ -132,30 +131,30 @@ public class FirebaseInitialization {
         DatabaseReference countiesRef = database.child(FirebaseNodeNames.COUNTIES.getNodeName());
         Map<String, List<Restaurant>> mapOfCountiesToRestaurants = new HashMap<>();
         Map<String, County> countiesAndRestaurants = firebaseDataProcessing.createAndRetrieveMapOfCounties(mapOfCountiesToRestaurants);
-        DatabaseReference.CompletionListener listener = getCompletionListener(FirebaseNodeNames.COUNTIES.getNodeName(),countiesAndRestaurants);
+        DatabaseReference.CompletionListener listener = getCompletionListener(FirebaseNodeNames.COUNTIES.getNodeName(), countiesAndRestaurants);
         countiesRef.setValue(countiesAndRestaurants, listener);
         return mapOfCountiesToRestaurants;
     }
 
     private Map<String, FlattenedRestaurant> saveFlattenedRestaurants(Map<String, List<Restaurant>> mapOfCountiesToRestaurants) {
         DatabaseReference restaurantsRef = database.child(FirebaseNodeNames.RESTAURANTS.getNodeName());
-        Map<String,FlattenedRestaurant> restaurantData = firebaseDataProcessing.flattenMapOfRestaurants(mapOfCountiesToRestaurants);
-        DatabaseReference.CompletionListener listener = getCompletionListener(FirebaseNodeNames.RESTAURANTS.getNodeName(),restaurantData);
+        Map<String, FlattenedRestaurant> restaurantData = firebaseDataProcessing.flattenMapOfRestaurants(mapOfCountiesToRestaurants);
+        DatabaseReference.CompletionListener listener = getCompletionListener(FirebaseNodeNames.RESTAURANTS.getNodeName(), restaurantData);
         restaurantsRef.setValue(restaurantData, listener);
         return restaurantData;
     }
 
-    private DatabaseReference.CompletionListener getCompletionListener(String desc,Map data) {
+    private DatabaseReference.CompletionListener getCompletionListener(String desc, Map data) {
         return (databaseError, databaseReference) -> {
             if (databaseError != null) {
-                logger.error("Data  for child ({}) could not be saved - {}", desc,databaseError.getMessage());
+                logger.error("Data  for child ({}) could not be saved - {}", desc, databaseError.getMessage());
             } else {
                 logger.info("Data for child ({} of size {}) saved successfully.", desc, data.size());
             }
         };
     }
 
-    public void printCounties(){
+    public void printCounties() {
         getDatabase().ifPresent(databaseReference -> {
             final DatabaseReference negaChildDBReference = databaseReference.child("counties");
             negaChildDBReference.orderByKey().addChildEventListener(new ChildEventListener() {

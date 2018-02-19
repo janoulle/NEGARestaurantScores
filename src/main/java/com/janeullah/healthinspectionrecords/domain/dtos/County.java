@@ -11,11 +11,12 @@ import java.util.Map;
 @ToString
 public class County {
     private String name;
-    private Map<String,FlattenedRestaurant> restaurants;
+    private Map<String, FlattenedRestaurant> restaurants;
 
-    public County(){}
+    public County() {
+    }
 
-    public County(String name, Map<String,FlattenedRestaurant> restaurants) {
+    public County(String name, Map<String, FlattenedRestaurant> restaurants) {
         setName(name);
         setRestaurants(restaurants);
     }

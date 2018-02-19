@@ -32,6 +32,52 @@ import java.util.stream.Collectors;
 public class FirebaseDataProcessing {
     private static final Logger logger = LoggerFactory.getLogger(FirebaseDataProcessing.class);
     private RestaurantRepository restaurantRepository;
+    /**
+     * http://www.baeldung.com/guava-string-charmatcher
+     */
+    private Function<Restaurant, String> createUniqueKey = restaurant -> {
+        String nameAndId = restaurant.getEstablishmentInfo().getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
+        return replaceInvalidCharsInKey(nameAndId);
+    };
+    private Function<FlattenedRestaurant, String> createUniqueKeyFromFlattenedRestaurant = restaurant -> {
+        String nameAndId = restaurant.getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
+        return replaceInvalidCharsInKey(nameAndId);
+    };
+    private Function<FlattenedInspectionReport, String> createUniqueKeyFromFlattenedInspectionReport = flattenedInspectionReport -> {
+        String nameAndId = flattenedInspectionReport.getName() + StringUtilities.HYPHEN.getValue() + flattenedInspectionReport.getId();
+        return replaceInvalidCharsInKey(nameAndId);
+    };
+    private Function<Restaurant, FlattenedRestaurant> getTrimmedRestaurantData = restaurant -> Objects.nonNull(restaurant)
+            ? processRestaurant(restaurant)
+            : null;
+    /**
+     * Convert Restaurant entity to a POJO
+     */
+    private Function<Restaurant, FlattenedRestaurant> mapRestaurantEntityToFlattenedRestaurant = restaurant -> {
+        logger.info("Flattening restaurant id {}", restaurant.getId());
+        Optional<InspectionReport> mostRecentInspectionReport = restaurant.getInspectionReports()
+                .stream()
+                .max(Comparator.comparing(InspectionReport::getDateReported));
+        if (mostRecentInspectionReport.isPresent()) {
+            InspectionReport inspectionReport = mostRecentInspectionReport.get();
+            Map<Severity, Long> mapOfSeverityToViolations = inspectionReport.getViolations()
+                    .stream()
+                    .collect(Collectors.groupingBy(Violation::getSeverity, Collectors.counting()));
+            return FlattenedRestaurantBuilder.aFlattenedRestaurant()
+                    .id(restaurant.getId())
+                    .score(inspectionReport.getScore())
+                    .name(restaurant.getEstablishmentInfo().getName())
+                    .address(restaurant.getEstablishmentInfo().getAddress())
+                    .county(restaurant.getEstablishmentInfo().getCounty())
+                    .criticalViolations(MapUtils.getInteger(mapOfSeverityToViolations, Severity.CRITICAL, 0))
+                    .nonCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations, Severity.NONCRITICAL, 0))
+                    .dateReported(inspectionReport.getDateReported().toString())
+                    .inspectionReport(createFlattenedInspectionReport(inspectionReport))
+                    .build();
+
+        }
+        return new FlattenedRestaurant();
+    };
 
     @Autowired
     public FirebaseDataProcessing(RestaurantRepository restaurantRepository) {
@@ -50,33 +96,11 @@ public class FirebaseDataProcessing {
             Map<String, FlattenedRestaurant> mapOfRestaurantsInCounty = restaurantsInCounty
                     .stream()
                     .collect(Collectors.toMap(createUniqueKey, getTrimmedRestaurantData));
-            County countyObj = new County(county,mapOfRestaurantsInCounty);
+            County countyObj = new County(county, mapOfRestaurantsInCounty);
             countiesAndRestaurants.put(county, countyObj);
         }
         return countiesAndRestaurants;
     }
-
-    /**
-     * http://www.baeldung.com/guava-string-charmatcher
-     */
-    private Function<Restaurant, String> createUniqueKey = restaurant -> {
-        String nameAndId = restaurant.getEstablishmentInfo().getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
-        return replaceInvalidCharsInKey(nameAndId);
-    };
-
-    private Function<FlattenedRestaurant,String> createUniqueKeyFromFlattenedRestaurant = restaurant -> {
-        String nameAndId = restaurant.getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
-        return replaceInvalidCharsInKey(nameAndId);
-    };
-
-    private Function<FlattenedInspectionReport,String> createUniqueKeyFromFlattenedInspectionReport = flattenedInspectionReport -> {
-        String nameAndId = flattenedInspectionReport.getName() + StringUtilities.HYPHEN.getValue() + flattenedInspectionReport.getId();
-        return replaceInvalidCharsInKey(nameAndId);
-    };
-
-    private Function<Restaurant, FlattenedRestaurant> getTrimmedRestaurantData = restaurant -> Objects.nonNull(restaurant)
-            ? processRestaurant(restaurant)
-            : null;
 
     private FlattenedRestaurant processRestaurant(Restaurant restaurant) {
         FlattenedRestaurant flattenedRestaurant = new FlattenedRestaurant();
@@ -88,48 +112,20 @@ public class FirebaseDataProcessing {
     /**
      * http://www.oracle.com/technetwork/articles/java/architect-streams-pt2-2227132.html
      * Map list of restaurants to list of flattened restaurant POJO
+     *
      * @param mapOfCountiesToRestaurants Map of County to List of Retaurant entities for that county
      * @return Map of county to flattened restaurant
      */
-    public Map<String,FlattenedRestaurant> flattenMapOfRestaurants(Map<String,List<Restaurant>> mapOfCountiesToRestaurants){
+    public Map<String, FlattenedRestaurant> flattenMapOfRestaurants(Map<String, List<Restaurant>> mapOfCountiesToRestaurants) {
         return mapOfCountiesToRestaurants
                 .values()
                 .stream()
                 .flatMap(List::stream)
                 .map(mapRestaurantEntityToFlattenedRestaurant)
-                .collect(Collectors.toMap(createUniqueKeyFromFlattenedRestaurant,Function.identity()));
+                .collect(Collectors.toMap(createUniqueKeyFromFlattenedRestaurant, Function.identity()));
     }
 
-    /**
-     * Convert Restaurant entity to a POJO
-     */
-    private Function<Restaurant, FlattenedRestaurant> mapRestaurantEntityToFlattenedRestaurant = restaurant -> {
-        logger.info("Flattening restaurant id {}",restaurant.getId());
-        Optional<InspectionReport> mostRecentInspectionReport = restaurant.getInspectionReports()
-                .stream()
-                .max(Comparator.comparing(InspectionReport::getDateReported));
-        if (mostRecentInspectionReport.isPresent()) {
-            InspectionReport inspectionReport = mostRecentInspectionReport.get();
-            Map<Severity, Long> mapOfSeverityToViolations = inspectionReport.getViolations()
-                    .stream()
-                    .collect(Collectors.groupingBy(Violation::getSeverity, Collectors.counting()));
-            return FlattenedRestaurantBuilder.aFlattenedRestaurant()
-                    .id(restaurant.getId())
-                    .score(inspectionReport.getScore())
-                    .name(restaurant.getEstablishmentInfo().getName())
-                    .address(restaurant.getEstablishmentInfo().getAddress())
-                    .county(restaurant.getEstablishmentInfo().getCounty())
-                    .criticalViolations(MapUtils.getInteger(mapOfSeverityToViolations,Severity.CRITICAL,0))
-                    .nonCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations,Severity.NONCRITICAL,0))
-                    .dateReported(inspectionReport.getDateReported().toString())
-                    .inspectionReport(createFlattenedInspectionReport(inspectionReport))
-                    .build();
-
-        }
-        return new FlattenedRestaurant();
-    };
-
-    private  FlattenedInspectionReport createFlattenedInspectionReport(InspectionReport inspectionReport) {
+    private FlattenedInspectionReport createFlattenedInspectionReport(InspectionReport inspectionReport) {
         FlattenedInspectionReport flattenedInspectionReport = new FlattenedInspectionReport();
         flattenedInspectionReport.setDateReported(inspectionReport.getDateReported().toString());
         flattenedInspectionReport.setId(inspectionReport.getRestaurant().getId());
@@ -141,7 +137,7 @@ public class FirebaseDataProcessing {
 
     private List<FlattenedViolation> createFlattenedViolations(InspectionReport inspectionReport) {
         List<FlattenedViolation> flattenedViolations = new ArrayList<>();
-        for(Violation violation : inspectionReport.getViolations()){
+        for (Violation violation : inspectionReport.getViolations()) {
             FlattenedViolation flattenedViolation = new FlattenedViolation();
             flattenedViolation.setCategory(violation.getCategory());
             flattenedViolation.setInspectionType(inspectionReport.getInspectionType().toString());
@@ -155,10 +151,10 @@ public class FirebaseDataProcessing {
         return flattenedViolations;
     }
 
-    public Map<String,FlattenedInspectionReport> createAndRetrieveViolations(Map<String, FlattenedRestaurant> restaurantData) {
+    public Map<String, FlattenedInspectionReport> createAndRetrieveViolations(Map<String, FlattenedRestaurant> restaurantData) {
         return restaurantData.values()
                 .stream()
                 .map(FlattenedRestaurant::getInspectionReport)
-                .collect(Collectors.toMap(createUniqueKeyFromFlattenedInspectionReport,Function.identity()));
+                .collect(Collectors.toMap(createUniqueKeyFromFlattenedInspectionReport, Function.identity()));
     }
 }

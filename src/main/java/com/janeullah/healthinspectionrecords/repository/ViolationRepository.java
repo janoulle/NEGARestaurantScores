@@ -13,7 +13,7 @@ import java.util.List;
  * Date:  9/19/2016
  */
 @Repository
-public interface ViolationRepository extends JpaRepository<Violation,Long> {
+public interface ViolationRepository extends JpaRepository<Violation, Long> {
     List<Violation> findByCategory(String category);
 
     @Query("select v from Violation v inner join v.inspectionReport ir inner join ir.restaurant r where r.id = :id")

@@ -13,17 +13,17 @@ public enum InspectionType {
 
     private final String value;
 
-    InspectionType(String type){
+    InspectionType(String type) {
         this.value = type;
-    }
-
-    String getValue(){
-        return value;
     }
 
     public static InspectionType asInspectionType(String str) {
         return Arrays.stream(InspectionType.values())
                 .filter(me -> me.getValue().equalsIgnoreCase(str))
                 .findFirst().orElse(null);
+    }
+
+    String getValue() {
+        return value;
     }
 }

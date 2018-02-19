@@ -17,5 +17,6 @@ public class WebSelectorConstants {
     public static final String NOT_CRITICAL = "div.ncrit a";
     public static final String HREF_PREFIX_FOR_VIOLATIONS = "crit_";
 
-    private WebSelectorConstants(){}
+    private WebSelectorConstants() {
+    }
 }

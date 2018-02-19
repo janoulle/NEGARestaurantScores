@@ -16,10 +16,13 @@ import java.util.List;
  * http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-property-expressions
  */
 @Repository
-public interface  RestaurantRepository extends JpaRepository<Restaurant, Long> {
-    List<Restaurant> findByEstablishmentInfoNameIgnoreCase (String name);
-    List<Restaurant> findByEstablishmentInfoCountyIgnoreCase (String county);
-    List<Restaurant> findByEstablishmentInfoNameAndEstablishmentInfoCountyIgnoreCase (String name, String county);
+public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+    List<Restaurant> findByEstablishmentInfoNameIgnoreCase(String name);
+
+    List<Restaurant> findByEstablishmentInfoCountyIgnoreCase(String county);
+
+    List<Restaurant> findByEstablishmentInfoNameAndEstablishmentInfoCountyIgnoreCase(String name, String county);
+
     List<Restaurant> findByEstablishmentInfoNameContaining(String name);
 
     @Query("select r from InspectionReport ir inner join ir.restaurant r where ir.score >= :limit")

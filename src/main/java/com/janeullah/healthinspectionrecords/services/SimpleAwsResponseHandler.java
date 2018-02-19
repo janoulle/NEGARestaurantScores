@@ -39,10 +39,10 @@ import java.io.StringWriter;
  * https://github.com/opencharles/charles-rest/blob/master/src/main/java/com/amihaiemil/charles/aws/SimpleAwsResponseHandler.java
  * A simple aws response handler that only checks that the http status is within the 200 range.
  * If not, {@link AmazonServiceException} is thrown.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 1.0.0
- *
  */
 public class SimpleAwsResponseHandler implements HttpResponseHandler<HttpResponse> {
 

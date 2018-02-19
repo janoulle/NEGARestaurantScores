@@ -19,20 +19,21 @@ public class ExecutorUtil {
     public static final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
     private static final Logger logger = LoggerFactory.getLogger(ExecutorUtil.class);
 
-    private ExecutorUtil(){}
+    private ExecutorUtil() {
+    }
 
     /**
      * http://stackoverflow.com/questions/3269445/executorservice-how-to-wait-for-all-tasks-to-finish?rq=1
      */
-    public static void shutDown(){
+    public static void shutDown() {
         try {
             if (!executorService.isShutdown() || !executorService.isTerminated()) {
                 logger.info("event=\"shutting down executor\"");
                 executorService.shutdown();
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
             }
-        }catch(InterruptedException e){
-            logger.error("InterruptedException during executor shut down",e);
+        } catch (InterruptedException e) {
+            logger.error("InterruptedException during executor shut down", e);
             Thread.currentThread().interrupt();
         }
     }
@@ -56,7 +57,7 @@ public class ExecutorUtil {
         }
     }
 
-    public static int getThreadCount(){
+    public static int getThreadCount() {
         return WebPageConstants.NUMBER_OF_THREADS;
     }
 }

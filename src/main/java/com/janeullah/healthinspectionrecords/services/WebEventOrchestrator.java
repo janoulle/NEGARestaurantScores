@@ -13,22 +13,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebEventOrchestrator {
     private static final Logger logger = LoggerFactory.getLogger(WebEventOrchestrator.class);
-
-    @Autowired
     private WebPageDownloader webPageDownloader;
-
-    @Autowired
     private WebPageProcessing webPageProcessing;
 
-    public void processAndSaveAllRestaurants(){
+    @Autowired
+    public WebEventOrchestrator(WebPageDownloader webPageDownloader,
+                                WebPageProcessing webPageProcessing) {
+        this.webPageDownloader = webPageDownloader;
+        this.webPageProcessing = webPageProcessing;
+    }
+
+    public void processAndSaveAllRestaurants() {
         try {
-            if (WebPageDownloader.isDataExpired()){
+            if (WebPageDownloader.isDataExpired()) {
                 webPageDownloader.initiateDownloadsAndProcessFiles();
-            }else {
+            } else {
                 webPageProcessing.startProcessingOfDownloadedFiles();
             }
-        }catch (Exception e){
-            logger.error("Exception in processAndSaveAllRestaurants",e);
+        } catch (Exception e) {
+            logger.error("Exception in processAndSaveAllRestaurants", e);
         }
     }
 }

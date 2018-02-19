@@ -8,7 +8,7 @@ import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
  * Author: Jane Ullah
  * Date:  4/2/2017
  */
-public class IdColumnNamingStrategy implements PhysicalNamingStrategy{
+public class IdColumnNamingStrategy implements PhysicalNamingStrategy {
     @Override
     public Identifier toPhysicalCatalogName(Identifier name, JdbcEnvironment jdbcEnvironment) {
         return name;
@@ -31,8 +31,8 @@ public class IdColumnNamingStrategy implements PhysicalNamingStrategy{
 
     @Override
     public Identifier toPhysicalColumnName(Identifier name, JdbcEnvironment jdbcEnvironment) {
-        if ("sqlite".equalsIgnoreCase(System.getProperty("spring.profiles.active")) && "id".equalsIgnoreCase(name.getText())){
-            return new Identifier("_id",false);
+        if ("sqlite".equalsIgnoreCase(System.getProperty("spring.profiles.active")) && "id".equalsIgnoreCase(name.getText())) {
+            return new Identifier("_id", false);
         }
         return name;
     }

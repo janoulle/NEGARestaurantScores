@@ -65,7 +65,7 @@ public final class FlattenedRestaurantBuilder {
         return this;
     }
 
-    public FlattenedRestaurantBuilder inspectionReport(FlattenedInspectionReport inspectionReport){
+    public FlattenedRestaurantBuilder inspectionReport(FlattenedInspectionReport inspectionReport) {
         this.inspectionReport = inspectionReport;
         return this;
     }

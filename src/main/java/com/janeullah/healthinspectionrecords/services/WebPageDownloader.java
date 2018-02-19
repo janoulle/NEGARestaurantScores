@@ -28,40 +28,20 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.executorSe
 @Component
 public class WebPageDownloader {
     private static final Logger logger = LoggerFactory.getLogger(WebPageDownloader.class);
+    private static final CompletionService<String> webPageDownloadCompletionService = new ExecutorCompletionService<>(executorService);
     private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
     private static final List<WebPageRequestAsync> callablePageRequests = Collections.synchronizedList(populateListOfAsyncWebRequestToBeMade());
-    private static final CompletionService<String> webPageDownloadCompletionService = new ExecutorCompletionService<>(executorService);
-
-    @Autowired
     private WebPageProcessing webPageProcessing;
 
-    public void initiateDownloadsAndProcessFiles(){
-        waitForCompletion(asyncDownloadWebPages());
+    @Autowired
+    public WebPageDownloader(WebPageProcessing webPageProcessing) {
+        this.webPageProcessing = webPageProcessing;
     }
 
-    private void waitForCompletion(List<Future<String>> futures) {
-        try {
-            int remainingFutures = futures.size();
-            while (remainingFutures > 0) {
-                Future<String> completedFuture = webPageDownloadCompletionService.take();
-                String relativePathName = completedFuture.get();
-                if (StringUtils.isNotBlank(relativePathName)) {
-                    logger.info("{} was successfully downloaded.",relativePathName);
-                    webPageProcessing.asyncProcessFile(FilesUtil.getFilePath(relativePathName));
-                }else{
-                    logger.error("Failed to download successfully.");
-                }
-                remainingFutures--;
-            }
-        }catch(InterruptedException | ExecutionException e){
-            logger.error("Error retrieving future from service",e);
-        }
-    }
-
-    private static List<WebPageRequestAsync> populateListOfAsyncWebRequestToBeMade(){
+    private static List<WebPageRequestAsync> populateListOfAsyncWebRequestToBeMade() {
         List<WebPageRequestAsync> results = new ArrayList<>();
         Map<String, String> urls = getUrls();
-        urls.forEach((key, value) -> results.add(new WebPageRequestAsync(value,key,doneSignal)));
+        urls.forEach((key, value) -> results.add(new WebPageRequestAsync(value, key, doneSignal)));
         return results;
     }
 
@@ -72,19 +52,6 @@ public class WebPageDownloader {
             results.put(county, String.format(WebPageConstants.URL, county));
         }
         return results;
-    }
-
-    /**
-     * http://stackoverflow.com/questions/4524063/make-simultaneous-web-requests-in-java
-     * http://nohack.eingenetzt.com/java/java-executorservice-and-threadpoolexecutor-tutorial/
-     * http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
-     * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
-     */
-    private List<Future<String>> asyncDownloadWebPages() {
-        List<Future<String>> futures = new ArrayList<>(callablePageRequests.size());
-        callablePageRequests.forEach(webPageRequest ->
-                futures.add(webPageDownloadCompletionService.submit(webPageRequest)));
-        return futures;
     }
 
     /**
@@ -120,7 +87,43 @@ public class WebPageDownloader {
 
     private static AtomicLong getMaxExpirationDate() {
         int daysToExpire = Integer.parseInt(WebPageConstants.DATA_EXPIRATION_IN_DAYS);
-        return new AtomicLong((long)daysToExpire * DateTimeConstants.MILLIS_PER_DAY);
+        return new AtomicLong((long) daysToExpire * DateTimeConstants.MILLIS_PER_DAY);
+    }
+
+    public void initiateDownloadsAndProcessFiles() {
+        waitForCompletion(asyncDownloadWebPages());
+    }
+
+    private void waitForCompletion(List<Future<String>> futures) {
+        try {
+            int remainingFutures = futures.size();
+            while (remainingFutures > 0) {
+                Future<String> completedFuture = webPageDownloadCompletionService.take();
+                String relativePathName = completedFuture.get();
+                if (StringUtils.isNotBlank(relativePathName)) {
+                    logger.info("{} was successfully downloaded.", relativePathName);
+                    webPageProcessing.asyncProcessFile(FilesUtil.getFilePath(relativePathName));
+                } else {
+                    logger.error("Failed to download successfully.");
+                }
+                remainingFutures--;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Error retrieving future from service", e);
+        }
+    }
+
+    /**
+     * http://stackoverflow.com/questions/4524063/make-simultaneous-web-requests-in-java
+     * http://nohack.eingenetzt.com/java/java-executorservice-and-threadpoolexecutor-tutorial/
+     * http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
+     * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
+     */
+    private List<Future<String>> asyncDownloadWebPages() {
+        List<Future<String>> futures = new ArrayList<>(callablePageRequests.size());
+        callablePageRequests.forEach(webPageRequest ->
+                futures.add(webPageDownloadCompletionService.submit(webPageRequest)));
+        return futures;
     }
 
 }

@@ -15,17 +15,16 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Author: jane
+ * Author: Jane Ullah
  * Date:  9/18/2016
  */
 public class WebPageRequestAsync implements Callable<String> {
     private static final Logger logger = LoggerFactory.getLogger(WebPageRequestAsync.class);
-
+    private final CountDownLatch doneSignal;
     private String url;
     private String name;
-    private final CountDownLatch doneSignal;
 
-    public WebPageRequestAsync(String url,String name, CountDownLatch doneSignal) {
+    public WebPageRequestAsync(String url, String name, CountDownLatch doneSignal) {
         this.url = url;
         this.name = name;
         this.doneSignal = doneSignal;
@@ -40,7 +39,7 @@ public class WebPageRequestAsync implements Callable<String> {
             FileUtils.copyInputStreamToFile(reqStream, destinationFile);
             return true;
         } catch (IOException e) {
-            logger.error("event=\"error writing file to disk\" for entry {}",name,e);
+            logger.error("event=\"error writing file to disk\" for entry {}", name, e);
         }
         return false;
     }
@@ -53,13 +52,13 @@ public class WebPageRequestAsync implements Callable<String> {
             conn.setRequestProperty("User-Agent", WebPageConstants.USER_AGENT);
             conn.connect();
             boolean isWriteSuccess = writeFileToDisk(conn.getInputStream());
-            if (!isWriteSuccess){
-                logger.error("event=\"Unable to write {} file to disk\"",url);
+            if (!isWriteSuccess) {
+                logger.error("event=\"Unable to write {} file to disk\"", url);
             }
             return isWriteSuccess ? name + WebPageConstants.PAGE_URL : StringUtils.EMPTY;
-        }catch(IOException  e){
-            logger.error("Error opening connection to url {}",url,e);
-        }finally {
+        } catch (IOException e) {
+            logger.error("Error opening connection to url {}", url, e);
+        } finally {
             doneSignal.countDown();
         }
         return StringUtils.EMPTY;

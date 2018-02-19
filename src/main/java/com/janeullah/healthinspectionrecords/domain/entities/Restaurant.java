@@ -11,20 +11,20 @@ import java.util.List;
  */
 
 @Entity
-@Table(name="ir_restaurants")
+@Table(name = "ir_restaurants")
 public class Restaurant implements Serializable {
 
     private static final long serialVersionUID = -7700847544993366495L;
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToMany(mappedBy = "restaurant",cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<InspectionReport> inspectionReports = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "establishment_info_id", foreignKey = @ForeignKey(name = "FK_establishment_info_id"))
     private EstablishmentInfo establishmentInfo;
 
@@ -36,7 +36,7 @@ public class Restaurant implements Serializable {
         this.inspectionReports = inspectionReports;
     }
 
-    public void addInspectionReport(InspectionReport report){
+    public void addInspectionReport(InspectionReport report) {
         this.inspectionReports.add(report);
         report.setRestaurant(this);
     }

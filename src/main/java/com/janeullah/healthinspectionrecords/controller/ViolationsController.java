@@ -28,7 +28,7 @@ public class ViolationsController {
 
     @Cacheable("violationsById")
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Violation getViolationById(@PathVariable("id") long id ) {
+    public Violation getViolationById(@PathVariable("id") long id) {
         logger.info("getting violation id {}", id);
         return violationRepository.findOne(id);
     }
@@ -42,7 +42,7 @@ public class ViolationsController {
 
     @Cacheable("violationsByRestaurant")
     @RequestMapping(value = "/restaurantId/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Violation> findViolationsByRestaurantId(@PathVariable("id") Long id){
+    public List<Violation> findViolationsByRestaurantId(@PathVariable("id") Long id) {
         return violationRepository.findViolationsByRestaurantId(id);
     }
 }

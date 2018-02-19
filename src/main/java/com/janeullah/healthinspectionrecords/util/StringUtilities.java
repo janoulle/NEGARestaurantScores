@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.util;
 
 /**
- * Author: jane
+ * Author: Jane Ullah
  * Date:  7/7/2017
  */
 public enum StringUtilities {
@@ -17,11 +17,11 @@ public enum StringUtilities {
 
     String value;
 
-    StringUtilities(String val){
+    StringUtilities(String val) {
         this.value = val;
     }
 
-    public String getValue(){
+    public String getValue() {
         return value;
     }
 }

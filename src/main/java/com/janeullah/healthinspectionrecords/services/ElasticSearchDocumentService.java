@@ -7,18 +7,19 @@ import org.springframework.stereotype.Service;
 
 /**
  * http://docs.aws.amazon.com/general/latest/gr/signature-v4-examples.html
- * Author: jane
+ * Author: Jane Ullah
  * Date:  9/23/2017
  */
 @Service
-public abstract class ElasticSearchDocumentService{
+public abstract class ElasticSearchDocumentService {
 
     protected RemoteRestClient restClient;
 
-    public ElasticSearchDocumentService(){}
+    public ElasticSearchDocumentService() {
+    }
 
     @Autowired
-    public ElasticSearchDocumentService(RemoteRestClient restClient){
+    public ElasticSearchDocumentService(RemoteRestClient restClient) {
         this.restClient = restClient;
     }
 

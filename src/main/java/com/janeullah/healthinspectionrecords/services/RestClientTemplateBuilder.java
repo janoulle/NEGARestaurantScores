@@ -18,14 +18,14 @@ import java.security.cert.X509Certificate;
 
 /**
  * https://stackoverflow.com/questions/42323468/how-to-call-https-restful-web-services-using-spring-resttemplate
- * Author: jane
+ * Author: Jane Ullah
  * Date:  9/24/2017
  */
 @Component
 public class RestClientTemplateBuilder {
     private static final Logger logger = LoggerFactory.getLogger(RestClientTemplateBuilder.class);
 
-    public RestTemplate httpsRestTemplate(){
+    public RestTemplate httpsRestTemplate() {
         try {
             TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
@@ -44,13 +44,13 @@ public class RestClientTemplateBuilder {
 
             requestFactory.setHttpClient(httpClient);
             return new RestTemplate(requestFactory);
-        }catch(KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex){
-            logger.error("Failed to configure rest template",ex);
+        } catch (KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
+            logger.error("Failed to configure rest template", ex);
             throw new IllegalArgumentException(ex);
         }
     }
 
-    public RestTemplate httpRestTemplate(){
+    public RestTemplate httpRestTemplate() {
         return new RestTemplate();
     }
 }

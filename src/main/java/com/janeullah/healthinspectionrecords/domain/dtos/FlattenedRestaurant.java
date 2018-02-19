@@ -28,7 +28,7 @@ public class FlattenedRestaurant {
     @JsonIgnore
     private FlattenedInspectionReport inspectionReport;
 
-    public FlattenedRestaurant(){
+    public FlattenedRestaurant() {
         /*
         Default constructor
          */
@@ -39,7 +39,7 @@ public class FlattenedRestaurant {
         this(id, score, criticalViolations, nonCriticalViolations, lastDateReported.toString(), name, address, county);
     }
 
-    public FlattenedRestaurant(Long id, int score, int criticalViolations, int nonCriticalViolations, String lastDateReported, String name, String address, String county){
+    public FlattenedRestaurant(Long id, int score, int criticalViolations, int nonCriticalViolations, String lastDateReported, String name, String address, String county) {
         this.id = id;
         this.score = score;
         this.criticalViolations = criticalViolations;
@@ -122,7 +122,7 @@ public class FlattenedRestaurant {
         this.inspectionReport = flattenedInspectionReport;
     }
 
-    public String getNameKey(){
+    public String getNameKey() {
         String nameAndId = name + StringUtilities.HYPHEN.getValue() + id;
         return replaceInvalidCharsInKey(nameAndId);
     }

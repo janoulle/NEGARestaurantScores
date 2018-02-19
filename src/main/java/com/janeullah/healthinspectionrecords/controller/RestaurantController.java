@@ -26,7 +26,7 @@ public class RestaurantController {
     private RestaurantRepository restaurantRepository;
 
     @Autowired
-    public RestaurantController(RestaurantRepository restaurantRepository){
+    public RestaurantController(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 
@@ -42,37 +42,37 @@ public class RestaurantController {
         return restaurantRepository.findAll();
     }
 
-    @RequestMapping(value = "/countylist",method = {RequestMethod.GET},produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> fetchCounties(){
+    @RequestMapping(value = "/countylist", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> fetchCounties() {
         return WebPageConstants.COUNTY_LIST;
     }
 
     @Cacheable("restaurantsByCounty")
     @RequestMapping(value = "/county/{county}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Restaurant> getRestaurantByCounty(@PathVariable("county") @NotNull String county){
+    public List<Restaurant> getRestaurantByCounty(@PathVariable("county") @NotNull String county) {
         logger.info("finding restaurant by county {}", county);
         return restaurantRepository.findByEstablishmentInfoCountyIgnoreCase(county);
     }
 
     @Cacheable("restaurantsByName")
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Restaurant> getRestaurantByName(@PathVariable("name") @NotNull String name){
+    public List<Restaurant> getRestaurantByName(@PathVariable("name") @NotNull String name) {
         logger.info("finding restaurant by name {}", name);
         return restaurantRepository.findByEstablishmentInfoNameIgnoreCase(name);
     }
 
     @Cacheable("restaurantsContainingName")
     @RequestMapping(value = "/contains/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Restaurant> getRestaurantLikeName(@PathVariable("name") @NotNull String name){
+    public List<Restaurant> getRestaurantLikeName(@PathVariable("name") @NotNull String name) {
         logger.info("finding restaurant by name {}", name);
         return restaurantRepository.findByEstablishmentInfoNameContaining(name);
     }
 
     @Cacheable("restaurantsByNameAndCounty")
     @RequestMapping(value = "/search/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Restaurant> getRestaurantByNameAndCounty(@RequestHeader("name") String name, @RequestHeader("county") String county){
-        logger.info("finding restaurant by name {} and county {}" ,name,county);
-        return restaurantRepository.findByEstablishmentInfoNameAndEstablishmentInfoCountyIgnoreCase (name,county);
+    public List<Restaurant> getRestaurantByNameAndCounty(@RequestHeader("name") String name, @RequestHeader("county") String county) {
+        logger.info("finding restaurant by name {} and county {}", name, county);
+        return restaurantRepository.findByEstablishmentInfoNameAndEstablishmentInfoCountyIgnoreCase(name, county);
     }
 
     @Cacheable("restaurantById")
@@ -97,7 +97,7 @@ public class RestaurantController {
     @Cacheable("scoresBetweenRange")
     @RequestMapping(value = "/score/lower={lower}&upper={upper}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Restaurant> getRestaurantsWithScoresGreaterThanOrEqual(@PathVariable("lower") int lower, @PathVariable("upper") int upper) {
-        return restaurantRepository.findRestaurantsWithScoresBetween(lower,upper);
+        return restaurantRepository.findRestaurantsWithScoresBetween(lower, upper);
     }
 
     @Cacheable("restaurantsWithCriticalViolations")

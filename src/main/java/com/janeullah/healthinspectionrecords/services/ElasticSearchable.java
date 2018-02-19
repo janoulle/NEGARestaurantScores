@@ -4,7 +4,7 @@ import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import org.springframework.http.ResponseEntity;
 
 /**
- * Author: jane
+ * Author: Jane Ullah
  * Date:  10/21/2017
  */
 public interface ElasticSearchable<T> {

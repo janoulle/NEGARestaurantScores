@@ -28,16 +28,16 @@ public class DataSourceConfig {
                     .username("sa")
                     .password(StringUtils.EMPTY)
                     .build();
-        }else if ("sqlite".equalsIgnoreCase(profile)){
+        } else if ("sqlite".equalsIgnoreCase(profile)) {
             return dataSourceBuilder
                     .driverClassName("org.sqlite.JDBC")
-                    .url("jdbc:sqlite:"+System.getProperty("SQLITE_DB_PATH","nega_inspections.db"))
+                    .url("jdbc:sqlite:" + System.getProperty("SQLITE_DB_PATH", "nega_inspections.db"))
                     .build();
-        }else {
+        } else {
             URI dbUri = new URI(System.getenv("DATABASE_URL"));
             String[] userInfo = dbUri.getUserInfo().split(":");
             String prefix = "mysql".equalsIgnoreCase(profile) ? "mysql" : "postgresql";
-            String dbUrl = String.format("jdbc:%s://%s:%d%s", prefix,dbUri.getHost(),dbUri.getPort(),dbUri.getPath());
+            String dbUrl = String.format("jdbc:%s://%s:%d%s", prefix, dbUri.getHost(), dbUri.getPort(), dbUri.getPath());
 
             return dataSourceBuilder
                     .url(dbUrl)

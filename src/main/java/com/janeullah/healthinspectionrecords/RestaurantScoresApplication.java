@@ -15,17 +15,17 @@ import java.util.Arrays;
 @SpringBootApplication
 @EnableCaching
 public class RestaurantScoresApplication {
-	private static final Logger logger = LoggerFactory.getLogger(RestaurantScoresApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantScoresApplication.class);
 
-	@Autowired
-	ApplicationContext applicationContext;
+    @Autowired
+    ApplicationContext applicationContext;
 
-	public static void main(String[] args) {
-		ApplicationContext ctx = SpringApplication.run(RestaurantScoresApplication.class, args);
-		logger.debug("Beans provided by the Restaurant Scores application");
+    public static void main(String[] args) {
+        ApplicationContext ctx = SpringApplication.run(RestaurantScoresApplication.class, args);
+        logger.debug("Beans provided by the Restaurant Scores application");
 
-		Arrays.stream(ctx.getBeanDefinitionNames())
-				.sorted()
-				.forEach(logger::debug);
-	}
+        Arrays.stream(ctx.getBeanDefinitionNames())
+                .sorted()
+                .forEach(logger::debug);
+    }
 }

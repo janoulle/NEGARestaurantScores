@@ -38,6 +38,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -53,32 +54,43 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 public class WatchDir {
 
-    private final WatchService watcher;
-    private final ConcurrentMap<WatchKey,Path> keys;
-    private static ConcurrentMap<String,Boolean> entriesBeingWatched = Maps.newConcurrentMap();
-    private final boolean recursive;
-    private boolean trace = false;
-    private final Path dir;
     private static final Logger logger = LoggerFactory.getLogger(WatchDir.class);
+    private static ConcurrentMap<String, Boolean> entriesBeingWatched = Maps.newConcurrentMap();
+    private final WatchService watcher;
+    private final ConcurrentMap<WatchKey, Path> keys;
+    private final boolean recursive;
+    private final Path dir;
+    private boolean trace = false;
+    private WebPageProcessing webPageProcessing;
     //private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.{html,text}");
+
+    /**
+     * Creates a WatchService and registers the given directory
+     */
+    public WatchDir(Path dir, boolean recursive) throws IOException {
+        this.watcher = FileSystems.getDefault().newWatchService();
+        this.keys = Maps.newConcurrentMap();
+        this.recursive = recursive;
+        this.dir = dir;
+
+        if (recursive) {
+            logger.info(String.format("event=\"Scanning %s ...%n\"", dir));
+            registerAll(dir);
+            logger.info("event=\"scanning done\"");
+        } else {
+            register(dir);
+        }
+
+        // enable trace after initial registration
+        this.trace = true;
+    }
 
     @SuppressWarnings("unchecked")
     static <T> WatchEvent<T> cast(WatchEvent<?> event) {
-        return (WatchEvent<T>)event;
+        return (WatchEvent<T>) event;
     }
 
-    /**
-     * Returns dir if already set. otherwise, returns path in system property 'PATH_TO_PAGE_STORAGE'
-     * @return Path
-     */
-    public Path getPath(){
-        if (dir == null){
-            return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE);
-        }
-        return dir;
-    }
-
-    public static WatchEvent.Kind[] getWatchableEvents(){
+    public static WatchEvent.Kind[] getWatchableEvents() {
         try {
             String[] eventsToWatchFor = WebPageConstants.WATCHABLE_EVENTS.split(",");
             if (eventsToWatchFor.length > 0) {
@@ -94,11 +106,24 @@ public class WatchDir {
                 }
                 return events;
             }
-        }catch(Exception e){
-            logger.error("Error retrieving watchable events",e);
+        } catch (Exception e) {
+            logger.error("Error retrieving watchable events", e);
         }
         return new WatchEvent.Kind[]{ENTRY_CREATE};
     }
+
+    /**
+     * Returns dir if already set. otherwise, returns path in system property 'PATH_TO_PAGE_STORAGE'
+     *
+     * @return Path
+     */
+    public Path getPath() {
+        if (dir == null) {
+            return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE);
+        }
+        return dir;
+    }
+
     /**
      * Register the given directory with the WatchService
      */
@@ -126,38 +151,15 @@ public class WatchDir {
         Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                    throws IOException
-            {
+                    throws IOException {
                 register(dir);
                 return FileVisitResult.CONTINUE;
             }
         });
     }
 
-    /**
-     * Creates a WatchService and registers the given directory
-     */
-    public WatchDir(Path dir, boolean recursive) throws IOException {
-        this.watcher = FileSystems.getDefault().newWatchService();
-        this.keys = Maps.newConcurrentMap();
-        this.recursive = recursive;
-        this.dir = dir;
-
-        if (recursive) {
-            logger.info(String.format("event=\"Scanning %s ...%n\"", dir));
-            registerAll(dir);
-            logger.info("event=\"scanning done\"");
-        } else {
-            register(dir);
-        }
-
-        // enable trace after initial registration
-        this.trace = true;
-    }
-
     public void executeProcess() {
-        WebPageProcessing webPageProcessing = new WebPageProcessing();
-        for (;;) {
+        for (; ; ) {
 
             // wait for key to be signaled
             WatchKey key;
@@ -167,7 +169,7 @@ public class WatchDir {
                 return;
             }
 
-            for (WatchEvent<?> event: key.pollEvents()) {
+            for (WatchEvent<?> event : key.pollEvents()) {
                 WatchEvent.Kind kind = event.kind();
 
                 if (kind == OVERFLOW) {
@@ -194,7 +196,7 @@ public class WatchDir {
                         }
                     }
                 } catch (Exception x) {
-                    logger.error("Error processing triggered watchable event",x);
+                    logger.error("Error processing triggered watchable event", x);
                 }
             }
 
@@ -213,7 +215,7 @@ public class WatchDir {
      * Process all events for keys queued to the watcher
      */
     public void processEventsDefault() {
-        for (;;) {
+        for (; ; ) {
 
             // wait for key to be signalled
             WatchKey key;
@@ -229,7 +231,7 @@ public class WatchDir {
                 continue;
             }
 
-            for (WatchEvent<?> event: key.pollEvents()) {
+            for (WatchEvent<?> event : key.pollEvents()) {
                 WatchEvent.Kind kind = event.kind();
 
                 // TBD - provide example of how OVERFLOW event is handled
@@ -269,5 +271,10 @@ public class WatchDir {
                 }
             }
         }
+    }
+
+    @Autowired
+    public void setWebPageProcessing(WebPageProcessing webPageProcessing) {
+        this.webPageProcessing = webPageProcessing;
     }
 }

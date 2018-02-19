@@ -35,9 +35,12 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.executorSe
 public class WebPageProcessing {
     private static final Logger logger = LoggerFactory.getLogger(WebPageProcessing.class);
     private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
+    private RestaurantRepository restaurantRepository;
 
     @Autowired
-    private RestaurantRepository restaurantRepository;
+    public WebPageProcessing(RestaurantRepository restaurantRepository) {
+        this.restaurantRepository = restaurantRepository;
+    }
 
     public void startProcessingOfDownloadedFiles() {
         try {
@@ -49,14 +52,14 @@ public class WebPageProcessing {
         }
     }
 
-    private void submitAsyncProcessingRequests(File[] files){
+    private void submitAsyncProcessingRequests(File[] files) {
         Stream.of(files).forEach(file -> asyncProcessFile(file.toPath()));
     }
 
     public Optional<ListenableFuture<List<Restaurant>>> asyncProcessFile(Path file) {
         try {
             String countyFile = FilenameUtils.getName(file.getFileName().toString());
-            Preconditions.checkArgument(StringUtils.isNotBlank(countyFile),"Failed to find county file="+file.getFileName());
+            Preconditions.checkArgument(StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
             ListenableFuture<List<Restaurant>> future = executorService.submit(new WebPageProcessAsync(FilesUtil.extractCounty(file), file, doneSignal));
             registerCallbackForFuture(countyFile, future);
             return Optional.of(future);
@@ -76,7 +79,7 @@ public class WebPageProcessing {
 
             @Override
             public void onFailure(Throwable thrown) {
-                logger.error("Failure during Future callback for async file processing",thrown);
+                logger.error("Failure during Future callback for async file processing", thrown);
             }
         });
     }

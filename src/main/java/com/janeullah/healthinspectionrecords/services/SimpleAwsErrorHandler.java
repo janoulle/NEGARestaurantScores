@@ -5,12 +5,12 @@ package com.janeullah.healthinspectionrecords.services;
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *  1)Redistributions of source code must retain the above copyright notice,
- *  this list of conditions and the following disclaimer.
- *  2)Redistributions in binary form must reproduce the above copyright notice,
+ * 1)Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 2)Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *  3)Neither the name of charles-rest nor the names of its
+ * 3)Neither the name of charles-rest nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -34,6 +34,7 @@ import com.amazonaws.http.HttpResponseHandler;
  * https://github.com/opencharles/charles-rest/blob/master/src/main/java/com/amihaiemil/charles/aws/SimpleAwsErrorHandler.java
  * Simple exception handler that returns an {@link AmazonServiceException}
  * containing the HTTP status code and status text.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 1.0.0
@@ -47,6 +48,7 @@ public class SimpleAwsErrorHandler implements HttpResponseHandler<AmazonServiceE
 
     /**
      * Ctor.
+     *
      * @param connectionLeftOpen Should the connection be closed immediately or not?
      */
     public SimpleAwsErrorHandler(boolean connectionLeftOpen) {

@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.constants;
 
 /**
- * Author: jane
+ * Author: Jane Ullah
  * Date:  7/8/2017
  */
 public enum FirebaseNodeNames {
@@ -11,11 +11,11 @@ public enum FirebaseNodeNames {
 
     String nodeName;
 
-    FirebaseNodeNames(String val){
+    FirebaseNodeNames(String val) {
         this.nodeName = val;
     }
 
-    public String getNodeName(){
+    public String getNodeName() {
         return nodeName;
     }
 }

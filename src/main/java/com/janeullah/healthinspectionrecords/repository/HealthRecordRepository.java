@@ -15,7 +15,9 @@ import java.util.List;
 @Repository
 public interface HealthRecordRepository extends JpaRepository<InspectionReport, Long> {
     List<InspectionReport> findByRestaurant(Restaurant restaurant);
+
     //https://spring.io/blog/2011/04/26/advanced-spring-data-jpa-specifications-and-querydsl/
     List<InspectionReport> findByScoreGreaterThan(int marker);
+
     List<InspectionReport> findByScoreBetween(int start, int stop);
 }

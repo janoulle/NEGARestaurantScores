@@ -38,9 +38,10 @@ public class JsoupUtil {
     //10 represents the count of chars in a date e.g. mm/dd/yyyy has exactly 10 chars
     private static final int DATE_CHAR_COUNT = 10;
 
-    private JsoupUtil(){}
+    private JsoupUtil() {
+    }
 
-    private static EstablishmentInfo extractEstablishmentInfoFromElement(Element rowElement){
+    private static EstablishmentInfo extractEstablishmentInfoFromElement(Element rowElement) {
         Element address = rowElement.select(WebSelectorConstants.RESTAURANT_ADDRESS_SELECTOR).first();
         Element name = rowElement.select(WebSelectorConstants.RESTAURANT_NAME_SELECTOR).first();
         EstablishmentInfo info = new EstablishmentInfo();
@@ -64,7 +65,7 @@ public class JsoupUtil {
                 return Optional.of(InspectionType.asInspectionType(type.text().trim()));
             }
         } catch (Exception e) {
-            logger.error("Exception while extracting inspection type from Element {}",rowElement.toString(),e);
+            logger.error("Exception while extracting inspection type from Element {}", rowElement.toString(), e);
         }
         return Optional.empty();
     }
@@ -76,10 +77,10 @@ public class JsoupUtil {
      * @param rowElement Represents a row in the tabular doc
      * @return score as int
      */
-    private static int extractScoreFromElement(Element rowElement){
+    private static int extractScoreFromElement(Element rowElement) {
         Elements potentialScore = rowElement.select(WebSelectorConstants.SCORE_SELECTOR);
         try {
-            if (potentialScore != null){
+            if (potentialScore != null) {
                 List<String> splits = new ArrayList<>();
                 Splitter.on(CharMatcher.WHITESPACE)
                         .trimResults()
@@ -95,13 +96,13 @@ public class JsoupUtil {
                     }
                 }
 
-                if  (StringUtils.isNumeric(lastDigitMatched)) {
+                if (StringUtils.isNumeric(lastDigitMatched)) {
                     Integer scoreVal = Ints.tryParse(lastDigitMatched);
                     return scoreVal != null ? scoreVal : 0;
                 }
             }
         } catch (IllegalArgumentException e) {
-            logger.error("Exception extracting score from rowElement {}",rowElement.toString(),e);
+            logger.error("Exception extracting score from rowElement {}", rowElement.toString(), e);
         }
         return 0;
     }
@@ -112,7 +113,7 @@ public class JsoupUtil {
      * @param rowElement Represents a row in the tabular doc
      * @return JodaTime DateTime object representing the date the inspection was conducted
      */
-    private static Optional<LocalDate> extractMostRecentDateFromElement(Element rowElement){
+    private static Optional<LocalDate> extractMostRecentDateFromElement(Element rowElement) {
         Element when = rowElement.select(WebSelectorConstants.DATE_SELECTOR).first();
         try {
             if (when != null && StringUtils.isNotBlank(when.text())) {
@@ -125,7 +126,7 @@ public class JsoupUtil {
                 return Optional.of(LocalDate.parse(when.text(), InspectionReport.MMddYYYY_PATTERN));
             }
         } catch (UnsupportedOperationException | IllegalArgumentException e) {
-            logger.error("Exception while extracting and parsing the most recent date of an inspection from rowElement {}",rowElement.toString(),e);
+            logger.error("Exception while extracting and parsing the most recent date of an inspection from rowElement {}", rowElement.toString(), e);
         }
         return Optional.empty();
     }
@@ -211,7 +212,7 @@ public class JsoupUtil {
             restaurant.addInspectionReport(report);
             return Optional.of(restaurant);
         } catch (Exception e) {
-            logger.error("Exception while putting together Restaurant POJO from rowElement {}",rowElement.toString(),e);
+            logger.error("Exception while putting together Restaurant POJO from rowElement {}", rowElement.toString(), e);
         }
         return Optional.empty();
     }

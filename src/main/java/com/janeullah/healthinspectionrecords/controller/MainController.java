@@ -48,7 +48,7 @@ public class MainController {
                           ViolationsController violationsController,
                           AwsElasticSearchDocumentService awsElasticSearchDocumentService,
                           LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService,
-                          HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService){
+                          HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService) {
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
         this.restaurantController = restaurantController;
@@ -66,49 +66,49 @@ public class MainController {
     }
 
     @RequestMapping(value = "/testFirebaseConnectivity", method = RequestMethod.GET)
-    public ResponseEntity<HttpStatus> testFirebaseConnectivity(){
+    public ResponseEntity<HttpStatus> testFirebaseConnectivity() {
         return firebaseInitialization.isDatabaseInitialized()
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
     }
 
     @RequestMapping(value = "/initializeFirebaseDB", method = RequestMethod.PUT)
-    public ResponseEntity<HttpStatus> writeRecordsToFirebase(){
+    public ResponseEntity<HttpStatus> writeRecordsToFirebase() {
         return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
     }
 
     @RequestMapping(value = "/seedElasticSearchDBLocal", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> seedElasticSearchDBLocal(){
+    public ResponseEntity<HttpStatus> seedElasticSearchDBLocal() {
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
-        for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+        for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
             updateViolationInformation(flattenedRestaurant);
-            ResponseEntity<String> status = localhostElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(),flattenedRestaurant);
-            if (!status.getStatusCode().is2xxSuccessful()){
-                logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,status.getBody());
+            ResponseEntity<String> status = localhostElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
+            if (!status.getStatusCode().is2xxSuccessful()) {
+                logger.error("Failed to write data about restaurant={} to the db with response={}", flattenedRestaurant, status.getBody());
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //todo: update hibernate query to fetch this info
-    private void updateViolationInformation(FlattenedRestaurant restaurant){
+    private void updateViolationInformation(FlattenedRestaurant restaurant) {
         List<Violation> allViolations = violationsController.findViolationsByRestaurantId(restaurant.getId());
         Map<Severity, Long> mapOfSeverityToViolations = allViolations.stream()
                 .collect(Collectors.groupingBy(Violation::getSeverity, Collectors.counting()));
-        restaurant.setCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations,Severity.CRITICAL,0));
-        restaurant.setNonCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations,Severity.NONCRITICAL,0));
+        restaurant.setCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations, Severity.CRITICAL, 0));
+        restaurant.setNonCriticalViolations(MapUtils.getInteger(mapOfSeverityToViolations, Severity.NONCRITICAL, 0));
     }
 
     @RequestMapping(value = "/seedElasticSearchDBAWS", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> seedElasticSearchDBAWS(){
+    public ResponseEntity<HttpStatus> seedElasticSearchDBAWS() {
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
-        for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+        for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
             updateViolationInformation(flattenedRestaurant);
-            ResponseEntity<HttpStatus> resp = awsElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(),flattenedRestaurant);
-            if (!resp.getStatusCode().is2xxSuccessful()){
-                logger.error("Failed to write data about restaurant={} to the db",flattenedRestaurant);
+            ResponseEntity<HttpStatus> resp = awsElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
+            if (!resp.getStatusCode().is2xxSuccessful()) {
+                logger.error("Failed to write data about restaurant={} to the db", flattenedRestaurant);
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -116,20 +116,20 @@ public class MainController {
 
     //todo: consolidate into single method with clean method of swapping implementation server (aws, heroku, local)
     @RequestMapping(value = "/seedElasticSearchDBHeroku", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku(){
+    public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
         Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantController.fetchAllFlattened();
-        for(FlattenedRestaurant flattenedRestaurant : flattenedRestaurants){
+        for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
             updateViolationInformation(flattenedRestaurant);
-            ResponseEntity<String> resp = herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(),flattenedRestaurant);
-            if (!resp.getStatusCode().is2xxSuccessful()){
-                logger.error("Failed to write data about restaurant={} to the db with response={}",flattenedRestaurant,resp);
+            ResponseEntity<String> resp = herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
+            if (!resp.getStatusCode().is2xxSuccessful()) {
+                logger.error("Failed to write data about restaurant={} to the db with response={}", flattenedRestaurant, resp);
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/printCountiesFromFirebase", method = RequestMethod.GET)
-    public void printCountiesFromFirebase(){
+    public void printCountiesFromFirebase() {
         firebaseInitialization.printCounties();
     }
 }

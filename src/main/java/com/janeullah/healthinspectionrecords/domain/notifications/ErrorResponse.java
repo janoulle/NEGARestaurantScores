@@ -10,7 +10,7 @@ public class ErrorResponse {
     private String message;
     private Throwable throwable;
 
-    public ErrorResponse(String code, String message, Throwable throwable){
+    public ErrorResponse(String code, String message, Throwable throwable) {
         this.code = code;
         this.message = message;
         this.throwable = throwable;

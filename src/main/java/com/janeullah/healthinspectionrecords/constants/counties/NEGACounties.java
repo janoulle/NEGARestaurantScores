@@ -23,17 +23,17 @@ public enum NEGACounties {
 
     String normalizedName;
 
-    NEGACounties(String normalizedName){
+    NEGACounties(String normalizedName) {
         this.normalizedName = normalizedName;
     }
 
-    public String getNormalizedName(){
-        return normalizedName;
-    }
-
-    public static List<String> getAllNEGACounties(){
+    public static List<String> getAllNEGACounties() {
         return Stream.of(NEGACounties.values())
                 .map(NEGACounties::getNormalizedName)
                 .collect(Collectors.toList());
+    }
+
+    public String getNormalizedName() {
+        return normalizedName;
     }
 }

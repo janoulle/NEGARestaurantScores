@@ -20,18 +20,18 @@ import java.util.Date;
  */
 @ControllerAdvice
 public class BaseExceptionHandler {
-    private static Logger logger = LoggerFactory.getLogger(BaseExceptionHandler.class);
     private static final ExceptionMapping DEFAULT_ERROR = new ExceptionMapping(
             "INTERNAL_SERVER_ERROR",
             "Unhandled exception encountered",
             HttpStatus.INTERNAL_SERVER_ERROR);
+    private static Logger logger = LoggerFactory.getLogger(BaseExceptionHandler.class);
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Throwable.class)
     @ResponseBody
     public ErrorResponse handleThrowable(final Throwable ex) {
         logger.error("Unhandled exception encountered", ex);
-        return new ErrorResponse(DEFAULT_ERROR.code,DEFAULT_ERROR.message,ex);
+        return new ErrorResponse(DEFAULT_ERROR.code, DEFAULT_ERROR.message, ex);
     }
 
     /**
@@ -39,12 +39,10 @@ public class BaseExceptionHandler {
      * information and return the "support" view name. This method explicitly
      * creates and returns
      *
-     * @param req
-     *            Current HTTP request.
-     * @param exception
-     *            The exception thrown - always {@link IncompatibleConfigurationException}.
+     * @param req       Current HTTP request.
+     * @param exception The exception thrown - always {@link IncompatibleConfigurationException}.
      * @return The model and view used by the DispatcherServlet to generate
-     *         output.
+     * output.
      * @throws Exception
      */
     @ExceptionHandler(IncompatibleConfigurationException.class)
@@ -54,7 +52,7 @@ public class BaseExceptionHandler {
         if (AnnotationUtils.findAnnotation(exception.getClass(), ResponseStatus.class) != null)
             throw exception;
 
-        logger.error("Request: {} raised ",req.getRequestURI(),exception);
+        logger.error("Request: {} raised ", req.getRequestURI(), exception);
 
         ModelAndView mav = new ModelAndView();
         mav.addObject("exception", exception);
@@ -71,7 +69,7 @@ public class BaseExceptionHandler {
         private String code;
         private HttpStatus status;
 
-        public ExceptionMapping(String code,String message,  HttpStatus status){
+        public ExceptionMapping(String code, String message, HttpStatus status) {
             this.message = message;
             this.code = code;
             this.status = status;
