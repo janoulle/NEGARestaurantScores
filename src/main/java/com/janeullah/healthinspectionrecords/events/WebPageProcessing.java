@@ -26,65 +26,69 @@ import java.util.stream.Stream;
 
 import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.executorService;
 
-/**
- * Author: Jane Ullah
- * Date:  9/17/2016
- */
+/** Author: Jane Ullah Date: 9/17/2016 */
 @Slf4j
 @Component
 public class WebPageProcessing {
-    private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
-    private RestaurantRepository restaurantRepository;
+  private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
+  private RestaurantRepository restaurantRepository;
 
-    @Autowired
-    public WebPageProcessing(RestaurantRepository restaurantRepository) {
-        this.restaurantRepository = restaurantRepository;
+  @Autowired
+  public WebPageProcessing(RestaurantRepository restaurantRepository) {
+    this.restaurantRepository = restaurantRepository;
+  }
+
+  public void startProcessingOfDownloadedFiles() {
+    try {
+      File[] files = FilesUtil.getFilesInDirectory(WebPageConstants.PATH_TO_PAGE_STORAGE);
+      submitAsyncProcessingRequests(files);
+      // TODO: figure out way to wait for all execution to be complete
+    } catch (Exception e) {
+      log.error("Exception in startProcessingOfDownloadedFiles", e);
     }
+  }
 
-    public void startProcessingOfDownloadedFiles() {
-        try {
-            File[] files = FilesUtil.getFilesInDirectory(WebPageConstants.PATH_TO_PAGE_STORAGE);
-            submitAsyncProcessingRequests(files);
-            //TODO: figure out way to wait for all execution to be complete
-        } catch (Exception e) {
-            log.error("Exception in startProcessingOfDownloadedFiles", e);
-        }
+  private void submitAsyncProcessingRequests(File[] files) {
+    Stream.of(files).forEach(file -> asyncProcessFile(file.toPath()));
+  }
+
+  public Optional<ListenableFuture<List<Restaurant>>> asyncProcessFile(Path file) {
+    try {
+      String countyFile = FilenameUtils.getName(file.getFileName().toString());
+      Preconditions.checkArgument(
+          StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
+      ListenableFuture<List<Restaurant>> future =
+          executorService.submit(
+              new WebPageProcessAsync(FilesUtil.extractCounty(file), file, doneSignal));
+      registerCallbackForFuture(countyFile, future);
+      return Optional.of(future);
+    } catch (SecurityException e) {
+      log.error("SecurityException caught during async file processing", e);
     }
+    return Optional.empty();
+  }
 
-    private void submitAsyncProcessingRequests(File[] files) {
-        Stream.of(files).forEach(file -> asyncProcessFile(file.toPath()));
-    }
+  private void registerCallbackForFuture(
+      String countyFile, ListenableFuture<List<Restaurant>> future) {
+    Futures.addCallback(
+        future,
+        new FutureCallback<List<Restaurant>>() {
+          @Override
+          public void onSuccess(List<Restaurant> result) {
+            log.info(
+                "Web Page Processing completed for county: {} size: {}", countyFile, result.size());
+            persistRestaurantData(result);
+          }
 
-    public Optional<ListenableFuture<List<Restaurant>>> asyncProcessFile(Path file) {
-        try {
-            String countyFile = FilenameUtils.getName(file.getFileName().toString());
-            Preconditions.checkArgument(StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
-            ListenableFuture<List<Restaurant>> future = executorService.submit(new WebPageProcessAsync(FilesUtil.extractCounty(file), file, doneSignal));
-            registerCallbackForFuture(countyFile, future);
-            return Optional.of(future);
-        } catch (SecurityException e) {
-            log.error("SecurityException caught during async file processing", e);
-        }
-        return Optional.empty();
-    }
-
-    private void registerCallbackForFuture(String countyFile, ListenableFuture<List<Restaurant>> future) {
-        Futures.addCallback(future, new FutureCallback<List<Restaurant>>() {
-            @Override
-            public void onSuccess(List<Restaurant> result) {
-                log.info("Web Page Processing completed for county: {} size: {}", countyFile, result.size());
-                persistRestaurantData(result);
-            }
-
-            @Override
-            public void onFailure(Throwable thrown) {
-                log.error("Failure during Future callback for async file processing", thrown);
-            }
+          @Override
+          public void onFailure(Throwable thrown) {
+            log.error("Failure during Future callback for async file processing", thrown);
+          }
         });
-    }
+  }
 
-    @Transactional
-    private synchronized void persistRestaurantData(List<Restaurant> restaurants) {
-        restaurantRepository.save(restaurants);
-    }
+  @Transactional
+  private synchronized void persistRestaurantData(List<Restaurant> restaurants) {
+    restaurantRepository.save(restaurants);
+  }
 }

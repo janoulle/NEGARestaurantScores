@@ -34,9 +34,9 @@
             <fileNamePattern>C:\Users\jane\Repositories\Logs\application_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 
             <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
-                <!--11-->
-                <!--<maxFileSize>1KB</maxFileSize>-->
-                <!--12-->
+            <!--11-->
+            <!--<maxFileSize>1KB</maxFileSize>-->
+            <!--12-->
             <!--</triggeringPolicy>-->
 
 
@@ -54,7 +54,7 @@
     </appender>
 
     <root level="DEBUG">
-        <appender-ref ref="CONSOLE_APPENDER" />
+        <appender-ref ref="CONSOLE_APPENDER"/>
         <appender-ref ref="FILE"/>
     </root>
 </configuration>

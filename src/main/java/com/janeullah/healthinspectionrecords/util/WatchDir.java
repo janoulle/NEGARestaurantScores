@@ -54,226 +54,225 @@ import static java.nio.file.StandardWatchEventKinds.*;
 @Slf4j
 public class WatchDir {
 
-    private static ConcurrentMap<String, Boolean> entriesBeingWatched = Maps.newConcurrentMap();
-    private final WatchService watcher;
-    private final ConcurrentMap<WatchKey, Path> keys;
-    private final boolean recursive;
-    private final Path dir;
-    private boolean trace = false;
-    private WebPageProcessing webPageProcessing;
-    //private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.{html,text}");
+  private static ConcurrentMap<String, Boolean> entriesBeingWatched = Maps.newConcurrentMap();
+  private final WatchService watcher;
+  private final ConcurrentMap<WatchKey, Path> keys;
+  private final boolean recursive;
+  private final Path dir;
+  private boolean trace = false;
+  private WebPageProcessing webPageProcessing;
+  // private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.{html,text}");
 
-    /**
-     * Creates a WatchService and registers the given directory
-     */
-    public WatchDir(Path dir, boolean recursive) throws IOException {
-        this.watcher = FileSystems.getDefault().newWatchService();
-        this.keys = Maps.newConcurrentMap();
-        this.recursive = recursive;
-        this.dir = dir;
+  /** Creates a WatchService and registers the given directory */
+  public WatchDir(Path dir, boolean recursive) throws IOException {
+    this.watcher = FileSystems.getDefault().newWatchService();
+    this.keys = Maps.newConcurrentMap();
+    this.recursive = recursive;
+    this.dir = dir;
 
-        if (recursive) {
-            log.info(String.format("event=\"Scanning %s ...%n\"", dir));
-            registerAll(dir);
-            log.info("event=\"scanning done\"");
-        } else {
+    if (recursive) {
+      log.info(String.format("event=\"Scanning %s ...%n\"", dir));
+      registerAll(dir);
+      log.info("event=\"scanning done\"");
+    } else {
+      register(dir);
+    }
+
+    // enable trace after initial registration
+    this.trace = true;
+  }
+
+  @SuppressWarnings("unchecked")
+  static <T> WatchEvent<T> cast(WatchEvent<?> event) {
+    return (WatchEvent<T>) event;
+  }
+
+  public static WatchEvent.Kind[] getWatchableEvents() {
+    try {
+      String[] eventsToWatchFor = WebPageConstants.WATCHABLE_EVENTS.split(",");
+      if (eventsToWatchFor.length > 0) {
+        WatchEvent.Kind[] events = new WatchEvent.Kind[eventsToWatchFor.length];
+        for (int i = 0; i < eventsToWatchFor.length; i++) {
+          if ("ENTRY_CREATE".equalsIgnoreCase(eventsToWatchFor[i])) {
+            events[i] = ENTRY_CREATE;
+          } else if ("ENTRY_MODIFY".equalsIgnoreCase(eventsToWatchFor[i])) {
+            events[i] = ENTRY_MODIFY;
+          } else if ("ENTRY_DELETE".equalsIgnoreCase(eventsToWatchFor[i])) {
+            events[i] = ENTRY_DELETE;
+          }
+        }
+        return events;
+      }
+    } catch (Exception e) {
+      log.error("Error retrieving watchable events", e);
+    }
+    return new WatchEvent.Kind[] {ENTRY_CREATE};
+  }
+
+  /**
+   * Returns dir if already set. otherwise, returns path in system property 'PATH_TO_PAGE_STORAGE'
+   *
+   * @return Path
+   */
+  public Path getPath() {
+    if (dir == null) {
+      return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE);
+    }
+    return dir;
+  }
+
+  /** Register the given directory with the WatchService */
+  private void register(Path dir) throws IOException {
+    WatchKey key = dir.register(watcher, getWatchableEvents());
+    if (trace) {
+      Path prev = keys.get(key);
+      if (prev == null) {
+        log.info(String.format("register_path=\"%s%n\"", dir));
+      } else {
+        if (!dir.equals(prev)) {
+          log.info(String.format("update_path=\"%s -> %s%n\"", prev, dir));
+        }
+      }
+    }
+    keys.put(key, dir);
+  }
+
+  /** Register the given directory, and all its sub-directories, with the WatchService. */
+  private void registerAll(final Path start) throws IOException {
+    // register directory and sub-directories
+    Files.walkFileTree(
+        start,
+        new SimpleFileVisitor<Path>() {
+          @Override
+          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+              throws IOException {
             register(dir);
-        }
-
-        // enable trace after initial registration
-        this.trace = true;
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T> WatchEvent<T> cast(WatchEvent<?> event) {
-        return (WatchEvent<T>) event;
-    }
-
-    public static WatchEvent.Kind[] getWatchableEvents() {
-        try {
-            String[] eventsToWatchFor = WebPageConstants.WATCHABLE_EVENTS.split(",");
-            if (eventsToWatchFor.length > 0) {
-                WatchEvent.Kind[] events = new WatchEvent.Kind[eventsToWatchFor.length];
-                for (int i = 0; i < eventsToWatchFor.length; i++) {
-                    if ("ENTRY_CREATE".equalsIgnoreCase(eventsToWatchFor[i])) {
-                        events[i] = ENTRY_CREATE;
-                    } else if ("ENTRY_MODIFY".equalsIgnoreCase(eventsToWatchFor[i])) {
-                        events[i] = ENTRY_MODIFY;
-                    } else if ("ENTRY_DELETE".equalsIgnoreCase(eventsToWatchFor[i])) {
-                        events[i] = ENTRY_DELETE;
-                    }
-                }
-                return events;
-            }
-        } catch (Exception e) {
-            log.error("Error retrieving watchable events", e);
-        }
-        return new WatchEvent.Kind[]{ENTRY_CREATE};
-    }
-
-    /**
-     * Returns dir if already set. otherwise, returns path in system property 'PATH_TO_PAGE_STORAGE'
-     *
-     * @return Path
-     */
-    public Path getPath() {
-        if (dir == null) {
-            return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE);
-        }
-        return dir;
-    }
-
-    /**
-     * Register the given directory with the WatchService
-     */
-    private void register(Path dir) throws IOException {
-        WatchKey key = dir.register(watcher, getWatchableEvents());
-        if (trace) {
-            Path prev = keys.get(key);
-            if (prev == null) {
-                log.info(String.format("register_path=\"%s%n\"", dir));
-            } else {
-                if (!dir.equals(prev)) {
-                    log.info(String.format("update_path=\"%s -> %s%n\"", prev, dir));
-                }
-            }
-        }
-        keys.put(key, dir);
-    }
-
-    /**
-     * Register the given directory, and all its sub-directories, with the
-     * WatchService.
-     */
-    private void registerAll(final Path start) throws IOException {
-        // register directory and sub-directories
-        Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                    throws IOException {
-                register(dir);
-                return FileVisitResult.CONTINUE;
-            }
+            return FileVisitResult.CONTINUE;
+          }
         });
-    }
+  }
 
-    public void executeProcess() {
-        for (; ; ) {
+  public void executeProcess() {
+    for (; ; ) {
 
-            // wait for key to be signaled
-            WatchKey key;
-            try {
-                key = watcher.take();
-            } catch (InterruptedException x) {
-                return;
-            }
+      // wait for key to be signaled
+      WatchKey key;
+      try {
+        key = watcher.take();
+      } catch (InterruptedException x) {
+        return;
+      }
 
-            for (WatchEvent<?> event : key.pollEvents()) {
-                WatchEvent.Kind kind = event.kind();
+      for (WatchEvent<?> event : key.pollEvents()) {
+        WatchEvent.Kind kind = event.kind();
 
-                if (kind == OVERFLOW) {
-                    continue;
-                }
-
-                //The filename is the context of the event.
-                WatchEvent<Path> ev = cast(event);
-                Path filename = ev.context();
-
-                //Verify that the new file is a text file.
-                try {
-                    //String contentType = Files.probeContentType(child);
-                    //if (!contentType.equals(MediaType.HTML_UTF_8.toString())) {
-                    Path child = dir.resolve(filename);
-                    String friendlyname = FilenameUtils.getName(filename.getFileName().toString());
-                    if (StringUtils.isNotBlank(friendlyname) && friendlyname.endsWith(".html")) {
-                        boolean hasTaskKickedOff = entriesBeingWatched.get(friendlyname) != null && entriesBeingWatched.get(friendlyname);
-                        if (hasTaskKickedOff) {
-                            log.info(String.format("event=\"async task has already been kicked off for filename %s", filename));
-                        } else {
-                            log.info(String.format("event=\"async task is being kicked off for filename %s", filename));
-                            webPageProcessing.asyncProcessFile(child);
-                        }
-                    }
-                } catch (Exception x) {
-                    log.error("Error processing triggered watchable event", x);
-                }
-            }
-
-            //Reset the key -- this step is critical if you want to receive
-            //further watch events. If the key is no longer valid, the directory
-            //is inaccessible so exit the loop.
-            boolean valid = key.reset();
-            if (!valid) {
-                keys.remove(key);
-                break;
-            }
+        if (kind == OVERFLOW) {
+          continue;
         }
-    }
 
-    /**
-     * Process all events for keys queued to the watcher
-     */
-    public void processEventsDefault() {
-        for (; ; ) {
+        // The filename is the context of the event.
+        WatchEvent<Path> ev = cast(event);
+        Path filename = ev.context();
 
-            // wait for key to be signalled
-            WatchKey key;
-            try {
-                key = watcher.take();
-            } catch (InterruptedException x) {
-                return;
+        // Verify that the new file is a text file.
+        try {
+          // String contentType = Files.probeContentType(child);
+          // if (!contentType.equals(MediaType.HTML_UTF_8.toString())) {
+          Path child = dir.resolve(filename);
+          String friendlyname = FilenameUtils.getName(filename.getFileName().toString());
+          if (StringUtils.isNotBlank(friendlyname) && friendlyname.endsWith(".html")) {
+            boolean hasTaskKickedOff =
+                entriesBeingWatched.get(friendlyname) != null
+                    && entriesBeingWatched.get(friendlyname);
+            if (hasTaskKickedOff) {
+              log.info(
+                  String.format(
+                      "event=\"async task has already been kicked off for filename %s", filename));
+            } else {
+              log.info(
+                  String.format(
+                      "event=\"async task is being kicked off for filename %s", filename));
+              webPageProcessing.asyncProcessFile(child);
             }
-
-            Path dir = keys.get(key);
-            if (dir == null) {
-                System.err.println("WatchKey not recognized!!");
-                continue;
-            }
-
-            for (WatchEvent<?> event : key.pollEvents()) {
-                WatchEvent.Kind kind = event.kind();
-
-                // TBD - provide example of how OVERFLOW event is handled
-                if (kind == OVERFLOW) {
-                    continue;
-                }
-
-                // Context for directory entry event is the file name of entry
-                WatchEvent<Path> ev = cast(event);
-                Path name = ev.context();
-                Path child = dir.resolve(name);
-
-                // print out event
-                System.out.format("%s: %s%n", event.kind().name(), child);
-
-                // if directory is created, and watching recursively, then
-                // register it and its sub-directories
-                if (recursive && (kind == ENTRY_CREATE)) {
-                    try {
-                        if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
-                            registerAll(child);
-                        }
-                    } catch (IOException x) {
-                        // ignore to keep sample readbale
-                    }
-                }
-            }
-
-            // reset key and remove from set if directory no longer accessible
-            boolean valid = key.reset();
-            if (!valid) {
-                keys.remove(key);
-
-                // all directories are inaccessible
-                if (keys.isEmpty()) {
-                    break;
-                }
-            }
+          }
+        } catch (Exception x) {
+          log.error("Error processing triggered watchable event", x);
         }
-    }
+      }
 
-    @Autowired
-    public void setWebPageProcessing(WebPageProcessing webPageProcessing) {
-        this.webPageProcessing = webPageProcessing;
+      // Reset the key -- this step is critical if you want to receive
+      // further watch events. If the key is no longer valid, the directory
+      // is inaccessible so exit the loop.
+      boolean valid = key.reset();
+      if (!valid) {
+        keys.remove(key);
+        break;
+      }
     }
+  }
+
+  /** Process all events for keys queued to the watcher */
+  public void processEventsDefault() {
+    for (; ; ) {
+
+      // wait for key to be signalled
+      WatchKey key;
+      try {
+        key = watcher.take();
+      } catch (InterruptedException x) {
+        return;
+      }
+
+      Path dir = keys.get(key);
+      if (dir == null) {
+        System.err.println("WatchKey not recognized!!");
+        continue;
+      }
+
+      for (WatchEvent<?> event : key.pollEvents()) {
+        WatchEvent.Kind kind = event.kind();
+
+        // TBD - provide example of how OVERFLOW event is handled
+        if (kind == OVERFLOW) {
+          continue;
+        }
+
+        // Context for directory entry event is the file name of entry
+        WatchEvent<Path> ev = cast(event);
+        Path name = ev.context();
+        Path child = dir.resolve(name);
+
+        // print out event
+        System.out.format("%s: %s%n", event.kind().name(), child);
+
+        // if directory is created, and watching recursively, then
+        // register it and its sub-directories
+        if (recursive && (kind == ENTRY_CREATE)) {
+          try {
+            if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+              registerAll(child);
+            }
+          } catch (IOException x) {
+            // ignore to keep sample readbale
+          }
+        }
+      }
+
+      // reset key and remove from set if directory no longer accessible
+      boolean valid = key.reset();
+      if (!valid) {
+        keys.remove(key);
+
+        // all directories are inaccessible
+        if (keys.isEmpty()) {
+          break;
+        }
+      }
+    }
+  }
+
+  @Autowired
+  public void setWebPageProcessing(WebPageProcessing webPageProcessing) {
+    this.webPageProcessing = webPageProcessing;
+  }
 }

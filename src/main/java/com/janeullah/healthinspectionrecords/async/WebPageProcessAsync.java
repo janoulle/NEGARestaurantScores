@@ -24,72 +24,72 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
-/**
- * Author: Jane Ullah
- * Date:  9/18/2016
- */
+/** Author: Jane Ullah Date: 9/18/2016 */
 @Slf4j
 public class WebPageProcessAsync implements Callable<List<Restaurant>> {
-    private final CountDownLatch doneSignal;
-    private Path url;
-    private Elements hiddenDivs;
-    private String county;
+  private final CountDownLatch doneSignal;
+  private Path url;
+  private Elements hiddenDivs;
+  private String county;
 
+  public WebPageProcessAsync(String county, Path url, CountDownLatch doneSignal) {
+    this.doneSignal = doneSignal;
+    this.county = county;
+    this.url = url;
+  }
 
-    public WebPageProcessAsync(String county, Path url, CountDownLatch doneSignal) {
-        this.doneSignal = doneSignal;
-        this.county = county;
-        this.url = url;
+  private List<Restaurant> ingestJsoupData() {
+    List<Restaurant> restaurantsInFile = new ArrayList<>();
+    Optional<Elements> jsoupList = processFile();
+    jsoupList.ifPresent(
+        iterable ->
+            iterable.forEach(
+                entry -> {
+                  Optional<Restaurant> restaurant = JsoupUtil.assemblePOJO(entry, hiddenDivs);
+                  restaurant.ifPresent(
+                      createdRestaurant -> {
+                        if (createdRestaurant.getEstablishmentInfo() == null) {
+                          createdRestaurant.setEstablishmentInfo(new EstablishmentInfo());
+                        }
+                        createdRestaurant.getEstablishmentInfo().setCounty(county);
+                        restaurantsInFile.add(createdRestaurant);
+                      });
+                }));
+    return restaurantsInFile;
+  }
+
+  private void setHiddenDivs(Document doc) {
+    try {
+      hiddenDivs =
+          doc.select("div:not([class])")
+              .stream()
+              .filter(entry -> StringUtils.isNumeric(entry.id()))
+              .collect(Collectors.toCollection(Elements::new));
+    } catch (Selector.SelectorParseException e) {
+      log.error("Error setting hidden divs which contain violation explanations", e);
     }
+  }
 
-    private List<Restaurant> ingestJsoupData() {
-        List<Restaurant> restaurantsInFile = new ArrayList<>();
-        Optional<Elements> jsoupList = processFile();
-        jsoupList.ifPresent(iterable -> iterable.forEach(entry -> {
-            Optional<Restaurant> restaurant = JsoupUtil.assemblePOJO(entry, hiddenDivs);
-            restaurant.ifPresent(createdRestaurant -> {
-                if (createdRestaurant.getEstablishmentInfo() == null) {
-                    createdRestaurant.setEstablishmentInfo(new EstablishmentInfo());
-                }
-                createdRestaurant.getEstablishmentInfo().setCounty(county);
-                restaurantsInFile.add(createdRestaurant);
-            });
-        }));
-        return restaurantsInFile;
+  private Optional<Elements> processFile() {
+    try (InputStream in = Files.newInputStream(url)) {
+      Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
+      setHiddenDivs(doc);
+      return Optional.of(doc.select(WebSelectorConstants.ALL_ROW));
+    } catch (Selector.SelectorParseException | IOException e) {
+      log.error("Exception processing the file from url {}", url, e);
     }
+    return Optional.empty();
+  }
 
-    private void setHiddenDivs(Document doc) {
-        try {
-            hiddenDivs = doc.select("div:not([class])")
-                    .stream()
-                    .filter(entry -> StringUtils.isNumeric(entry.id()))
-                    .collect(Collectors.toCollection(Elements::new));
-        } catch (Selector.SelectorParseException e) {
-            log.error("Error setting hidden divs which contain violation explanations", e);
-        }
+  @Override
+  public List<Restaurant> call() throws Exception {
+    try {
+      return ingestJsoupData();
+    } catch (Exception e) {
+      log.error("Exception processing the downloaded web page for  {}", county, e);
+    } finally {
+      doneSignal.countDown();
     }
-
-    private Optional<Elements> processFile() {
-        try (InputStream in = Files.newInputStream(url)) {
-            Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
-            setHiddenDivs(doc);
-            return Optional.of(doc.select(WebSelectorConstants.ALL_ROW));
-        } catch (Selector.SelectorParseException | IOException e) {
-            log.error("Exception processing the file from url {}", url, e);
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Restaurant> call() throws Exception {
-        try {
-            return ingestJsoupData();
-        } catch (Exception e) {
-            log.error("Exception processing the downloaded web page for  {}", county, e);
-        } finally {
-            doneSignal.countDown();
-        }
-        return new ArrayList<>();
-    }
-
+    return new ArrayList<>();
+  }
 }

@@ -13,38 +13,47 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Author: Jane Ullah
- * Date:  9/20/2016
- */
+/** Author: Jane Ullah Date: 9/20/2016 */
 @Slf4j
 @RestController
 @RequestMapping("/violations")
 public class ViolationsController {
-    private ViolationRepository violationRepository;
+  private ViolationRepository violationRepository;
 
-    @Autowired
-    public ViolationsController(ViolationRepository violationRepository) {
-        this.violationRepository = violationRepository;
-    }
+  @Autowired
+  public ViolationsController(ViolationRepository violationRepository) {
+    this.violationRepository = violationRepository;
+  }
 
-    @Cacheable("violationsById")
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Violation getViolationById(@PathVariable("id") long id) {
-        log.info("getting violation id {}", id);
-        return violationRepository.findOne(id);
-    }
+  @Cacheable("violationsById")
+  @RequestMapping(
+    value = "/id/{id}",
+    method = RequestMethod.GET,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public Violation getViolationById(@PathVariable("id") long id) {
+    log.info("getting violation id {}", id);
+    return violationRepository.findOne(id);
+  }
 
-    @Cacheable("violationsByCategory")
-    @RequestMapping(value = "/category/{category}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Violation> getViolationsByCode(@PathVariable("category") String category) {
-        log.info("getting violations by code {}", category);
-        return violationRepository.findByCategory(category);
-    }
+  @Cacheable("violationsByCategory")
+  @RequestMapping(
+    value = "/category/{category}",
+    method = RequestMethod.GET,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public List<Violation> getViolationsByCode(@PathVariable("category") String category) {
+    log.info("getting violations by code {}", category);
+    return violationRepository.findByCategory(category);
+  }
 
-    @Cacheable("violationsByRestaurant")
-    @RequestMapping(value = "/restaurantId/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Violation> findViolationsByRestaurantId(@PathVariable("id") Long id) {
-        return violationRepository.findViolationsByRestaurantId(id);
-    }
+  @Cacheable("violationsByRestaurant")
+  @RequestMapping(
+    value = "/restaurantId/{id}",
+    method = RequestMethod.GET,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public List<Violation> findViolationsByRestaurantId(@PathVariable("id") Long id) {
+    return violationRepository.findViolationsByRestaurantId(id);
+  }
 }

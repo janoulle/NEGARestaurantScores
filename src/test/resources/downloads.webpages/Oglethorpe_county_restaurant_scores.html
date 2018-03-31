@@ -1,8 +1,8 @@
 <html>
-	<head>
-		<link rel="Stylesheet" href="inspection_051508.css" type="text/css">
-		<script type="text/javascript" src="scores_032408.js"></script> 
-		<script type="text/javascript">
+<head>
+    <link rel="Stylesheet" href="inspection_051508.css" type="text/css">
+    <script type="text/javascript" src="scores_032408.js"></script>
+    <script type="text/javascript">
 			$(document).ready(function() { 
 				$("#new").tablesorter();
 				$("#new").bind("sortEnd",function() { 
@@ -25,814 +25,787 @@
 			}
 							     
 
-		</script>
-		<title>
-			 County Restaurant Scores
-		</title>
-		<style>
+
+    </script>
+    <title>
+        County Restaurant Scores
+    </title>
+    <style>
 			.hidden { display:none; }
 			#overlay { position:absolute; margin-left:25%; top:375px; width:180px; height:35px; padding:20px;
 				font-size:2em; text-align:center; color:#777; background-color:white; }
 			#overlay img { float:left; padding-right:20px; }
-		</style>
-	</head>
 
-	<body>
+    </style>
+</head>
 
-	<div id="container">
+<body>
 
-	<div id="overlay">
-		<img src="throbberblue.gif" alt="Loading..." /> Loading...
-	</div>
+<div id="container">
 
-
-	<div id="title">
-		<img alt="Northeast Health District Restaurant Scores" src="mapBanner6.png"/>
-	</div>
+    <div id="overlay">
+        <img src="throbberblue.gif" alt="Loading..."/> Loading...
+    </div>
 
 
-	<div class="view">
-
-		<div class="key"> 
-			<div class="name">Key and Explanation</div>
-			<table class="key">
-				<tr>
-					<td class="red_label">High Risk</td>
-					<td class="red_def">
-						One or More Critical Violations (9 points each)
-					</td>
-				</tr>
-				<tr>
-					<td class="green_label">Low Risk</td>
-					<td class="green_def">
-						No Critical Violations and a score of 90 or above <br/>&nbsp;
-					</td>
-				</tr>
-			</table>
-			</div>
-		</div>
-		<div class="notes">
-			<ul>
-				<li> Violations marked in <b>bold</b> are <b>Critical Violations</b></li>
-				<li> If a restaurant receives a failing score for an inspection, a score of less than 70, then they will receive a follow-up inspection within 10 days</li>
-				<li> Roll your mouse over the violation text to view the inspector's observations</li>
-				<li> Click a column header to resort on that column </li>
-			</ul>
-		</div>
-
-		<div class="header">
-			<div class="title">
-				Oglethorpe County 
-			</div>
-	
-			<div class="report_date">
-				Updated:  March 26, 2017
-			</div>
-
-			<div>
-			<form name="eh">
-				<select id="countypick" name="countypick">
-					<option value="" selected>Click to select another county...</option>
-					<option value="Greene_county_restaurant_scores.html">Greene County</option><option value="Elbert_county_restaurant_scores.html">Elbert County</option><option value="Barrow_county_restaurant_scores.html">Barrow County</option><option value="Jackson_county_restaurant_scores.html">Jackson County</option><option value="Morgan_county_restaurant_scores.html">Morgan County</option><option value="Walton_county_restaurant_scores.html">Walton County</option><option value="Madison_county_restaurant_scores.html">Madison County</option><option value="Clarke_county_restaurant_scores.html">Clarke County</option><option value="Oconee_county_restaurant_scores.html">Oconee County</option>
-				</select>
-			</form>
-			</div>
-			<div>
-				Back to <a href="http://www.publichealthathens.com">publichealthathens.com</a>
-			</div>
-			<div style="padding-top:40px">
-				<b>Group by Name</b> | <a href="Oglethorpe_county_restaurant_grouped_scores.html">Group by Score</a>
-			</div>
-		</div>
+    <div id="title">
+        <img alt="Northeast Health District Restaurant Scores" src="mapBanner6.png"/>
+    </div>
 
 
-		<table class="sorted" id="new" style="display:none">
-			<thead>
-			<tr>
-				<th id="grade">Score</th> 
-				<th id="estab">Establishment</th> 
-				<th id="type">Type</th> 
-				<th id="date">Date</th> 
-				<th class="hidden"></th>
-				<th id="violation">Critical Violations</th> 
-			</tr>
-			</thead>
+    <div class="view">
 
-			<tbody>
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					92
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Blazers of Lexington LLC</div>
-					<div class="estab_addr">640 Athens Rd Lexington GA, 30648</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					06/23/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_46923">
-						<a href="Javascript:displayNonCrit(46923)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_46923">
-						
-						<div class="ncrit">
-					 		<a id="crit_98253" href="$98253?width=300" class="betterTip" title="$content">Violation of : 4-2B. Food-contact surfaces: cleaned & sanitized</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_98286" href="$98286?width=300" class="betterTip" title="$content">Violation of : 15C. Nonfood-contact surfaces clean</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_98292" href="$98292?width=300" class="betterTip" title="$content">Violation of : 17C. Physical facilities installed, maintained, and clean</a>
-						</div>
-						
-					</div>
-					
+        <div class="key">
+            <div class="name">Key and Explanation</div>
+            <table class="key">
+                <tr>
+                    <td class="red_label">High Risk</td>
+                    <td class="red_def">
+                        One or More Critical Violations (9 points each)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="green_label">Low Risk</td>
+                    <td class="green_def">
+                        No Critical Violations and a score of 90 or above <br/>&nbsp;
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="notes">
+        <ul>
+            <li> Violations marked in <b>bold</b> are <b>Critical Violations</b></li>
+            <li> If a restaurant receives a failing score for an inspection, a score of less than 70, then they will
+                receive a follow-up inspection within 10 days
+            </li>
+            <li> Roll your mouse over the violation text to view the inspector's observations</li>
+            <li> Click a column header to resort on that column</li>
+        </ul>
+    </div>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="yellow">
-					84
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Chicken Express</div>
-					<div class="estab_addr">643 Athens  Road Lexington GA, 30648</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					06/22/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_46919">
-						<a href="Javascript:displayNonCrit(46919)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_46919">
-						
-						<div class="ncrit">
-					 		<a id="crit_98017" href="$98017?width=300" class="betterTip" title="$content">Violation of : 4-2B. Food-contact surfaces: cleaned & sanitized</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_98028" href="$98028?width=300" class="betterTip" title="$content">Violation of : 8-2B. Toxic substances properly identified, stored, used</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_98055" href="$98055?width=300" class="betterTip" title="$content">Violation of : 17B. Garbage/refuse properly disposed; facilities maintained</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_98056" href="$98056?width=300" class="betterTip" title="$content">Violation of : 17C. Physical facilities installed, maintained, and clean</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_98058" href="$98058?width=300" class="betterTip" title="$content">Violation of : 18. Insects, rodents, and animals not present</a>
-						</div>
-						
-					</div>
-					
+    <div class="header">
+        <div class="title">
+            Oglethorpe County
+        </div>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					96
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Chill Spot</div>
-					<div class="estab_addr">777 Athens Road Lexington GA, 30648</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/22/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_48115">
-						<a href="Javascript:displayNonCrit(48115)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_48115">
-						
-						<div class="ncrit">
-					 		<a id="crit_166035" href="$166035?width=300" class="betterTip" title="$content">Violation of : 2-2D. Adequate handwashing facilities supplied & accessible</a>
-						</div>
-						
-					</div>
-					
+        <div class="report_date">
+            Updated: March 26, 2017
+        </div>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					100
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">COUNTRYSIDE CATERING</div>
-					<div class="estab_addr">20 BUSBIN DR. WINTERVILLE GA, 30683</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/22/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
+        <div>
+            <form name="eh">
+                <select id="countypick" name="countypick">
+                    <option value="" selected>Click to select another county...</option>
+                    <option value="Greene_county_restaurant_scores.html">Greene County</option>
+                    <option value="Elbert_county_restaurant_scores.html">Elbert County</option>
+                    <option value="Barrow_county_restaurant_scores.html">Barrow County</option>
+                    <option value="Jackson_county_restaurant_scores.html">Jackson County</option>
+                    <option value="Morgan_county_restaurant_scores.html">Morgan County</option>
+                    <option value="Walton_county_restaurant_scores.html">Walton County</option>
+                    <option value="Madison_county_restaurant_scores.html">Madison County</option>
+                    <option value="Clarke_county_restaurant_scores.html">Clarke County</option>
+                    <option value="Oconee_county_restaurant_scores.html">Oconee County</option>
+                </select>
+            </form>
+        </div>
+        <div>
+            Back to <a href="http://www.publichealthathens.com">publichealthathens.com</a>
+        </div>
+        <div style="padding-top:40px">
+            <b>Group by Name</b> | <a href="Oglethorpe_county_restaurant_grouped_scores.html">Group by Score</a>
+        </div>
+    </div>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="red">
-					84
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Golden Panda</div>
-					<div class="estab_addr">777 Athens Rd Ste. 105 Lexington GA, 30648</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					01/11/2017 
-				</td>
-				<td class="hidden">1</td>
-				<td align="left">
-					
-					
-					<div class="crit">
-					 	<a id="crit_165923" href="$165923?width=300" class="betterTip" title="$content">Violation of : 4-1A. Food separated and protected</a>
-					</div>
-					
-					
-					
-					<div class="ncrit" id="noncrita_48112">
-						<a href="Javascript:displayNonCrit(48112)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_48112">
-						
-						<div class="ncrit">
-					 		<a id="crit_165942" href="$165942?width=300" class="betterTip" title="$content">Violation of : 10D. Food properly labeled; original container</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_165950" href="$165950?width=300" class="betterTip" title="$content">Violation of : 12D. Washing fruits and vegetables</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_165954" href="$165954?width=300" class="betterTip" title="$content">Violation of : 14B. Utensils, equipment and linens: properly stored, dried, handled</a>
-						</div>
-						
-					</div>
-					
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					100
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">OGLETHORPE CO. High School</div>
-					<div class="estab_addr">749 Athens Rd LEXINGTON GA, 30648</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/15/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
+    <table class="sorted" id="new" style="display:none">
+        <thead>
+        <tr>
+            <th id="grade">Score</th>
+            <th id="estab">Establishment</th>
+            <th id="type">Type</th>
+            <th id="date">Date</th>
+            <th class="hidden"></th>
+            <th id="violation">Critical Violations</th>
+        </tr>
+        </thead>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					100
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">OGLETHORPE COUNTY ELEMENTARY S</div>
-					<div class="estab_addr"> LEXINGTON GA, </div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/14/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
+        <tbody>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					99
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Oglethorpe County Jail</div>
-					<div class="estab_addr">115 Buddy Faust Road Crawford GA, 30630</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					03/03/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_46953">
-						<a href="Javascript:displayNonCrit(46953)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_46953">
-						
-						<div class="ncrit">
-					 		<a id="crit_100120" href="$100120?width=300" class="betterTip" title="$content">Violation of : 17B. Garbage/refuse properly disposed; facilities maintained</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_100121" href="$100121?width=300" class="betterTip" title="$content">Violation of : 17C. Physical facilities installed, maintained, and clean</a>
-						</div>
-						
-					</div>
-					
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					100
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Oglethorpe County Middle School</div>
-					<div class="estab_addr">270 Buddy Faust Rd Crawford GA, 30630</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/15/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
+        <tr>
+            <td align="center" class="green">
+                92
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					100
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">OGLETHORPE COUNTY PRIMARY SCHOOL</div>
-					<div class="estab_addr">300 Comer Road LEXINGTON GA, 30648</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/15/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
+            </td>
+            <td align="left">
+                <div class="estab_name">Blazers of Lexington LLC</div>
+                <div class="estab_addr">640 Athens Rd Lexington GA, 30648</div>
+            </td>
+            <td align="left" class="type">
+                Routine
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					96
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">OGLETHORPE COUNTY SENIOR CENT.</div>
-					<div class="estab_addr"> CRAWFORD GA, 30630</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					03/03/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_46920">
-						<a href="Javascript:displayNonCrit(46920)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_46920">
-						
-						<div class="ncrit">
-					 		<a id="crit_98076" href="$98076?width=300" class="betterTip" title="$content">Violation of : 4-2B. Food-contact surfaces: cleaned & sanitized</a>
-						</div>
-						
-					</div>
-					
+            </td>
+            <td align="right" class="date">
+                06/23/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					93
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">PAPA'S PIZZA TO GO</div>
-					<div class="estab_addr">1151 ATHENS RD. CRAWFORD GA, 30630</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/21/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_48121">
-						<a href="Javascript:displayNonCrit(48121)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_48121">
-						
-						<div class="ncrit">
-					 		<a id="crit_166409" href="$166409?width=300" class="betterTip" title="$content">Violation of : 8-2B. Toxic substances properly identified, stored, used</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_166429" href="$166429?width=300" class="betterTip" title="$content">Violation of : 15A. Food and nonfood-contact surfaces cleanable, properly designed, constructed, and used</a>
-						</div>
-						
-					</div>
-					
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					98
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">PIG-O'S - Food Truck</div>
-					<div class="estab_addr">5706 Hwy 29N  Danielsville GA, 30633</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					10/06/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_47433">
-						<a href="Javascript:displayNonCrit(47433)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_47433">
-						
-						<div class="ncrit">
-					 		<a id="crit_124896" href="$124896?width=300" class="betterTip" title="$content">Violation of : 16A. Hot and cold water available; adequate pressure</a>
-						</div>
-						
-					</div>
-					
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					98
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">QUIET OAKS HEALTH CARE</div>
-					<div class="estab_addr">125 Quiet Oaks Dr. CRAWFORD GA, 30630</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/21/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_48119">
-						<a href="Javascript:displayNonCrit(48119)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_48119">
-						
-						<div class="ncrit">
-					 		<a id="crit_166378" href="$166378?width=300" class="betterTip" title="$content">Violation of : 17C. Physical facilities installed, maintained, and clean</a>
-						</div>
-						
-					</div>
-					
+                <div class="ncrit" id="noncrita_46923">
+                    <a href="Javascript:displayNonCrit(46923)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_46923">
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					100
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Sanders Down Home BBQ</div>
-					<div class="estab_addr">3078 Elberton Rd Carlton GA, 30627</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					10/27/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
+                    <div class="ncrit">
+                        <a id="crit_98253" href="$98253?width=300" class="betterTip" title="$content">Violation of :
+                            4-2B. Food-contact surfaces: cleaned & sanitized</a>
+                    </div>
 
-				</td>
-			</tr> 
-			
-			
-			
-				
-				  
-				  
-				  
-			<tr>
-				<td align="center" class="green">
-					97
-					
-				</td> 
-				<td align="left"> 
-					<div class="estab_name">Subway</div>
-					<div class="estab_addr">726 Athens Rd Lexington GA, 30648</div>
-				</td>
-				<td align="left" class="type">
-					Routine
-					
-				</td>
-				<td align="right" class="date">
-					12/22/2016 
-				</td>
-				<td class="hidden">0</td>
-				<td align="left">
-					
-					<div class="ncrit">
-						No Critical Violations
-					</div>
-					
-					
-					<div class="ncrit" id="noncrita_48118">
-						<a href="Javascript:displayNonCrit(48118)">Display Non-Critical Violations</a>
-					</div>
-					<div style="display:none" id="noncrit_48118">
-						
-						<div class="ncrit">
-					 		<a id="crit_168845" href="$168845?width=300" class="betterTip" title="$content">Violation of : 14B. Utensils, equipment and linens: properly stored, dried, handled</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_168848" href="$168848?width=300" class="betterTip" title="$content">Violation of : 15A. Food and nonfood-contact surfaces cleanable, properly designed, constructed, and used</a>
-						</div>
-						
-						<div class="ncrit">
-					 		<a id="crit_168855" href="$168855?width=300" class="betterTip" title="$content">Violation of : 17B. Garbage/refuse properly disposed; facilities maintained</a>
-						</div>
-						
-					</div>
-					
+                    <div class="ncrit">
+                        <a id="crit_98286" href="$98286?width=300" class="betterTip" title="$content">Violation of :
+                            15C. Nonfood-contact surfaces clean</a>
+                    </div>
 
-				</td>
-			</tr> 
-			
-			
-			
-			</tbody>
-		</table>
+                    <div class="ncrit">
+                        <a id="crit_98292" href="$98292?width=300" class="betterTip" title="$content">Violation of :
+                            17C. Physical facilities installed, maintained, and clean</a>
+                    </div>
 
-		<div id="98253" style="display:none;"></div><div id="98286" style="display:none;"></div><div id="98292" style="display:none;"></div><div id="98017" style="display:none;"></div><div id="98028" style="display:none;"></div><div id="98055" style="display:none;"></div><div id="98056" style="display:none;"></div><div id="98058" style="display:none;"></div><div id="166035" style="display:none;">No paper towels @ HW sink in dish room.</div><div id="165923" style="display:none;">Raw shrimp over cooked shrimp in WI. COS, shrimp moved to raw shelf;cooked items stored in covered bins so not discarded.</div><div id="165942" style="display:none;">White bins not labeled with contents; flour,sugar,etc</div><div id="165950" style="display:none;">Vegetable sink used for chicken thaw</div><div id="165954" style="display:none;">Stacking pans wet</div><div id="100120" style="display:none;">Dumpster missing drainplug and lid</div><div id="100121" style="display:none;">Mop in bucket, not hung to dry</div><div id="98076" style="display:none;"></div><div id="166409" style="display:none;">Using non-commercial bleach</div><div id="166429" style="display:none;">Freezer and microwave are not commercial</div><div id="124896" style="display:none;">No hot water in RR</div><div id="166378" style="display:none;">Floor in dry storage chipping near drain.</div><div id="168845" style="display:none;">Pans stacked wet</div><div id="168848" style="display:none;">HW sink not sealed to wall</div><div id="168855" style="display:none;">Drainplug missing from dumpster.</div>
-		
-		
-	</div>
-	</div>
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="yellow">
+                84
+
+            </td>
+            <td align="left">
+                <div class="estab_name">Chicken Express</div>
+                <div class="estab_addr">643 Athens Road Lexington GA, 30648</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                06/22/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_46919">
+                    <a href="Javascript:displayNonCrit(46919)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_46919">
+
+                    <div class="ncrit">
+                        <a id="crit_98017" href="$98017?width=300" class="betterTip" title="$content">Violation of :
+                            4-2B. Food-contact surfaces: cleaned & sanitized</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_98028" href="$98028?width=300" class="betterTip" title="$content">Violation of :
+                            8-2B. Toxic substances properly identified, stored, used</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_98055" href="$98055?width=300" class="betterTip" title="$content">Violation of :
+                            17B. Garbage/refuse properly disposed; facilities maintained</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_98056" href="$98056?width=300" class="betterTip" title="$content">Violation of :
+                            17C. Physical facilities installed, maintained, and clean</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_98058" href="$98058?width=300" class="betterTip" title="$content">Violation of : 18.
+                            Insects, rodents, and animals not present</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                96
+
+            </td>
+            <td align="left">
+                <div class="estab_name">Chill Spot</div>
+                <div class="estab_addr">777 Athens Road Lexington GA, 30648</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/22/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_48115">
+                    <a href="Javascript:displayNonCrit(48115)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_48115">
+
+                    <div class="ncrit">
+                        <a id="crit_166035" href="$166035?width=300" class="betterTip" title="$content">Violation of :
+                            2-2D. Adequate handwashing facilities supplied & accessible</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                100
+
+            </td>
+            <td align="left">
+                <div class="estab_name">COUNTRYSIDE CATERING</div>
+                <div class="estab_addr">20 BUSBIN DR. WINTERVILLE GA, 30683</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/22/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="red">
+                84
+
+            </td>
+            <td align="left">
+                <div class="estab_name">Golden Panda</div>
+                <div class="estab_addr">777 Athens Rd Ste. 105 Lexington GA, 30648</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                01/11/2017
+            </td>
+            <td class="hidden">1</td>
+            <td align="left">
+
+
+                <div class="crit">
+                    <a id="crit_165923" href="$165923?width=300" class="betterTip" title="$content">Violation of : 4-1A.
+                        Food separated and protected</a>
+                </div>
+
+
+                <div class="ncrit" id="noncrita_48112">
+                    <a href="Javascript:displayNonCrit(48112)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_48112">
+
+                    <div class="ncrit">
+                        <a id="crit_165942" href="$165942?width=300" class="betterTip" title="$content">Violation of :
+                            10D. Food properly labeled; original container</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_165950" href="$165950?width=300" class="betterTip" title="$content">Violation of :
+                            12D. Washing fruits and vegetables</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_165954" href="$165954?width=300" class="betterTip" title="$content">Violation of :
+                            14B. Utensils, equipment and linens: properly stored, dried, handled</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                100
+
+            </td>
+            <td align="left">
+                <div class="estab_name">OGLETHORPE CO. High School</div>
+                <div class="estab_addr">749 Athens Rd LEXINGTON GA, 30648</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/15/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                100
+
+            </td>
+            <td align="left">
+                <div class="estab_name">OGLETHORPE COUNTY ELEMENTARY S</div>
+                <div class="estab_addr"> LEXINGTON GA,</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/14/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                99
+
+            </td>
+            <td align="left">
+                <div class="estab_name">Oglethorpe County Jail</div>
+                <div class="estab_addr">115 Buddy Faust Road Crawford GA, 30630</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                03/03/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_46953">
+                    <a href="Javascript:displayNonCrit(46953)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_46953">
+
+                    <div class="ncrit">
+                        <a id="crit_100120" href="$100120?width=300" class="betterTip" title="$content">Violation of :
+                            17B. Garbage/refuse properly disposed; facilities maintained</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_100121" href="$100121?width=300" class="betterTip" title="$content">Violation of :
+                            17C. Physical facilities installed, maintained, and clean</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                100
+
+            </td>
+            <td align="left">
+                <div class="estab_name">Oglethorpe County Middle School</div>
+                <div class="estab_addr">270 Buddy Faust Rd Crawford GA, 30630</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/15/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                100
+
+            </td>
+            <td align="left">
+                <div class="estab_name">OGLETHORPE COUNTY PRIMARY SCHOOL</div>
+                <div class="estab_addr">300 Comer Road LEXINGTON GA, 30648</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/15/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                96
+
+            </td>
+            <td align="left">
+                <div class="estab_name">OGLETHORPE COUNTY SENIOR CENT.</div>
+                <div class="estab_addr"> CRAWFORD GA, 30630</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                03/03/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_46920">
+                    <a href="Javascript:displayNonCrit(46920)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_46920">
+
+                    <div class="ncrit">
+                        <a id="crit_98076" href="$98076?width=300" class="betterTip" title="$content">Violation of :
+                            4-2B. Food-contact surfaces: cleaned & sanitized</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                93
+
+            </td>
+            <td align="left">
+                <div class="estab_name">PAPA'S PIZZA TO GO</div>
+                <div class="estab_addr">1151 ATHENS RD. CRAWFORD GA, 30630</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/21/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_48121">
+                    <a href="Javascript:displayNonCrit(48121)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_48121">
+
+                    <div class="ncrit">
+                        <a id="crit_166409" href="$166409?width=300" class="betterTip" title="$content">Violation of :
+                            8-2B. Toxic substances properly identified, stored, used</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_166429" href="$166429?width=300" class="betterTip" title="$content">Violation of :
+                            15A. Food and nonfood-contact surfaces cleanable, properly designed, constructed, and
+                            used</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                98
+
+            </td>
+            <td align="left">
+                <div class="estab_name">PIG-O'S - Food Truck</div>
+                <div class="estab_addr">5706 Hwy 29N Danielsville GA, 30633</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                10/06/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_47433">
+                    <a href="Javascript:displayNonCrit(47433)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_47433">
+
+                    <div class="ncrit">
+                        <a id="crit_124896" href="$124896?width=300" class="betterTip" title="$content">Violation of :
+                            16A. Hot and cold water available; adequate pressure</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                98
+
+            </td>
+            <td align="left">
+                <div class="estab_name">QUIET OAKS HEALTH CARE</div>
+                <div class="estab_addr">125 Quiet Oaks Dr. CRAWFORD GA, 30630</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/21/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_48119">
+                    <a href="Javascript:displayNonCrit(48119)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_48119">
+
+                    <div class="ncrit">
+                        <a id="crit_166378" href="$166378?width=300" class="betterTip" title="$content">Violation of :
+                            17C. Physical facilities installed, maintained, and clean</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                100
+
+            </td>
+            <td align="left">
+                <div class="estab_name">Sanders Down Home BBQ</div>
+                <div class="estab_addr">3078 Elberton Rd Carlton GA, 30627</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                10/27/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="green">
+                97
+
+            </td>
+            <td align="left">
+                <div class="estab_name">Subway</div>
+                <div class="estab_addr">726 Athens Rd Lexington GA, 30648</div>
+            </td>
+            <td align="left" class="type">
+                Routine
+
+            </td>
+            <td align="right" class="date">
+                12/22/2016
+            </td>
+            <td class="hidden">0</td>
+            <td align="left">
+
+                <div class="ncrit">
+                    No Critical Violations
+                </div>
+
+
+                <div class="ncrit" id="noncrita_48118">
+                    <a href="Javascript:displayNonCrit(48118)">Display Non-Critical Violations</a>
+                </div>
+                <div style="display:none" id="noncrit_48118">
+
+                    <div class="ncrit">
+                        <a id="crit_168845" href="$168845?width=300" class="betterTip" title="$content">Violation of :
+                            14B. Utensils, equipment and linens: properly stored, dried, handled</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_168848" href="$168848?width=300" class="betterTip" title="$content">Violation of :
+                            15A. Food and nonfood-contact surfaces cleanable, properly designed, constructed, and
+                            used</a>
+                    </div>
+
+                    <div class="ncrit">
+                        <a id="crit_168855" href="$168855?width=300" class="betterTip" title="$content">Violation of :
+                            17B. Garbage/refuse properly disposed; facilities maintained</a>
+                    </div>
+
+                </div>
+
+
+            </td>
+        </tr>
+
+
+        </tbody>
+    </table>
+
+    <div id="98253" style="display:none;"></div>
+    <div id="98286" style="display:none;"></div>
+    <div id="98292" style="display:none;"></div>
+    <div id="98017" style="display:none;"></div>
+    <div id="98028" style="display:none;"></div>
+    <div id="98055" style="display:none;"></div>
+    <div id="98056" style="display:none;"></div>
+    <div id="98058" style="display:none;"></div>
+    <div id="166035" style="display:none;">No paper towels @ HW sink in dish room.</div>
+    <div id="165923" style="display:none;">Raw shrimp over cooked shrimp in WI. COS, shrimp moved to raw shelf;cooked
+        items stored in covered bins so not discarded.
+    </div>
+    <div id="165942" style="display:none;">White bins not labeled with contents; flour,sugar,etc</div>
+    <div id="165950" style="display:none;">Vegetable sink used for chicken thaw</div>
+    <div id="165954" style="display:none;">Stacking pans wet</div>
+    <div id="100120" style="display:none;">Dumpster missing drainplug and lid</div>
+    <div id="100121" style="display:none;">Mop in bucket, not hung to dry</div>
+    <div id="98076" style="display:none;"></div>
+    <div id="166409" style="display:none;">Using non-commercial bleach</div>
+    <div id="166429" style="display:none;">Freezer and microwave are not commercial</div>
+    <div id="124896" style="display:none;">No hot water in RR</div>
+    <div id="166378" style="display:none;">Floor in dry storage chipping near drain.</div>
+    <div id="168845" style="display:none;">Pans stacked wet</div>
+    <div id="168848" style="display:none;">HW sink not sealed to wall</div>
+    <div id="168855" style="display:none;">Drainplug missing from dumpster.</div>
+
+
+</div>
+</div>
 </body>
 </html>
