@@ -1,7 +1,6 @@
 package com.janeullah.healthinspectionrecords;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,21 +10,21 @@ import org.springframework.context.annotation.ComponentScan;
 
 import java.util.Arrays;
 
+@Slf4j
 @ComponentScan(basePackages = {"com.janeullah.healthinspectionrecords"})
 @SpringBootApplication
 @EnableCaching
 public class RestaurantScoresApplication {
-    private static final Logger logger = LoggerFactory.getLogger(RestaurantScoresApplication.class);
 
     @Autowired
     ApplicationContext applicationContext;
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(RestaurantScoresApplication.class, args);
-        logger.debug("Beans provided by the Restaurant Scores application");
+        log.debug("Beans provided by the Restaurant Scores application");
 
         Arrays.stream(ctx.getBeanDefinitionNames())
                 .sorted()
-                .forEach(logger::debug);
+                .forEach(log::debug);
     }
 }

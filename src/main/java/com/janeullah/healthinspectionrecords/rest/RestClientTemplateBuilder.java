@@ -1,11 +1,10 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -21,9 +20,9 @@ import java.security.cert.X509Certificate;
  * Author: Jane Ullah
  * Date:  9/24/2017
  */
+@Slf4j
 @Component
 public class RestClientTemplateBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(RestClientTemplateBuilder.class);
 
     public RestTemplate httpsRestTemplate() {
         try {
@@ -45,7 +44,7 @@ public class RestClientTemplateBuilder {
             requestFactory.setHttpClient(httpClient);
             return new RestTemplate(requestFactory);
         } catch (KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
-            logger.error("Failed to configure rest template", ex);
+            log.error("Failed to configure rest template", ex);
             throw new IllegalArgumentException(ex);
         }
     }

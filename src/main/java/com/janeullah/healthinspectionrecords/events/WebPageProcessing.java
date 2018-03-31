@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.events;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.FutureCallback;
@@ -10,10 +10,9 @@ import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.ExecutorUtil;
 import com.janeullah.healthinspectionrecords.util.FilesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,9 +30,9 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.executorSe
  * Author: Jane Ullah
  * Date:  9/17/2016
  */
+@Slf4j
 @Component
 public class WebPageProcessing {
-    private static final Logger logger = LoggerFactory.getLogger(WebPageProcessing.class);
     private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
     private RestaurantRepository restaurantRepository;
 
@@ -48,7 +47,7 @@ public class WebPageProcessing {
             submitAsyncProcessingRequests(files);
             //TODO: figure out way to wait for all execution to be complete
         } catch (Exception e) {
-            logger.error("Exception in startProcessingOfDownloadedFiles", e);
+            log.error("Exception in startProcessingOfDownloadedFiles", e);
         }
     }
 
@@ -64,7 +63,7 @@ public class WebPageProcessing {
             registerCallbackForFuture(countyFile, future);
             return Optional.of(future);
         } catch (SecurityException e) {
-            logger.error("SecurityException caught during async file processing", e);
+            log.error("SecurityException caught during async file processing", e);
         }
         return Optional.empty();
     }
@@ -73,13 +72,13 @@ public class WebPageProcessing {
         Futures.addCallback(future, new FutureCallback<List<Restaurant>>() {
             @Override
             public void onSuccess(List<Restaurant> result) {
-                logger.info("Web Page Processing completed for county: {} size: {}", countyFile, result.size());
+                log.info("Web Page Processing completed for county: {} size: {}", countyFile, result.size());
                 persistRestaurantData(result);
             }
 
             @Override
             public void onFailure(Throwable thrown) {
-                logger.error("Failure during Future callback for async file processing", thrown);
+                log.error("Failure during Future callback for async file processing", thrown);
             }
         });
     }

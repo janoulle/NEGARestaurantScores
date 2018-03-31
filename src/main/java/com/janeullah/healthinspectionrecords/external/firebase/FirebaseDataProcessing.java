@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.external.firebase;
 
 import com.google.common.base.CharMatcher;
 import com.janeullah.healthinspectionrecords.constants.Severity;
@@ -13,10 +13,9 @@ import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.StringUtilities;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +27,9 @@ import java.util.stream.Collectors;
  * Author: Jane Ullah
  * Date:  4/22/2017
  */
+@Slf4j
 @Component
 public class FirebaseDataProcessing {
-    private static final Logger logger = LoggerFactory.getLogger(FirebaseDataProcessing.class);
     private RestaurantRepository restaurantRepository;
     /**
      * http://www.baeldung.com/guava-string-charmatcher
@@ -54,7 +53,7 @@ public class FirebaseDataProcessing {
      * Convert Restaurant entity to a POJO
      */
     private Function<Restaurant, FlattenedRestaurant> mapRestaurantEntityToFlattenedRestaurant = restaurant -> {
-        logger.info("Flattening restaurant id {}", restaurant.getId());
+        log.info("Flattening restaurant id {}", restaurant.getId());
         Optional<InspectionReport> mostRecentInspectionReport = restaurant.getInspectionReports()
                 .stream()
                 .max(Comparator.comparing(InspectionReport::getDateReported));

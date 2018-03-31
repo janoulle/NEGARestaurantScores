@@ -1,8 +1,7 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.events;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +9,9 @@ import org.springframework.stereotype.Component;
  * Author: Jane Ullah
  * Date:  9/18/2016
  */
+@Slf4j
 @Component
 public class WebEventOrchestrator {
-    private static final Logger logger = LoggerFactory.getLogger(WebEventOrchestrator.class);
     private WebPageDownloader webPageDownloader;
     private WebPageProcessing webPageProcessing;
 
@@ -31,7 +30,7 @@ public class WebEventOrchestrator {
                 webPageProcessing.startProcessingOfDownloadedFiles();
             }
         } catch (Exception e) {
-            logger.error("Exception in processAndSaveAllRestaurants", e);
+            log.error("Exception in processAndSaveAllRestaurants", e);
         }
     }
 }

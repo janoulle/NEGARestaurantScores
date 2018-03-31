@@ -1,9 +1,7 @@
 package com.janeullah.healthinspectionrecords.rest;
 
-import com.janeullah.healthinspectionrecords.services.RestClientTemplateBuilder;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -18,13 +16,11 @@ import java.util.Map;
  */
 @Component
 public class RemoteRestClient {
-    private Environment env;
     private RestTemplate restTemplate;
     private RestTemplate restTemplateHttps;
 
     @Autowired
-    public RemoteRestClient(Environment env, RestClientTemplateBuilder restClientTemplateBuilder) {
-        this.env = env;
+    public RemoteRestClient(RestClientTemplateBuilder restClientTemplateBuilder) {
         this.restTemplate = restClientTemplateBuilder.httpRestTemplate();
         this.restTemplateHttps = restClientTemplateBuilder.httpsRestTemplate();
     }

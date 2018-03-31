@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.external;
+package com.janeullah.healthinspectionrecords.external.firebase;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -16,7 +16,6 @@ import com.janeullah.healthinspectionrecords.domain.dtos.County;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedInspectionReport;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import com.janeullah.healthinspectionrecords.services.FirebaseDataProcessing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Author: jane
@@ -103,9 +105,7 @@ public class FirebaseInitialization {
     }
 
     private Optional<DatabaseReference> getDatabase() {
-        return Objects.nonNull(database)
-                ? Optional.of(database)
-                : Optional.empty();
+        return Optional.ofNullable(database);
     }
 
     public boolean readRecordsFromLocalAndWriteToRemote() {

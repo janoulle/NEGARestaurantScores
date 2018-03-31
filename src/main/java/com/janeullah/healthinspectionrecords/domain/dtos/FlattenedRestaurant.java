@@ -7,7 +7,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 
-import static com.janeullah.healthinspectionrecords.services.FirebaseDataProcessing.replaceInvalidCharsInKey;
+import static com.janeullah.healthinspectionrecords.external.firebase.FirebaseDataProcessing.replaceInvalidCharsInKey;
 
 /**
  * Author: Jane Ullah

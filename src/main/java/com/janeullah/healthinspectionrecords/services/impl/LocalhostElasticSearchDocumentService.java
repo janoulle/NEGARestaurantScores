@@ -1,8 +1,11 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.services.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
+import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import java.util.Map;
  * Author: jane
  * Date:  10/21/2017
  */
+@Slf4j
 @Service
 public class LocalhostElasticSearchDocumentService extends ElasticSearchDocumentService implements ElasticSearchable {
     private static final String LOCALHOST_ELASTICSEARCH_TYPE_URL = "http://localhost:9200/restaurants/restaurant/{id}";

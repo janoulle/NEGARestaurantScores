@@ -4,14 +4,13 @@ package com.janeullah.healthinspectionrecords.controller;
 import com.janeullah.healthinspectionrecords.constants.Severity;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
-import com.janeullah.healthinspectionrecords.external.FirebaseInitialization;
-import com.janeullah.healthinspectionrecords.services.AwsElasticSearchDocumentService;
-import com.janeullah.healthinspectionrecords.services.HerokuBonsaiElasticSearchDocumentService;
-import com.janeullah.healthinspectionrecords.services.LocalhostElasticSearchDocumentService;
-import com.janeullah.healthinspectionrecords.services.WebEventOrchestrator;
+import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
+import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
+import com.janeullah.healthinspectionrecords.services.impl.AwsElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.impl.LocalhostElasticSearchDocumentService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +28,10 @@ import java.util.stream.Collectors;
  * Author: Jane Ullah
  * Date:  3/28/2017
  */
+@Slf4j
 @RequestMapping("/admin")
 @RestController
 public class MainController {
-    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
     private WebEventOrchestrator webEventOrchestrator;
     private FirebaseInitialization firebaseInitialization;
     private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
@@ -62,7 +61,7 @@ public class MainController {
     @ResponseStatus(HttpStatus.OK)
     public void writeRecordsToDB() {
         webEventOrchestrator.processAndSaveAllRestaurants();
-        logger.info("Processing initiated");
+        log.info("Processing initiated");
     }
 
     @RequestMapping(value = "/testFirebaseConnectivity", method = RequestMethod.GET)
@@ -86,7 +85,7 @@ public class MainController {
             updateViolationInformation(flattenedRestaurant);
             ResponseEntity<String> status = localhostElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
             if (!status.getStatusCode().is2xxSuccessful()) {
-                logger.error("Failed to write data about restaurant={} to the db with response={}", flattenedRestaurant, status.getBody());
+                log.error("Failed to write data about restaurant={} to the db with response={}", flattenedRestaurant, status.getBody());
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -108,7 +107,7 @@ public class MainController {
             updateViolationInformation(flattenedRestaurant);
             ResponseEntity<HttpStatus> resp = awsElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
             if (!resp.getStatusCode().is2xxSuccessful()) {
-                logger.error("Failed to write data about restaurant={} to the db", flattenedRestaurant);
+                log.error("Failed to write data about restaurant={} to the db", flattenedRestaurant);
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -122,7 +121,7 @@ public class MainController {
             updateViolationInformation(flattenedRestaurant);
             ResponseEntity<String> resp = herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
             if (!resp.getStatusCode().is2xxSuccessful()) {
-                logger.error("Failed to write data about restaurant={} to the db with response={}", flattenedRestaurant, resp);
+                log.error("Failed to write data about restaurant={} to the db with response={}", flattenedRestaurant, resp);
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);

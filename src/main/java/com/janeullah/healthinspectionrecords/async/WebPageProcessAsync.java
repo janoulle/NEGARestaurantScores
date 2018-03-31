@@ -5,14 +5,13 @@ import com.janeullah.healthinspectionrecords.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.util.JsoupUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +28,8 @@ import java.util.stream.Collectors;
  * Author: Jane Ullah
  * Date:  9/18/2016
  */
+@Slf4j
 public class WebPageProcessAsync implements Callable<List<Restaurant>> {
-    private static final Logger logger = LoggerFactory.getLogger(WebPageProcessAsync.class);
     private final CountDownLatch doneSignal;
     private Path url;
     private Elements hiddenDivs;
@@ -66,7 +65,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
                     .filter(entry -> StringUtils.isNumeric(entry.id()))
                     .collect(Collectors.toCollection(Elements::new));
         } catch (Selector.SelectorParseException e) {
-            logger.error("Error setting hidden divs which contain violation explanations", e);
+            log.error("Error setting hidden divs which contain violation explanations", e);
         }
     }
 
@@ -76,7 +75,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
             setHiddenDivs(doc);
             return Optional.of(doc.select(WebSelectorConstants.ALL_ROW));
         } catch (Selector.SelectorParseException | IOException e) {
-            logger.error("Exception processing the file from url {}", url, e);
+            log.error("Exception processing the file from url {}", url, e);
         }
         return Optional.empty();
     }
@@ -86,7 +85,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
         try {
             return ingestJsoupData();
         } catch (Exception e) {
-            logger.error("Exception processing the downloaded web page for  {}", county, e);
+            log.error("Exception processing the downloaded web page for  {}", county, e);
         } finally {
             doneSignal.countDown();
         }

@@ -4,8 +4,7 @@ import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
@@ -19,10 +18,10 @@ import java.util.List;
  * Author: Jane Ullah
  * Date:  9/17/2016
  */
+@Slf4j
 @RestController
 @RequestMapping("/restaurants")
 public class RestaurantController {
-    private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
     private RestaurantRepository restaurantRepository;
 
     @Autowired
@@ -50,35 +49,35 @@ public class RestaurantController {
     @Cacheable("restaurantsByCounty")
     @RequestMapping(value = "/county/{county}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Restaurant> getRestaurantByCounty(@PathVariable("county") @NotNull String county) {
-        logger.info("finding restaurant by county {}", county);
+        log.info("finding restaurant by county {}", county);
         return restaurantRepository.findByEstablishmentInfoCountyIgnoreCase(county);
     }
 
     @Cacheable("restaurantsByName")
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Restaurant> getRestaurantByName(@PathVariable("name") @NotNull String name) {
-        logger.info("finding restaurant by name {}", name);
+        log.info("finding restaurant by name {}", name);
         return restaurantRepository.findByEstablishmentInfoNameIgnoreCase(name);
     }
 
     @Cacheable("restaurantsContainingName")
     @RequestMapping(value = "/contains/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Restaurant> getRestaurantLikeName(@PathVariable("name") @NotNull String name) {
-        logger.info("finding restaurant by name {}", name);
+        log.info("finding restaurant by name {}", name);
         return restaurantRepository.findByEstablishmentInfoNameContaining(name);
     }
 
     @Cacheable("restaurantsByNameAndCounty")
     @RequestMapping(value = "/search/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Restaurant> getRestaurantByNameAndCounty(@RequestHeader("name") String name, @RequestHeader("county") String county) {
-        logger.info("finding restaurant by name {} and county {}", name, county);
+        log.info("finding restaurant by name {} and county {}", name, county);
         return restaurantRepository.findByEstablishmentInfoNameAndEstablishmentInfoCountyIgnoreCase(name, county);
     }
 
     @Cacheable("restaurantById")
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Restaurant getRestaurantById(@PathVariable("id") long id) {
-        logger.info("getting restaurant id {}", id);
+        log.info("getting restaurant id {}", id);
         return restaurantRepository.findOne(id);
     }
 

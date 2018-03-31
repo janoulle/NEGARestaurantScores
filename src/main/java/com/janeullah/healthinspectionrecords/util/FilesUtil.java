@@ -2,9 +2,8 @@ package com.janeullah.healthinspectionrecords.util;
 
 
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.InvalidPathException;
@@ -16,8 +15,8 @@ import java.nio.file.Paths;
  * Author: Jane Ullah
  * Date:  9/17/2016
  */
+@Slf4j
 public class FilesUtil {
-    private static final Logger logger = LoggerFactory.getLogger(FilesUtil.class);
 
     private FilesUtil() {
     }
@@ -27,7 +26,7 @@ public class FilesUtil {
             File dir = Paths.get(path).toFile();
             return dir.listFiles();
         } catch (InvalidPathException | SecurityException e) {
-            logger.error("Unable to retrieve list of files", e);
+            log.error("Unable to retrieve list of files", e);
         }
         return new File[0];
     }
@@ -41,7 +40,7 @@ public class FilesUtil {
                 }
             }
         } catch (StringIndexOutOfBoundsException | NullPointerException e) {
-            logger.error("{} with {}", e.getMessage(), e.getClass(), e);
+            log.error("{} with {}", e.getMessage(), e.getClass(), e);
         }
         return StringUtils.EMPTY;
     }

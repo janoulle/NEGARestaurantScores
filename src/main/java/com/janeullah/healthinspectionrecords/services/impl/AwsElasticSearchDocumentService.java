@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.services.impl;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Request;
@@ -8,10 +8,13 @@ import com.amazonaws.http.AmazonHttpClient;
 import com.amazonaws.http.ExecutionContext;
 import com.amazonaws.http.HttpResponse;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
+import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsErrorHandler;
+import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsResponseHandler;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
+import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import com.janeullah.healthinspectionrecords.util.AwsV4RequestSigner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +25,9 @@ import org.springframework.stereotype.Service;
  * Author: Jane Ullah
  * Date:  9/24/2017
  */
+@Slf4j
 @Service
 public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService implements ElasticSearchable {
-    private static final Logger logger = LoggerFactory.getLogger(AwsElasticSearchDocumentService.class);
     private static final String AWS_ES_SERVICE_NAME = "es";
     private static final String AWS_REGION_NAME = "us-east-1";
 
@@ -53,7 +56,7 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
         if (response.getHttpResponse().getStatusCode() < 200 || response.getHttpResponse().getStatusCode() >= 300) {
             new ResponseEntity<>(HttpStatus.OK);
         }
-        logger.error("awsResponse={} httpResponse={} statusCode={}", response.getAwsResponse(), response.getHttpResponse(), response.getHttpResponse().getStatusCode());
+        log.error("awsResponse={} httpResponse={} statusCode={}", response.getAwsResponse(), response.getHttpResponse(), response.getHttpResponse().getStatusCode());
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

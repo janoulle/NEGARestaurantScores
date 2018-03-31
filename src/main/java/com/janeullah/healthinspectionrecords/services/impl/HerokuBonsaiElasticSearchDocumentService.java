@@ -1,10 +1,11 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.services.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,9 +20,9 @@ import java.util.Map;
  * Author: jane
  * Date:  10/21/2017
  */
+@Slf4j
 @Service
 public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService implements ElasticSearchable {
-    private static final Logger logger = LoggerFactory.getLogger(HerokuBonsaiElasticSearchDocumentService.class);
     private static final String HEROKU_BONSAI_URL = System.getenv("BONSAI_URL").concat("/restaurants/restaurant/");
 
     public HerokuBonsaiElasticSearchDocumentService() {
@@ -46,7 +47,7 @@ public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocum
             String base64EncodedValue = new String(encoder.encode((System.getenv("BONSAI_USERNAME") + ":" + System.getenv("BONSAI_PASSWORD")).getBytes("UTF-8")));
             return ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
         } catch (Exception e) {
-            logger.error("Error generating auth header", e);
+            log.error("Error generating auth header", e);
         }
         return new HashMap<>();
     }

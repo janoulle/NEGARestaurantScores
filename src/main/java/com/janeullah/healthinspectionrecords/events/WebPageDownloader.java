@@ -1,14 +1,13 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageRequestAsync;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.util.ExecutorUtil;
 import com.janeullah.healthinspectionrecords.util.FilesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +24,9 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.executorSe
  * Author: Jane Ullah
  * Date:  9/17/2016
  */
+@Slf4j
 @Component
 public class WebPageDownloader {
-    private static final Logger logger = LoggerFactory.getLogger(WebPageDownloader.class);
     private static final CompletionService<String> webPageDownloadCompletionService = new ExecutorCompletionService<>(executorService);
     private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
     private static final List<WebPageRequestAsync> callablePageRequests = Collections.synchronizedList(populateListOfAsyncWebRequestToBeMade());
@@ -80,7 +79,7 @@ public class WebPageDownloader {
                     .findAny();
             return result.isPresent();
         } catch (Exception e) {
-            logger.error("Exception while checking for areFilesMoreRecentThanLimit", e);
+            log.error("Exception while checking for areFilesMoreRecentThanLimit", e);
         }
         return false;
     }
@@ -101,15 +100,15 @@ public class WebPageDownloader {
                 Future<String> completedFuture = webPageDownloadCompletionService.take();
                 String relativePathName = completedFuture.get();
                 if (StringUtils.isNotBlank(relativePathName)) {
-                    logger.info("{} was successfully downloaded.", relativePathName);
+                    log.info("{} was successfully downloaded.", relativePathName);
                     webPageProcessing.asyncProcessFile(FilesUtil.getFilePath(relativePathName));
                 } else {
-                    logger.error("Failed to download successfully.");
+                    log.error("Failed to download successfully.");
                 }
                 remainingFutures--;
             }
         } catch (InterruptedException | ExecutionException e) {
-            logger.error("Error retrieving future from service", e);
+            log.error("Error retrieving future from service", e);
         }
     }
 

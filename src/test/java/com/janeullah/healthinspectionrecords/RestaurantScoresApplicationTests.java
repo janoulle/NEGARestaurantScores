@@ -1,8 +1,8 @@
 package com.janeullah.healthinspectionrecords;
 
-import com.janeullah.healthinspectionrecords.services.WebEventOrchestrator;
-import com.janeullah.healthinspectionrecords.services.WebPageDownloader;
-import com.janeullah.healthinspectionrecords.services.WebPageProcessing;
+import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
+import com.janeullah.healthinspectionrecords.events.WebPageDownloader;
+import com.janeullah.healthinspectionrecords.events.WebPageProcessing;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

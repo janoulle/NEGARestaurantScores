@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.services;
+package com.janeullah.healthinspectionrecords.external.aws;
 
 /**
  * Copyright (c) 2016-2017, Mihai Emil Andronache
@@ -29,52 +29,37 @@ package com.janeullah.healthinspectionrecords.services;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.http.HttpResponse;
 import com.amazonaws.http.HttpResponseHandler;
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
-import java.io.StringWriter;
 
 /**
- * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html
- * https://github.com/opencharles/charles-rest/blob/master/src/main/java/com/amihaiemil/charles/aws/SimpleAwsResponseHandler.java
- * A simple aws response handler that only checks that the http status is within the 200 range.
- * If not, {@link AmazonServiceException} is thrown.
+ * https://github.com/opencharles/charles-rest/blob/master/src/main/java/com/amihaiemil/charles/aws/SimpleAwsErrorHandler.java
+ * Simple exception handler that returns an {@link AmazonServiceException}
+ * containing the HTTP status code and status text.
  *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 1.0.0
  */
-public class SimpleAwsResponseHandler implements HttpResponseHandler<HttpResponse> {
+public class SimpleAwsErrorHandler implements HttpResponseHandler<AmazonServiceException> {
 
     /**
      * See {@link HttpResponseHandler}, method needsConnectionLeftOpen()
      */
     private boolean needsConnectionLeftOpen;
 
-    public SimpleAwsResponseHandler(boolean connectionLeftOpen) {
+    /**
+     * Ctor.
+     *
+     * @param connectionLeftOpen Should the connection be closed immediately or not?
+     */
+    public SimpleAwsErrorHandler(boolean connectionLeftOpen) {
         this.needsConnectionLeftOpen = connectionLeftOpen;
     }
 
     @Override
-    public HttpResponse handle(HttpResponse response) {
-
-        int status = response.getStatusCode();
-        if (status < 200 || status >= 300) {
-            String content;
-            try {
-                final StringWriter writer = new StringWriter();
-                IOUtils.copy(response.getContent(), writer, "UTF-8");
-                content = writer.toString();
-            } catch (final IOException e) {
-                content = "Couldn't get response content!";
-            }
-            AmazonServiceException ase = new AmazonServiceException(content);
-            ase.setStatusCode(status);
-            throw ase;
-        }
-
-        return response;
-
+    public AmazonServiceException handle(HttpResponse response) {
+        AmazonServiceException ase = new AmazonServiceException(response.getStatusText());
+        ase.setStatusCode(response.getStatusCode());
+        return ase;
     }
 
     @Override

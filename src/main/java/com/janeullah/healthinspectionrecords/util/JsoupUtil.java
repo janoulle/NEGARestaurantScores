@@ -11,11 +11,10 @@ import com.janeullah.healthinspectionrecords.domain.entities.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.domain.entities.InspectionReport;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ import java.util.stream.Stream;
  * Author: Jane Ullah
  * Date:  9/18/2016
  */
+@Slf4j
 public class JsoupUtil {
-    private static final Logger logger = LoggerFactory.getLogger(JsoupUtil.class);
     private static final Pattern leadingDigitMatcher = Pattern.compile("^[0-9]+");
     private static final String DIV = "div#";
     private static final String FWD_SLASH = " / ";
@@ -65,7 +64,7 @@ public class JsoupUtil {
                 return Optional.of(InspectionType.asInspectionType(type.text().trim()));
             }
         } catch (Exception e) {
-            logger.error("Exception while extracting inspection type from Element {}", rowElement.toString(), e);
+            log.error("Exception while extracting inspection type from Element {}", rowElement.toString(), e);
         }
         return Optional.empty();
     }
@@ -102,7 +101,7 @@ public class JsoupUtil {
                 }
             }
         } catch (IllegalArgumentException e) {
-            logger.error("Exception extracting score from rowElement {}", rowElement.toString(), e);
+            log.error("Exception extracting score from rowElement {}", rowElement.toString(), e);
         }
         return 0;
     }
@@ -126,7 +125,7 @@ public class JsoupUtil {
                 return Optional.of(LocalDate.parse(when.text(), InspectionReport.MMddYYYY_PATTERN));
             }
         } catch (UnsupportedOperationException | IllegalArgumentException e) {
-            logger.error("Exception while extracting and parsing the most recent date of an inspection from rowElement {}", rowElement.toString(), e);
+            log.error("Exception while extracting and parsing the most recent date of an inspection from rowElement {}", rowElement.toString(), e);
         }
         return Optional.empty();
     }
@@ -212,7 +211,7 @@ public class JsoupUtil {
             restaurant.addInspectionReport(report);
             return Optional.of(restaurant);
         } catch (Exception e) {
-            logger.error("Exception while putting together Restaurant POJO from rowElement {}", rowElement.toString(), e);
+            log.error("Exception while putting together Restaurant POJO from rowElement {}", rowElement.toString(), e);
         }
         return Optional.empty();
     }

@@ -3,8 +3,7 @@ package com.janeullah.healthinspectionrecords.util;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,9 +14,9 @@ import java.util.concurrent.TimeUnit;
  * Author: Jane Ullah
  * Date:  9/18/2016
  */
+@Slf4j
 public class ExecutorUtil {
     public static final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
-    private static final Logger logger = LoggerFactory.getLogger(ExecutorUtil.class);
 
     private ExecutorUtil() {
     }
@@ -28,12 +27,12 @@ public class ExecutorUtil {
     public static void shutDown() {
         try {
             if (!executorService.isShutdown() || !executorService.isTerminated()) {
-                logger.info("event=\"shutting down executor\"");
+                log.info("event=\"shutting down executor\"");
                 executorService.shutdown();
                 executorService.awaitTermination(5, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
-            logger.error("InterruptedException during executor shut down", e);
+            log.error("InterruptedException during executor shut down", e);
             Thread.currentThread().interrupt();
         }
     }
@@ -47,7 +46,7 @@ public class ExecutorUtil {
                 pool.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
                 if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-                    logger.error("Pool did not terminate");
+                    log.error("Pool did not terminate");
             }
         } catch (InterruptedException ie) {
             // (Re-)Cancel if current thread also interrupted

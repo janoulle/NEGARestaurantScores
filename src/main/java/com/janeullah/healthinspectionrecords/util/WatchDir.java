@@ -33,11 +33,10 @@ package com.janeullah.healthinspectionrecords.util;
 
 import com.google.common.collect.Maps;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
-import com.janeullah.healthinspectionrecords.services.WebPageProcessing;
+import com.janeullah.healthinspectionrecords.events.WebPageProcessing;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -52,9 +51,9 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * Example to watch a directory (or tree) for changes to files.
  * https://docs.oracle.com/javase/tutorial/essential/io/notification.html
  */
+@Slf4j
 public class WatchDir {
 
-    private static final Logger logger = LoggerFactory.getLogger(WatchDir.class);
     private static ConcurrentMap<String, Boolean> entriesBeingWatched = Maps.newConcurrentMap();
     private final WatchService watcher;
     private final ConcurrentMap<WatchKey, Path> keys;
@@ -74,9 +73,9 @@ public class WatchDir {
         this.dir = dir;
 
         if (recursive) {
-            logger.info(String.format("event=\"Scanning %s ...%n\"", dir));
+            log.info(String.format("event=\"Scanning %s ...%n\"", dir));
             registerAll(dir);
-            logger.info("event=\"scanning done\"");
+            log.info("event=\"scanning done\"");
         } else {
             register(dir);
         }
@@ -107,7 +106,7 @@ public class WatchDir {
                 return events;
             }
         } catch (Exception e) {
-            logger.error("Error retrieving watchable events", e);
+            log.error("Error retrieving watchable events", e);
         }
         return new WatchEvent.Kind[]{ENTRY_CREATE};
     }
@@ -132,10 +131,10 @@ public class WatchDir {
         if (trace) {
             Path prev = keys.get(key);
             if (prev == null) {
-                logger.info(String.format("register_path=\"%s%n\"", dir));
+                log.info(String.format("register_path=\"%s%n\"", dir));
             } else {
                 if (!dir.equals(prev)) {
-                    logger.info(String.format("update_path=\"%s -> %s%n\"", prev, dir));
+                    log.info(String.format("update_path=\"%s -> %s%n\"", prev, dir));
                 }
             }
         }
@@ -189,14 +188,14 @@ public class WatchDir {
                     if (StringUtils.isNotBlank(friendlyname) && friendlyname.endsWith(".html")) {
                         boolean hasTaskKickedOff = entriesBeingWatched.get(friendlyname) != null && entriesBeingWatched.get(friendlyname);
                         if (hasTaskKickedOff) {
-                            logger.info(String.format("event=\"async task has already been kicked off for filename %s", filename));
+                            log.info(String.format("event=\"async task has already been kicked off for filename %s", filename));
                         } else {
-                            logger.info(String.format("event=\"async task is being kicked off for filename %s", filename));
+                            log.info(String.format("event=\"async task is being kicked off for filename %s", filename));
                             webPageProcessing.asyncProcessFile(child);
                         }
                     }
                 } catch (Exception x) {
-                    logger.error("Error processing triggered watchable event", x);
+                    log.error("Error processing triggered watchable event", x);
                 }
             }
 
