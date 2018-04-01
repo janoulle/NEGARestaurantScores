@@ -6,6 +6,7 @@
 .idea
 *.iml
 out
+out/
 gen### Java template
 *.class
 
