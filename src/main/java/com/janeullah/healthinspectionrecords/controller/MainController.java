@@ -60,13 +60,6 @@ public class MainController {
     log.info("Processing initiated");
   }
 
-  @RequestMapping(value = "/testFirebaseConnectivity", method = RequestMethod.GET)
-  public ResponseEntity<HttpStatus> testFirebaseConnectivity() {
-    return firebaseInitialization.isDatabaseInitialized()
-        ? new ResponseEntity<>(HttpStatus.OK)
-        : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
-  }
-
   @RequestMapping(value = "/initializeFirebaseDB", method = RequestMethod.PUT)
   public ResponseEntity<HttpStatus> writeRecordsToFirebase() {
     return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
