@@ -61,6 +61,7 @@ public class WatchDir {
   private final Path dir;
   private boolean trace = false;
   private WebPageProcessing webPageProcessing;
+  public static final String WATCHABLE_EVENTS = System.getenv("WATCHABLE_EVENT");
   // private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.{html,text}");
 
   /** Creates a WatchService and registers the given directory */
@@ -89,7 +90,7 @@ public class WatchDir {
 
   public static WatchEvent.Kind[] getWatchableEvents() {
     try {
-      String[] eventsToWatchFor = WebPageConstants.WATCHABLE_EVENTS.split(",");
+      String[] eventsToWatchFor = WATCHABLE_EVENTS.split(",");
       if (eventsToWatchFor.length > 0) {
         WatchEvent.Kind[] events = new WatchEvent.Kind[eventsToWatchFor.length];
         for (int i = 0; i < eventsToWatchFor.length; i++) {

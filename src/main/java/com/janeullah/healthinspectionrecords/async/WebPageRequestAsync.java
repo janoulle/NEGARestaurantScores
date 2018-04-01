@@ -46,7 +46,7 @@ public class WebPageRequestAsync implements Callable<String> {
     try {
       URL urlObj = new URL(url);
       URLConnection conn = urlObj.openConnection();
-      conn.setRequestProperty("User-Agent", WebPageConstants.USER_AGENT);
+      conn.setRequestProperty("User-Agent", System.getenv("USER_AGENT"));
       conn.connect();
       boolean isWriteSuccess = writeFileToDisk(conn.getInputStream());
       if (!isWriteSuccess) {

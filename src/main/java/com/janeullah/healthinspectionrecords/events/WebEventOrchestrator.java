@@ -20,7 +20,7 @@ public class WebEventOrchestrator {
 
   public void processAndSaveAllRestaurants() {
     try {
-      if (WebPageDownloader.isDataExpired()) {
+      if (webPageDownloader.isDownloadOverrideOrDataExpired()) {
         webPageDownloader.initiateDownloadsAndProcessFiles();
       } else {
         webPageProcessing.startProcessingOfDownloadedFiles();
