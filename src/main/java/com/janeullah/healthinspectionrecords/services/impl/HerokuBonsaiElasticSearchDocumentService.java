@@ -7,6 +7,7 @@ import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentServi
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,15 @@ import java.util.Map;
 @Service
 public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService
     implements ElasticSearchable {
-  private static final String HEROKU_BONSAI_URL =
-      System.getenv("BONSAI_URL").concat("/restaurants/restaurant/");
+
+  @Value("${BONSAI_URL}")
+  private String herokuBonsaiUrl;
+
+  @Value("${BONSAI_USERNAME}")
+  private String herokuBonsaiUserName;
+
+  @Value("${BONSAI_PASSWORD}")
+  private String herokuBonsaiPassword;
 
   public HerokuBonsaiElasticSearchDocumentService() {}
 
@@ -40,11 +48,10 @@ public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocum
     return restClient
         .getHttpsRestTemplate()
         .exchange(
-            HEROKU_BONSAI_URL + Long.toString(id),
+            herokuBonsaiUrl.concat("/restaurants/restaurant/").concat(Long.toString(id)),
             HttpMethod.POST,
             requestWithHeaders,
             String.class);
-    // restTemplate.postForEntity(HEROKU_BONSAI_URL + Long.toString(id), flattenedRestaurant);
   }
 
   private Map<String, String> getAuthHeaders() {
@@ -53,8 +60,7 @@ public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocum
       String base64EncodedValue =
           new String(
               encoder.encode(
-                  (System.getenv("BONSAI_USERNAME") + ":" + System.getenv("BONSAI_PASSWORD"))
-                      .getBytes("UTF-8")));
+                  (herokuBonsaiUserName + ":" + herokuBonsaiPassword).getBytes("UTF-8")));
       return ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
     } catch (Exception e) {
       log.error("Error generating auth header", e);

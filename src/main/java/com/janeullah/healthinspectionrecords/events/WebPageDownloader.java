@@ -27,8 +27,6 @@ public class WebPageDownloader {
   private static final CompletionService<String> webPageDownloadCompletionService =
       new ExecutorCompletionService<>(executorService);
   private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
-  private final List<WebPageRequestAsync> callablePageRequests =
-      Collections.synchronizedList(populateListOfAsyncWebRequestToBeMade());
   private WebPageProcessing webPageProcessing;
 
   @Value("${DOWNLOAD_OVERRIDE}")
@@ -124,6 +122,8 @@ public class WebPageDownloader {
    * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
    */
   private List<Future<String>> asyncDownloadWebPages() {
+    List<WebPageRequestAsync> callablePageRequests =
+            Collections.synchronizedList(populateListOfAsyncWebRequestToBeMade());
     List<Future<String>> futures = new ArrayList<>(callablePageRequests.size());
     callablePageRequests.forEach(
         webPageRequest -> futures.add(webPageDownloadCompletionService.submit(webPageRequest)));

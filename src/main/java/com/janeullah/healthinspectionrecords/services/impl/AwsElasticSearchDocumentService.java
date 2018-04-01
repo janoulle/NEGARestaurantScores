@@ -16,6 +16,7 @@ import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import com.janeullah.healthinspectionrecords.util.AwsV4RequestSigner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService
     implements ElasticSearchable {
-  private static final String AWS_ES_SERVICE_NAME = "es";
-  private static final String AWS_REGION_NAME = "us-east-1";
+
+  @Value("${AWS_ES_SERVICE_NAME}")
+  private String awsElasticSearchServiceName;
+
+  @Value("${AWS_ES_REGION_NAME}")
+  private String awsRegionName;
+
+  @Value("${AWS_ES_NEGA_ACCESS_KEY}")
+  private String awsElasticSearchAccessKey;
+
+  @Value("${AWS_ES_NEGA_SECRET}")
+  private String awsElasticSearchSecret;
+
+  @Value("${AWS_ES_URL}")
+  private String awsElasticSearchUrl;
 
   public AwsElasticSearchDocumentService() {}
 
@@ -43,15 +57,13 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
       Long id, FlattenedRestaurant flattenedRestaurant) {
     AwsV4RequestSigner awsV4RequestSigner =
         new AwsV4RequestSigner(
-            new BasicAWSCredentials(
-                System.getenv("AWS_ES_NEGA_ACCESS_KEY"), System.getenv("AWS_ES_NEGA_SECRET")),
-            AWS_REGION_NAME,
-            AWS_ES_SERVICE_NAME);
+            new BasicAWSCredentials(awsElasticSearchAccessKey, awsElasticSearchSecret),
+                awsRegionName,
+                awsElasticSearchServiceName);
     // Instantiate the request
     Request<Void> request =
         awsV4RequestSigner.makeSignableRequest(
-            flattenedRestaurant,
-            System.getenv("AWS_ES_URL").concat("/restaurants/restaurant/" + id));
+            flattenedRestaurant, awsElasticSearchUrl.concat("/restaurants/restaurant/" + id));
     request = awsV4RequestSigner.signRequest(request);
 
     // Execute it and get the response...
@@ -64,13 +76,13 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
             .execute(new SimpleAwsResponseHandler(false));
     if (response.getHttpResponse().getStatusCode() < 200
         || response.getHttpResponse().getStatusCode() >= 300) {
-      new ResponseEntity<>(HttpStatus.OK);
+      log.error(
+          "awsResponse={} httpResponse={} statusCode={}",
+          response.getAwsResponse(),
+          response.getHttpResponse(),
+          response.getHttpResponse().getStatusCode());
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    log.error(
-        "awsResponse={} httpResponse={} statusCode={}",
-        response.getAwsResponse(),
-        response.getHttpResponse(),
-        response.getHttpResponse().getStatusCode());
-    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

@@ -19,6 +19,7 @@ import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,17 @@ import java.util.Optional;
 @Service
 public class FirebaseInitialization {
   private static final Logger logger = LoggerFactory.getLogger(FirebaseInitialization.class);
-  private static DatabaseReference database;
+  private DatabaseReference database;
   private FirebaseDataProcessing firebaseDataProcessing;
+
+  @Value("${NEGA_FIREBASE_DB}")
+  private String negaFirebaseDbUrl;
+
+  @Value("${NEGA_BUCKET_NAME_READONLY}")
+  private String negaReadOnlyBucketName;
+
+  @Value("${NEGA_BUCKET_KEY}")
+  private String negaReadOnlyBucketKey;
 
   @Autowired
   public FirebaseInitialization(FirebaseDataProcessing firebaseDataProcessing) {
@@ -42,7 +52,7 @@ public class FirebaseInitialization {
   }
 
   @EventListener(ContextRefreshedEvent.class)
-  private static void connectToFirebaseApp() {
+  private void connectToFirebaseApp() {
     try (InputStream is = getInputStreamFromAWS()) {
       FirebaseOptions options = getFirebaseOptions(is);
       FirebaseApp.initializeApp(options);
@@ -80,10 +90,10 @@ public class FirebaseInitialization {
   }
 
   // https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
-  private static FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
+  private FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
     return new FirebaseOptions.Builder()
         .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-        .setDatabaseUrl(System.getenv("NEGA_FIREBASE_DB"))
+        .setDatabaseUrl(negaFirebaseDbUrl)
         .build();
   }
 
@@ -93,12 +103,9 @@ public class FirebaseInitialization {
    *
    * @return InputStream of the item from S3
    */
-  private static InputStream getInputStreamFromAWS() {
-    String bucketName = System.getenv("NEGA_BUCKET_NAME_READONLY");
-    String bucketKey = System.getenv("NEGA_BUCKET_KEY");
+  private InputStream getInputStreamFromAWS() {
     AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_1).build();
-
-    S3Object object = s3Client.getObject(new GetObjectRequest(bucketName, bucketKey));
+    S3Object object = s3Client.getObject(new GetObjectRequest(negaReadOnlyBucketName, negaReadOnlyBucketKey));
     logger.info("Content-Type: {}", object.getObjectMetadata().getContentType());
     return object.getObjectContent();
   }
