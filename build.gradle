@@ -76,7 +76,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
     //compile group: 'org.yaml', name: 'snakeyaml', version: '1.18'
 
-    //providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    //https://intellij-support.jetbrains.com/hc/en-us/community/posts/206670989-Spring-Boot-app-shuts-down-automatically
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
