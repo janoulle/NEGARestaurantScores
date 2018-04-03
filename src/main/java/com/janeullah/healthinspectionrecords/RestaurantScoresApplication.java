@@ -1,27 +1,25 @@
 package com.janeullah.healthinspectionrecords;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.util.Arrays;
 
 @Slf4j
 @ComponentScan(basePackages = {"com.janeullah.healthinspectionrecords"})
 @SpringBootApplication
 @EnableCaching
-public class RestaurantScoresApplication {
+public class RestaurantScoresApplication extends SpringBootServletInitializer {
 
-  @Autowired ApplicationContext applicationContext;
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+    return application.sources(RestaurantScoresApplication.class);
+  }
 
   public static void main(String[] args) {
-    ApplicationContext ctx = SpringApplication.run(RestaurantScoresApplication.class, args);
-    log.debug("Beans provided by the Restaurant Scores application");
-
-    Arrays.stream(ctx.getBeanDefinitionNames()).sorted().forEach(log::debug);
+    SpringApplication.run(RestaurantScoresApplication.class, args);
   }
 }
