@@ -7,9 +7,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
 
 @Slf4j
 @ComponentScan(basePackages = {"com.janeullah.healthinspectionrecords"})
+@PropertySource(value = {
+        "classpath:application-postgresql.properties",
+        "classpath:catalina.properties",
+}, ignoreResourceNotFound = true)
 @SpringBootApplication
 @EnableCaching
 public class RestaurantScoresApplication extends SpringBootServletInitializer {

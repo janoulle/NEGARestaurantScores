@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.config.db;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import java.net.URISyntaxException;
  * Author: Jane Ullah Date: 9/20/2016
  * https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-java
  */
+@Slf4j
 @Configuration
 public class DataSourceConfig {
 
@@ -20,6 +22,7 @@ public class DataSourceConfig {
   public DataSource dataSource() throws URISyntaxException {
     DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
     String profile = System.getenv("spring.profiles.active");
+    log.info("Active profile = {}", profile);
     if ("h2".equalsIgnoreCase(profile)) {
       return dataSourceBuilder
           .driverClassName("org.h2.Driver")
@@ -34,13 +37,18 @@ public class DataSourceConfig {
           .build();
     } else {
       URI dbUri = new URI(System.getenv("DATABASE_URL"));
+      log.debug("Database url info = {}", dbUri);
       String[] userInfo = dbUri.getUserInfo().split(":");
       String prefix = "mysql".equalsIgnoreCase(profile) ? "mysql" : "postgresql";
       String dbUrl =
           String.format(
               "jdbc:%s://%s:%d%s", prefix, dbUri.getHost(), dbUri.getPort(), dbUri.getPath());
 
-      return dataSourceBuilder.url(dbUrl).username(userInfo[0]).password(userInfo[1]).build();
+      return dataSourceBuilder
+              .url(dbUrl)
+              .username(userInfo[0])
+              .password(userInfo[1])
+              .build();
     }
   }
 }
