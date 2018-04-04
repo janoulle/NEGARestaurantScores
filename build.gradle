@@ -34,7 +34,8 @@ configurations.all {
 
 dependencyManagement {
     imports {
-        mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.119'
+        //https://github.com/awsdocs/aws-doc-sdk-examples
+        mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.228'
     }
 }
 
