@@ -12,8 +12,9 @@ import org.springframework.context.annotation.PropertySource;
 @Slf4j
 @ComponentScan(basePackages = {"com.janeullah.healthinspectionrecords"})
 @PropertySource(value = {
+        "classpath:application-${spring.profiles.active}.properties",
         "classpath:application-postgresql.properties",
-        "classpath:catalina.properties",
+        "file:${catalina.home:}/conf/catalina.properties",
 }, ignoreResourceNotFound = true)
 @SpringBootApplication
 @EnableCaching

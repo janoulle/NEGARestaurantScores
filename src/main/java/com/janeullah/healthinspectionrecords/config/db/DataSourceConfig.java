@@ -2,9 +2,11 @@ package com.janeullah.healthinspectionrecords.config.db;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 import java.net.URI;
@@ -18,10 +20,13 @@ import java.net.URISyntaxException;
 @Configuration
 public class DataSourceConfig {
 
+  @Autowired
+  private Environment env;
+
   @Bean
   public DataSource dataSource() throws URISyntaxException {
     DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-    String profile = System.getenv("spring.profiles.active");
+    String profile = env.getProperty("spring.profiles.active");
     log.info("Active profile = {}", profile);
     if ("h2".equalsIgnoreCase(profile)) {
       return dataSourceBuilder
@@ -33,10 +38,10 @@ public class DataSourceConfig {
     } else if ("sqlite".equalsIgnoreCase(profile)) {
       return dataSourceBuilder
           .driverClassName("org.sqlite.JDBC")
-          .url("jdbc:sqlite:" + System.getProperty("SQLITE_DB_PATH", "nega_inspections.db"))
+          .url("jdbc:sqlite:" + env.getProperty("SQLITE_DB_PATH", "nega_inspections.db"))
           .build();
     } else {
-      URI dbUri = new URI(System.getenv("DATABASE_URL"));
+      URI dbUri = new URI(env.getProperty("DATABASE_URL"));
       log.debug("Database url info = {}", dbUri);
       String[] userInfo = dbUri.getUserInfo().split(":");
       String prefix = "mysql".equalsIgnoreCase(profile) ? "mysql" : "postgresql";
