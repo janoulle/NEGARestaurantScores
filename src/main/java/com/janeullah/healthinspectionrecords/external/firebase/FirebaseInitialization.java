@@ -2,6 +2,7 @@ package com.janeullah.healthinspectionrecords.external.firebase;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -41,6 +42,9 @@ public class FirebaseInitialization {
 
   @Value("${NEGA_FIREBASE_DB}")
   private String negaFirebaseDbUrl;
+
+  @Value("${NEGA_BUCKET_KEY}")
+  private String negaBucketFileNameKey;
 
   @Value("${NEGA_BUCKET_NAME_READONLY}")
   private String negaReadOnlyBucketName;
@@ -109,11 +113,14 @@ public class FirebaseInitialization {
    * @return InputStream of the item from S3
    */
   private InputStream getInputStreamFromAWS() {
-    AmazonS3 s3Client = AmazonS3ClientBuilder
-            .standard()
-            .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(negaBucketAccessKey, negaBucketSecretKey)))
-            .withRegion(Regions.US_EAST_1).build();
-    S3Object object = s3Client.getObject(new GetObjectRequest(negaReadOnlyBucketName, negaBucketAccessKey));
+    AWSCredentials credentials = new BasicAWSCredentials(negaBucketAccessKey, negaBucketSecretKey);
+    AmazonS3 s3Client =
+        AmazonS3ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+            .withRegion(Regions.US_EAST_1)
+            .build();
+    S3Object object =
+        s3Client.getObject(new GetObjectRequest(negaReadOnlyBucketName, negaBucketFileNameKey));
     logger.info("Content-Type: {}", object.getObjectMetadata().getContentType());
     return object.getObjectContent();
   }
