@@ -8,6 +8,7 @@ import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,12 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
+
 /** Author: jane Date: 10/21/2017 */
 @Slf4j
 @Service
+@Scope(value = SCOPE_SINGLETON)
 public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService
     implements ElasticSearchable {
 

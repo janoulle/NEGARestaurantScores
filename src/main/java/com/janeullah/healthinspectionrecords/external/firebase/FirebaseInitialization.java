@@ -23,18 +23,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/** Author: jane Date: 4/14/2017 */
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
+
+/** Author: jane Date: 4/14/2017
+ * https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
+ * */
 @Service
+@Scope(value = SCOPE_SINGLETON)
 public class FirebaseInitialization {
   private static final Logger logger = LoggerFactory.getLogger(FirebaseInitialization.class);
   private DatabaseReference database;
@@ -91,6 +98,8 @@ public class FirebaseInitialization {
               + "Error Message: "
               + ace.getMessage();
       logger.error(sb, ace);
+    } catch (IOException e) {
+      logger.error("IO Exception thrown while fetching credentials", e);
     } catch (DatabaseException de) {
       logger.error("Firebase app initialized but DB not initialized", de);
     } catch (Exception e) {
@@ -99,11 +108,18 @@ public class FirebaseInitialization {
   }
 
   // https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
+//  private FirebaseOptions getFirebaseOptions(InputStream serviceAccount) throws IOException {
+//    return new FirebaseOptions.Builder()
+//        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+//        .setDatabaseUrl(negaFirebaseDbUrl)
+//        .build();
+//  }
+
   private FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
     return new FirebaseOptions.Builder()
-        .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-        .setDatabaseUrl(negaFirebaseDbUrl)
-        .build();
+            .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+            .setDatabaseUrl(negaFirebaseDbUrl)
+            .build();
   }
 
   /**

@@ -17,9 +17,12 @@ import com.janeullah.healthinspectionrecords.util.AwsV4RequestSigner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
 /**
  * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html Author:
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@Scope(value = SCOPE_SINGLETON)
 public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService
     implements ElasticSearchable {
 

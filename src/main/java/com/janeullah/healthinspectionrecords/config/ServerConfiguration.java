@@ -1,6 +1,10 @@
 package com.janeullah.healthinspectionrecords.config;
 
-/*@Component
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.stereotype.Component;
+
+@Component
 public class ServerConfiguration implements EmbeddedServletContainerCustomizer {
 
     @Override
@@ -8,4 +12,4 @@ public class ServerConfiguration implements EmbeddedServletContainerCustomizer {
         container.setPort(8080);
         container.setContextPath("/restaurantscores");
     }
-}*/
+}
