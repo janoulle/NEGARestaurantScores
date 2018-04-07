@@ -13,7 +13,6 @@ import org.springframework.context.annotation.PropertySource;
 @ComponentScan(basePackages = {"com.janeullah.healthinspectionrecords"})
 @PropertySource(value = {
         "classpath:application-${spring.profiles.active}.properties",
-        "classpath:application-postgresql.properties",
         "file:${catalina.home:}/conf/catalina.properties",
 }, ignoreResourceNotFound = true)
 @SpringBootApplication

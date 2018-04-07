@@ -65,7 +65,7 @@ dependencies {
     compile('commons-io:commons-io:2.4')
 
     //https://firebase.google.com/support/release-notes/admin/java
-    compile 'com.google.firebase:firebase-admin:4.1.7'
+    compile 'com.google.firebase:firebase-admin:4.1.6'
     compile 'com.amazonaws:aws-java-sdk-s3'
     compile 'com.amazonaws:aws-java-sdk-ec2'
     compile 'com.amazonaws:aws-java-sdk-dynamodb'
