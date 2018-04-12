@@ -2,14 +2,6 @@ package com.janeullah.healthinspectionrecords.external.firebase;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
@@ -19,15 +11,14 @@ import com.janeullah.healthinspectionrecords.domain.dtos.County;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedInspectionReport;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.janeullah.healthinspectionrecords.services.AmazonS3ClientForFirebaseOperations;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -40,41 +31,32 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 /** Author: jane Date: 4/14/2017
  * https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
  * */
+@Slf4j
 @Service
 @Scope(value = SCOPE_SINGLETON)
 public class FirebaseInitialization {
-  private static final Logger logger = LoggerFactory.getLogger(FirebaseInitialization.class);
   private DatabaseReference database;
   private FirebaseDataProcessing firebaseDataProcessing;
+  private AmazonS3ClientForFirebaseOperations amazonS3ClientForFirebaseOperations;
 
   @Value("${NEGA_FIREBASE_DB}")
   private String negaFirebaseDbUrl;
 
-  @Value("${NEGA_BUCKET_KEY}")
-  private String negaBucketFileNameKey;
-
-  @Value("${NEGA_BUCKET_NAME_READONLY}")
-  private String negaReadOnlyBucketName;
-
-  @Value("${NEGA_BUCKET_ACCESS_KEY}")
-  private String negaBucketAccessKey;
-
-  @Value("${NEGA_BUCKET_SECRET_KEY}")
-  private String negaBucketSecretKey;
-
   @Autowired
-  public FirebaseInitialization(FirebaseDataProcessing firebaseDataProcessing) {
+  public FirebaseInitialization(FirebaseDataProcessing firebaseDataProcessing,
+                                AmazonS3ClientForFirebaseOperations amazonS3ClientForFirebaseOperations) {
     this.firebaseDataProcessing = firebaseDataProcessing;
+    this.amazonS3ClientForFirebaseOperations = amazonS3ClientForFirebaseOperations;
   }
 
-  @EventListener(ContextRefreshedEvent.class)
+  @PostConstruct
   private void connectToFirebaseApp() {
-    try (InputStream is = getInputStreamFromAWS()) {
+    try (InputStream is = amazonS3ClientForFirebaseOperations.getFirebaseCredentials()) {
       FirebaseOptions options = getFirebaseOptions(is);
       FirebaseApp.initializeApp(options);
-      logger.info("Firebase app initialized");
+      log.info("Firebase app initialized");
       database = FirebaseDatabase.getInstance().getReference("nega");
-      logger.info("Firebase db initialized");
+      log.info("Firebase db initialized");
     } catch (AmazonServiceException ase) {
       String sb =
           ("Caught an AmazonServiceException, which means your request made it "
@@ -89,7 +71,7 @@ public class FirebaseInitialization {
               + ase.getErrorType()
               + "Request ID:       "
               + ase.getRequestId();
-      logger.error(sb, ase);
+      log.error(sb, ase);
     } catch (AmazonClientException ace) {
       String sb =
           ("Caught an AmazonClientException, which means the client encountered "
@@ -97,48 +79,21 @@ public class FirebaseInitialization {
                   + "such as not being able to access the network.")
               + "Error Message: "
               + ace.getMessage();
-      logger.error(sb, ace);
+      log.error(sb, ace);
     } catch (IOException e) {
-      logger.error("IO Exception thrown while fetching credentials", e);
+      log.error("IO Exception thrown while fetching credentials", e);
     } catch (DatabaseException de) {
-      logger.error("Firebase app initialized but DB not initialized", de);
+      log.error("Firebase app initialized but DB not initialized", de);
     } catch (Exception e) {
-      logger.error("Unable to connect to firebase app with provided credential file", e);
+      log.error("Unable to connect to firebase app with provided credential file", e);
     }
   }
-
-  // https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
-//  private FirebaseOptions getFirebaseOptions(InputStream serviceAccount) throws IOException {
-//    return new FirebaseOptions.Builder()
-//        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//        .setDatabaseUrl(negaFirebaseDbUrl)
-//        .build();
-//  }
 
   private FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
     return new FirebaseOptions.Builder()
             .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
             .setDatabaseUrl(negaFirebaseDbUrl)
             .build();
-  }
-
-  /**
-   * http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html
-   * http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-project-gradle.html
-   *
-   * @return InputStream of the item from S3
-   */
-  private InputStream getInputStreamFromAWS() {
-    AWSCredentials credentials = new BasicAWSCredentials(negaBucketAccessKey, negaBucketSecretKey);
-    AmazonS3 s3Client =
-        AmazonS3ClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
-            .withRegion(Regions.US_EAST_1)
-            .build();
-    S3Object object =
-        s3Client.getObject(new GetObjectRequest(negaReadOnlyBucketName, negaBucketFileNameKey));
-    logger.info("Content-Type: {}", object.getObjectMetadata().getContentType());
-    return object.getObjectContent();
   }
 
   public boolean isDatabaseInitialized() {
@@ -157,7 +112,7 @@ public class FirebaseInitialization {
       saveFlattenedViolations(restaurantData);
       return true;
     } catch (Exception e) {
-      logger.error("Exception encountered during readRecordsFromLocalAndWriteToRemote", e);
+      log.error("Exception encountered during readRecordsFromLocalAndWriteToRemote", e);
     }
     return false;
   }
@@ -196,10 +151,10 @@ public class FirebaseInitialization {
   private DatabaseReference.CompletionListener getCompletionListener(String desc, Map data) {
     return (databaseError, databaseReference) -> {
       if (databaseError != null) {
-        logger.error(
+        log.error(
             "Data  for child ({}) could not be saved - {}", desc, databaseError.getMessage());
       } else {
-        logger.info("Data for child ({} of size {}) saved successfully.", desc, data.size());
+        log.info("Data for child ({} of size {}) saved successfully.", desc, data.size());
       }
     };
   }
@@ -216,7 +171,7 @@ public class FirebaseInitialization {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                           County county = dataSnapshot.getValue(County.class);
-                          logger.debug(
+                          log.debug(
                               "County: {}, County Restaurant Size: {}, Key: {}, Snapshot size: {}",
                               county.getName(),
                               county.getRestaurants().size(),
