@@ -8,7 +8,6 @@ import com.janeullah.healthinspectionrecords.async.WebPageProcessAsync;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import com.janeullah.healthinspectionrecords.util.ExecutorUtil;
 import com.janeullah.healthinspectionrecords.util.FilesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -24,13 +23,13 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Stream;
 
-import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.executorService;
+import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.EXECUTOR_SERVICE;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
 @Slf4j
 @Component
 public class WebPageProcessing {
-  private static CountDownLatch doneSignal = new CountDownLatch(ExecutorUtil.getThreadCount());
+  private static final CountDownLatch COUNT_DOWN_LATCH = new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
   private RestaurantRepository restaurantRepository;
 
   @Autowired
@@ -58,8 +57,8 @@ public class WebPageProcessing {
       Preconditions.checkArgument(
           StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
       ListenableFuture<List<Restaurant>> future =
-          executorService.submit(
-              new WebPageProcessAsync(FilesUtil.extractCounty(file), file, doneSignal));
+          EXECUTOR_SERVICE.submit(
+              new WebPageProcessAsync(FilesUtil.extractCounty(file), file, COUNT_DOWN_LATCH));
       registerCallbackForFuture(countyFile, future);
       return Optional.of(future);
     } catch (SecurityException e) {

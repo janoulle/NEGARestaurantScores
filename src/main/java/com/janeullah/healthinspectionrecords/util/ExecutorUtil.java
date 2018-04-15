@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ExecutorUtil {
-  public static final ListeningExecutorService executorService =
+  public static final ListeningExecutorService EXECUTOR_SERVICE =
       MoreExecutors.listeningDecorator(
           Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
 
@@ -24,12 +25,13 @@ public class ExecutorUtil {
   /**
    * http://stackoverflow.com/questions/3269445/executorservice-how-to-wait-for-all-tasks-to-finish?rq=1
    */
-  public static void shutDown() {
+  @Bean
+  public static void shutdown() {
     try {
-      if (!executorService.isShutdown() || !executorService.isTerminated()) {
+      if (!EXECUTOR_SERVICE.isShutdown() || !EXECUTOR_SERVICE.isTerminated()) {
         log.info("event=\"shutting down executor\"");
-        executorService.shutdown();
-        executorService.awaitTermination(5, TimeUnit.SECONDS);
+        EXECUTOR_SERVICE.shutdown();
+        EXECUTOR_SERVICE.awaitTermination(5, TimeUnit.SECONDS);
       }
     } catch (InterruptedException e) {
       log.error("InterruptedException during executor shut down", e);

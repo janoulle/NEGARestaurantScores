@@ -26,6 +26,10 @@ public class WebPageRequestAsync implements Callable<String> {
     this.doneSignal = doneSignal;
   }
 
+  public String getName() {
+    return name;
+  }
+
   // https://stackoverflow.com/questions/2417485/file-separator-vs-slash-in-paths
   // https://stackoverflow.com/questions/5971964/file-separator-or-file-pathseparator
   private boolean writeFileToDisk(InputStream reqStream) {
@@ -48,11 +52,11 @@ public class WebPageRequestAsync implements Callable<String> {
       URLConnection conn = urlObj.openConnection();
       conn.setRequestProperty("User-Agent", System.getenv("USER_AGENT"));
       conn.connect();
-      boolean isWriteSuccess = writeFileToDisk(conn.getInputStream());
-      if (!isWriteSuccess) {
-        log.error("event=\"Unable to write {} file to disk\"", url);
+      if (writeFileToDisk(conn.getInputStream())) {
+        log.info("event=\"Successfully wrote {} to disk\"", name);
+        return name + WebPageConstants.PAGE_URL;
       }
-      return isWriteSuccess ? name + WebPageConstants.PAGE_URL : StringUtils.EMPTY;
+      log.error("event=\"Unable to write {} file to disk\"", url);
     } catch (IOException e) {
       log.error("Error opening connection to url {}", url, e);
     } finally {

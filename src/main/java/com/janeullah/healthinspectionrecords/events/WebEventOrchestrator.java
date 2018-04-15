@@ -21,8 +21,10 @@ public class WebEventOrchestrator {
   public void processAndSaveAllRestaurants() {
     try {
       if (webPageDownloader.isDownloadOverrideOrDataExpired()) {
+        log.info("event=file_download_and_processing message=\"Beginning file download process\"");
         webPageDownloader.initiateDownloadsAndProcessFiles();
       } else {
+        log.info("event=file_processing message=\"File download not needed. Processing existing files\"");
         webPageProcessing.startProcessingOfDownloadedFiles();
       }
     } catch (Exception e) {
