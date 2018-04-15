@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +24,6 @@ public class ExecutorUtil {
   /**
    * http://stackoverflow.com/questions/3269445/executorservice-how-to-wait-for-all-tasks-to-finish?rq=1
    */
-  @Bean
   public static void shutdown() {
     try {
       if (!EXECUTOR_SERVICE.isShutdown() || !EXECUTOR_SERVICE.isTerminated()) {

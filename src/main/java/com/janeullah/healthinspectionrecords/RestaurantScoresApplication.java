@@ -11,7 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 import java.util.Arrays;
-
 @Slf4j
 @EnableCaching
 @ComponentScan(basePackages = {"com.janeullah.healthinspectionrecords"})
@@ -35,4 +34,5 @@ public class RestaurantScoresApplication extends SpringBootServletInitializer {
             .sorted()
             .forEach(log::debug);
   }
+
 }

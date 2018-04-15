@@ -32,6 +32,10 @@ configurations.all {
     exclude group: "commons-logging", module: "commons-logging"
 }
 
+configurations {
+    providedRuntime
+}
+
 dependencyManagement {
     imports {
         //https://github.com/awsdocs/aws-doc-sdk-examples
