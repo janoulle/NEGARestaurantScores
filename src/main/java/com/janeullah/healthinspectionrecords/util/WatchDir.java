@@ -54,6 +54,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
 @Slf4j
 public class WatchDir {
 
+  public static final String WATCHABLE_EVENTS = System.getenv("WATCHABLE_EVENT");
   private static ConcurrentMap<String, Boolean> entriesBeingWatched = Maps.newConcurrentMap();
   private final WatchService watcher;
   private final ConcurrentMap<WatchKey, Path> keys;
@@ -61,7 +62,6 @@ public class WatchDir {
   private final Path dir;
   private boolean trace = false;
   private WebPageProcessing webPageProcessing;
-  public static final String WATCHABLE_EVENTS = System.getenv("WATCHABLE_EVENT");
   // private PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.{html,text}");
 
   /** Creates a WatchService and registers the given directory */

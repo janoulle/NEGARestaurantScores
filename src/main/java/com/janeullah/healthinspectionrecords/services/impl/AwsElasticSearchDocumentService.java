@@ -62,8 +62,8 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
     AwsV4RequestSigner awsV4RequestSigner =
         new AwsV4RequestSigner(
             new BasicAWSCredentials(awsElasticSearchAccessKey, awsElasticSearchSecret),
-                awsRegionName,
-                awsElasticSearchServiceName);
+            awsRegionName,
+            awsElasticSearchServiceName);
     // Instantiate the request
     Request<Void> request =
         awsV4RequestSigner.makeSignableRequest(

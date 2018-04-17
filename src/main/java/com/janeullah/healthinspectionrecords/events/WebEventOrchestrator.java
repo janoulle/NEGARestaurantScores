@@ -24,7 +24,8 @@ public class WebEventOrchestrator {
         log.info("event=file_download_and_processing message=\"Beginning file download process\"");
         webPageDownloader.initiateDownloadsAndProcessFiles();
       } else {
-        log.info("event=file_processing message=\"File download not needed. Processing existing files\"");
+        log.info(
+            "event=file_processing message=\"File download not needed. Processing existing files\"");
         webPageProcessing.startProcessingOfDownloadedFiles();
       }
     } catch (Exception e) {

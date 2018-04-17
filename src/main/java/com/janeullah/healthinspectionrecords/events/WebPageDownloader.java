@@ -25,8 +25,9 @@ public class WebPageDownloader {
   private static final CompletionService<String> webPageDownloadCompletionService =
       new ExecutorCompletionService<>(EXECUTOR_SERVICE);
 
-  //https://stackoverflow.com/questions/10156191/real-life-examples-for-countdownlatch-and-cyclicbarrier/32416323
-  //contains count of tasks to be completed. Unrelated to the count of threads being used to perform work
+  // https://stackoverflow.com/questions/10156191/real-life-examples-for-countdownlatch-and-cyclicbarrier/32416323
+  // contains count of tasks to be completed. Unrelated to the count of threads being used to
+  // perform work
   private static final CountDownLatch COUNT_DOWN_LATCH =
       new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
   private WebPageProcessing webPageProcessing;
@@ -42,20 +43,20 @@ public class WebPageDownloader {
     this.webPageProcessing = webPageProcessing;
   }
 
-  private List<WebPageRequestAsync> populateListOfAsyncWebRequestToBeMade() {
-    List<WebPageRequestAsync> results = new ArrayList<>();
-    Map<String, String> urls = getUrls();
-    urls.forEach(
-        (key, value) -> results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH)));
-    return results;
-  }
-
   // Return Map of County Name to County URL
   private static Map<String, String> getUrls() {
     Map<String, String> results = new ConcurrentHashMap<>();
     for (String county : WebPageConstants.COUNTY_LIST) {
       results.put(county, String.format(WebPageConstants.URL, county));
     }
+    return results;
+  }
+
+  private List<WebPageRequestAsync> populateListOfAsyncWebRequestToBeMade() {
+    List<WebPageRequestAsync> results = new ArrayList<>();
+    Map<String, String> urls = getUrls();
+    urls.forEach(
+        (key, value) -> results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH)));
     return results;
   }
 

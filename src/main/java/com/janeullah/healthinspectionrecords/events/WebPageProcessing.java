@@ -29,7 +29,8 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.EXECUTOR_S
 @Slf4j
 @Component
 public class WebPageProcessing {
-  private static final CountDownLatch COUNT_DOWN_LATCH = new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
+  private static final CountDownLatch COUNT_DOWN_LATCH =
+      new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
   private RestaurantRepository restaurantRepository;
 
   @Autowired

@@ -18,7 +18,7 @@ public class HealthCheckController {
 
   @Autowired
   public HealthCheckController(FirebaseInitialization firebaseInitialization) {
-      this.firebaseInitialization = firebaseInitialization;
+    this.firebaseInitialization = firebaseInitialization;
   }
 
   @RequestMapping(value = "/isAlive", method = RequestMethod.GET)

@@ -28,9 +28,10 @@ import java.util.Optional;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
-/** Author: jane Date: 4/14/2017
+/**
+ * Author: jane Date: 4/14/2017
  * https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
- * */
+ */
 @Slf4j
 @Service
 @Scope(value = SCOPE_SINGLETON)
@@ -43,8 +44,9 @@ public class FirebaseInitialization {
   private String negaFirebaseDbUrl;
 
   @Autowired
-  public FirebaseInitialization(FirebaseDataProcessing firebaseDataProcessing,
-                                AmazonS3ClientForFirebaseOperations amazonS3ClientForFirebaseOperations) {
+  public FirebaseInitialization(
+      FirebaseDataProcessing firebaseDataProcessing,
+      AmazonS3ClientForFirebaseOperations amazonS3ClientForFirebaseOperations) {
     this.firebaseDataProcessing = firebaseDataProcessing;
     this.amazonS3ClientForFirebaseOperations = amazonS3ClientForFirebaseOperations;
   }
@@ -91,9 +93,9 @@ public class FirebaseInitialization {
 
   private FirebaseOptions getFirebaseOptions(InputStream serviceAccount) {
     return new FirebaseOptions.Builder()
-            .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-            .setDatabaseUrl(negaFirebaseDbUrl)
-            .build();
+        .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+        .setDatabaseUrl(negaFirebaseDbUrl)
+        .build();
   }
 
   public boolean isDatabaseInitialized() {
@@ -151,8 +153,7 @@ public class FirebaseInitialization {
   private DatabaseReference.CompletionListener getCompletionListener(String desc, Map data) {
     return (databaseError, databaseReference) -> {
       if (databaseError != null) {
-        log.error(
-            "Data  for child ({}) could not be saved - {}", desc, databaseError.getMessage());
+        log.error("Data  for child ({}) could not be saved - {}", desc, databaseError.getMessage());
       } else {
         log.info("Data for child ({} of size {}) saved successfully.", desc, data.size());
       }

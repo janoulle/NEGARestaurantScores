@@ -73,10 +73,6 @@ public class InspectionReport implements Serializable {
     return dateReported;
   }
 
-  public void setDateReported(LocalDate dateReported) {
-    this.dateReported = dateReported;
-  }
-
   /**
    * http://www.thoughts-on-java.org/persist-localdate-localdatetime-jpa/
    * https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
@@ -86,6 +82,10 @@ public class InspectionReport implements Serializable {
    */
   private void setDateReported(String date) {
     setDateReported(LocalDate.parse(date, MMddYYYY_PATTERN));
+  }
+
+  public void setDateReported(LocalDate dateReported) {
+    this.dateReported = dateReported;
   }
 
   public InspectionType getInspectionType() {

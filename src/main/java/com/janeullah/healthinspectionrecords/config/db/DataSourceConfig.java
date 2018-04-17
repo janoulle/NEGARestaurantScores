@@ -17,19 +17,16 @@ import java.net.URISyntaxException;
  * Author: Jane Ullah Date: 9/20/2016
  * https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-java
  * https://medium.com/@joeclever/using-multiple-datasources-with-spring-boot-and-spring-data-6430b00c02e7
- * Opted to keep username/password out of .properties files and using env variables passed (e.g. catalina.properties
- * or intellij config
+ * Opted to keep username/password out of .properties files and using env variables passed (e.g.
+ * catalina.properties or intellij config
  */
 @Slf4j
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-        basePackages = { "com.janeullah.healthinspectionrecords.repository" }
-)
+@EnableJpaRepositories(basePackages = {"com.janeullah.healthinspectionrecords.repository"})
 public class DataSourceConfig {
 
-  @Autowired
-  private Environment env;
+  @Autowired private Environment env;
 
   @Bean(name = "dataSource")
   @ConfigurationProperties(prefix = "spring.datasource")

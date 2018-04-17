@@ -7,14 +7,12 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 @WebListener
-public class ThreadCleanup  implements ServletContextListener {
-    @Override
-    public void contextDestroyed(ServletContextEvent evt) {
-        ExecutorUtil.shutdown();
-    }
+public class ThreadCleanup implements ServletContextListener {
+  @Override
+  public void contextDestroyed(ServletContextEvent evt) {
+    ExecutorUtil.shutdown();
+  }
 
-    @Override
-    public void contextInitialized(ServletContextEvent evt) {
-
-    }
+  @Override
+  public void contextInitialized(ServletContextEvent evt) {}
 }
