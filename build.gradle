@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.5.11.RELEASE'
+        springBootVersion = '1.5.12.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -17,12 +17,10 @@ apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 apply plugin: 'war'
 
-jar {
-    baseName = 'RestaurantScores'
-    version = '0.0.3-SNAPSHOT'
-}
+
+group = 'com.janeullah.healthinspectionrecords'
+version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
