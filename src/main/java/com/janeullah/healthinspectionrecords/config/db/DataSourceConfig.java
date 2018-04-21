@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.net.URISyntaxException;
 
 /**
  * Author: Jane Ullah Date: 9/20/2016
@@ -30,36 +29,7 @@ public class DataSourceConfig {
 
   @Bean(name = "dataSource")
   @ConfigurationProperties(prefix = "spring.datasource")
-  public DataSource dataSource() throws URISyntaxException {
-    /*String profile = env.getProperty("spring.profiles.active");
-    log.info("Active profile = {}", profile);
-    if ("h2".equalsIgnoreCase(profile)) {
-      return DataSourceBuilder.create()
-          .driverClassName("org.h2.Driver")
-          .url("jdbc:h2:mem:testdb")
-          .username("sa")
-          .password(StringUtils.EMPTY)
-          .build();
-    } else if ("sqlite".equalsIgnoreCase(profile)) {
-      return DataSourceBuilder.create()
-          .driverClassName("org.sqlite.JDBC")
-          .url("jdbc:sqlite:" + env.getProperty("SQLITE_DB_PATH", "nega_inspections.db"))
-          .build();
-    } else {
-      URI dbUri = new URI(env.getProperty("DATABASE_URL"));
-      log.debug("Database url info = {}", dbUri);
-      String[] userInfo = dbUri.getUserInfo().split(":");
-      String prefix = "mysql".equalsIgnoreCase(profile) ? "mysql" : "postgresql";
-      String dbUrl =
-          String.format(
-              "jdbc:%s://%s:%d%s", prefix, dbUri.getHost(), dbUri.getPort(), dbUri.getPath());
-
-      return DataSourceBuilder.create()
-              .url(dbUrl)
-              .username(userInfo[0])
-              .password(userInfo[1])
-              .build();
-    }*/
+  public DataSource dataSource() {
     return DataSourceBuilder.create().build();
   }
 }
