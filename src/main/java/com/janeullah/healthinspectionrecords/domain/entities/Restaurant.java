@@ -1,11 +1,14 @@
 package com.janeullah.healthinspectionrecords.domain.entities;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
+@Data
 @Entity
 @Table(name = "ir_restaurants")
 public class Restaurant implements Serializable {
@@ -32,33 +35,14 @@ public class Restaurant implements Serializable {
   )
   private EstablishmentInfo establishmentInfo;
 
-  public List<InspectionReport> getInspectionReports() {
-    return inspectionReports;
-  }
-
-  public void setInspectionReports(List<InspectionReport> inspectionReports) {
-    this.inspectionReports = inspectionReports;
-  }
-
+  //TODO: review the need to do this.
   public void addInspectionReport(InspectionReport report) {
     this.inspectionReports.add(report);
     report.setRestaurant(this);
   }
 
-  public EstablishmentInfo getEstablishmentInfo() {
-    return establishmentInfo;
-  }
-
   public void setEstablishmentInfo(EstablishmentInfo establishmentInfo) {
     this.establishmentInfo = establishmentInfo;
     establishmentInfo.setRestaurant(this);
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 }

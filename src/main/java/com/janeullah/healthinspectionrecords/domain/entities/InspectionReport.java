@@ -3,6 +3,8 @@ package com.janeullah.healthinspectionrecords.domain.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.janeullah.healthinspectionrecords.constants.InspectionType;
 import com.janeullah.healthinspectionrecords.util.StringUtilities;
+import lombok.Data;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
+@Data
+@ToString(exclude="restaurant")
 @Entity
 @Table(name = "ir_inspectionreport")
 public class InspectionReport implements Serializable {
@@ -53,25 +57,6 @@ public class InspectionReport implements Serializable {
   @Column(name = "score")
   private int score;
 
-  public InspectionReport() {}
-
-  public InspectionReport(int score, String date, InspectionType type) {
-    setScore(score);
-    setDateReported(date);
-    setInspectionType(type);
-  }
-
-  public int getScore() {
-    return score;
-  }
-
-  public void setScore(int score) {
-    this.score = score;
-  }
-
-  public LocalDate getDateReported() {
-    return dateReported;
-  }
 
   /**
    * http://www.thoughts-on-java.org/persist-localdate-localdatetime-jpa/
@@ -88,67 +73,9 @@ public class InspectionReport implements Serializable {
     this.dateReported = dateReported;
   }
 
-  public InspectionType getInspectionType() {
-    return inspectionType;
-  }
-
-  public void setInspectionType(InspectionType inspectionType) {
-    this.inspectionType = inspectionType;
-  }
-
-  public List<Violation> getViolations() {
-    return violations;
-  }
-
-  public void setViolations(List<Violation> violations) {
-    this.violations = violations;
-  }
-
-  public void addViolation(Violation violation) {
-    violations.add(violation);
-    violation.setInspectionReport(this);
-  }
-
   public void addViolations(List<Violation> violations) {
     setViolations(violations);
     violations.forEach(violation -> violation.setInspectionReport(this));
   }
 
-  public void removeViolation(Violation violation) {
-    violations.remove(violation);
-    violation.setInspectionReport(null);
-  }
-
-  public Restaurant getRestaurant() {
-    return restaurant;
-  }
-
-  public void setRestaurant(Restaurant restaurant) {
-    this.restaurant = restaurant;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  private String getViolationsAsString() {
-    if (CollectionUtils.isEmpty(violations)) {
-      return StringUtils.EMPTY;
-    }
-    return violations
-        .stream()
-        .map(Violation::toString)
-        .collect(Collectors.joining(StringUtilities.COMMA.getValue()));
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "InspectionReport[score=%s,dateReported=%s,violations=%s, restaurant=\"%s\"]",
-        score, dateReported, getViolationsAsString(), restaurant.toString());
-  }
 }
