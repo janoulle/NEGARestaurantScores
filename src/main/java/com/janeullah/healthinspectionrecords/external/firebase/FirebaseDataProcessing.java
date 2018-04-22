@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.external.firebase;
 import com.google.common.base.CharMatcher;
 import com.janeullah.healthinspectionrecords.constants.Severity;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
-import com.janeullah.healthinspectionrecords.domain.builders.FlattenedRestaurantBuilder;
 import com.janeullah.healthinspectionrecords.domain.dtos.County;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedInspectionReport;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
@@ -44,6 +43,7 @@ public class FirebaseDataProcessing {
             restaurant.getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
         return replaceInvalidCharsInKey(nameAndId);
       };
+
   private Function<FlattenedInspectionReport, String> createUniqueKeyFromFlattenedInspectionReport =
       flattenedInspectionReport -> {
         String nameAndId =
@@ -52,8 +52,10 @@ public class FirebaseDataProcessing {
                 + flattenedInspectionReport.getId();
         return replaceInvalidCharsInKey(nameAndId);
       };
+
   private Function<Restaurant, FlattenedRestaurant> getTrimmedRestaurantData =
       restaurant -> Objects.nonNull(restaurant) ? processRestaurant(restaurant) : null;
+
   /** Convert Restaurant entity to a POJO */
   private Function<Restaurant, FlattenedRestaurant> mapRestaurantEntityToFlattenedRestaurant =
       restaurant -> {
@@ -70,7 +72,7 @@ public class FirebaseDataProcessing {
                   .getViolations()
                   .stream()
                   .collect(Collectors.groupingBy(Violation::getSeverity, Collectors.counting()));
-          return FlattenedRestaurantBuilder.aFlattenedRestaurant()
+          return FlattenedRestaurant.builder()
               .id(restaurant.getId())
               .score(inspectionReport.getScore())
               .name(restaurant.getEstablishmentInfo().getName())
@@ -84,7 +86,7 @@ public class FirebaseDataProcessing {
               .inspectionReport(createFlattenedInspectionReport(inspectionReport))
               .build();
         }
-        return new FlattenedRestaurant();
+        return null;
       };
 
   @Autowired
@@ -108,17 +110,19 @@ public class FirebaseDataProcessing {
           restaurantsInCounty
               .stream()
               .collect(Collectors.toMap(createUniqueKey, getTrimmedRestaurantData));
-      County countyObj = new County(county, mapOfRestaurantsInCounty);
-      countiesAndRestaurants.put(county, countyObj);
+      countiesAndRestaurants.put(county, County.builder()
+              .name(county)
+              .restaurants(mapOfRestaurantsInCounty)
+              .build());
     }
     return countiesAndRestaurants;
   }
 
   private FlattenedRestaurant processRestaurant(Restaurant restaurant) {
-    FlattenedRestaurant flattenedRestaurant = new FlattenedRestaurant();
-    flattenedRestaurant.setName(restaurant.getEstablishmentInfo().getName());
-    flattenedRestaurant.setAddress(restaurant.getEstablishmentInfo().getAddress());
-    return flattenedRestaurant;
+    return FlattenedRestaurant.builder()
+            .name(restaurant.getEstablishmentInfo().getName())
+            .address(restaurant.getEstablishmentInfo().getAddress())
+            .build();
   }
 
   /**
@@ -135,32 +139,33 @@ public class FirebaseDataProcessing {
         .stream()
         .flatMap(List::stream)
         .map(mapRestaurantEntityToFlattenedRestaurant)
+            .filter(Objects::nonNull)
         .collect(Collectors.toMap(createUniqueKeyFromFlattenedRestaurant, Function.identity()));
   }
 
   private FlattenedInspectionReport createFlattenedInspectionReport(
       InspectionReport inspectionReport) {
-    FlattenedInspectionReport flattenedInspectionReport = new FlattenedInspectionReport();
-    flattenedInspectionReport.setDateReported(inspectionReport.getDateReported().toString());
-    flattenedInspectionReport.setId(inspectionReport.getRestaurant().getId());
-    flattenedInspectionReport.setName(
-        inspectionReport.getRestaurant().getEstablishmentInfo().getName());
-    flattenedInspectionReport.setScore(inspectionReport.getScore());
-    flattenedInspectionReport.setViolations(createFlattenedViolations(inspectionReport));
-    return flattenedInspectionReport;
+    return FlattenedInspectionReport.builder()
+            .dateReported(String.valueOf(inspectionReport.getDateReported()))
+            .id(inspectionReport.getRestaurant().getId())
+            .name(inspectionReport.getRestaurant().getEstablishmentInfo().getName())
+            .score(inspectionReport.getScore())
+            .violations(createFlattenedViolations(inspectionReport))
+            .build();
   }
 
   private List<FlattenedViolation> createFlattenedViolations(InspectionReport inspectionReport) {
     List<FlattenedViolation> flattenedViolations = new ArrayList<>();
     for (Violation violation : inspectionReport.getViolations()) {
-      FlattenedViolation flattenedViolation = new FlattenedViolation();
-      flattenedViolation.setCategory(violation.getCategory());
-      flattenedViolation.setInspectionType(inspectionReport.getInspectionType().toString());
-      flattenedViolation.setSection(violation.getSection());
-      flattenedViolation.setSeverity(violation.getSeverity().toString());
-      flattenedViolation.setViolationId(violation.getId());
-      flattenedViolation.setSummary(violation.getSummary());
-      flattenedViolation.setNotes(violation.getNotes());
+      FlattenedViolation flattenedViolation = FlattenedViolation.builder()
+              .category(violation.getCategory())
+              .inspectionType(String.valueOf(inspectionReport.getInspectionType()))
+              .section(violation.getSection())
+              .severity(String.valueOf(violation.getSeverity()))
+              .violationId(violation.getId())
+              .summary(violation.getSummary())
+              .notes(violation.getNotes())
+              .build();
       flattenedViolations.add(flattenedViolation);
     }
     return flattenedViolations;
