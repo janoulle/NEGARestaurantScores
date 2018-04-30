@@ -4,10 +4,7 @@ import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * http://www.vogella.com/tutorials/JavaIO/article.html#javaio_writefile Author: Jane Ullah Date:
@@ -17,16 +14,6 @@ import java.nio.file.Paths;
 public class FilesUtil {
 
   private FilesUtil() {}
-
-  public static File[] getFilesInDirectory(String path) {
-    try {
-      File dir = Paths.get(path).toFile();
-      return dir.listFiles();
-    } catch (InvalidPathException | SecurityException e) {
-      log.error("Unable to retrieve list of files", e);
-    }
-    return new File[0];
-  }
 
   public static String extractCounty(Path file) {
     try {
@@ -43,7 +30,4 @@ public class FilesUtil {
     return StringUtils.EMPTY;
   }
 
-  public static Path getFilePath(String relativePathName) {
-    return Paths.get(WebPageConstants.PATH_TO_PAGE_STORAGE + File.separator + relativePathName);
-  }
 }

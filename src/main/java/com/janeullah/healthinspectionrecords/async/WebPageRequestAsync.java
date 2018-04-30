@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.async;
 
+import com.janeullah.healthinspectionrecords.constants.PathVariables;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -19,11 +20,13 @@ public class WebPageRequestAsync implements Callable<String> {
   private final CountDownLatch doneSignal;
   private String url;
   private String name;
+  private PathVariables pathVariables;
 
-  public WebPageRequestAsync(String url, String name, CountDownLatch doneSignal) {
+  public WebPageRequestAsync(String url, String name, CountDownLatch doneSignal, PathVariables pathVariables) {
     this.url = url;
     this.name = name;
     this.doneSignal = doneSignal;
+    this.pathVariables = pathVariables;
   }
 
   public String getName() {
@@ -34,9 +37,7 @@ public class WebPageRequestAsync implements Callable<String> {
   // https://stackoverflow.com/questions/5971964/file-separator-or-file-pathseparator
   private boolean writeFileToDisk(InputStream reqStream) {
     try {
-      String fileName = name + WebPageConstants.PAGE_URL;
-      File destinationFile =
-          new File(WebPageConstants.PATH_TO_PAGE_STORAGE + File.separator + fileName);
+      File destinationFile = pathVariables.getDefaultFilePath(name + WebPageConstants.PAGE_URL);
       FileUtils.copyInputStreamToFile(reqStream, destinationFile);
       return true;
     } catch (IOException e) {

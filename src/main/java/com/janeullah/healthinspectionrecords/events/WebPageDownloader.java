@@ -1,8 +1,8 @@
 package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageRequestAsync;
+import com.janeullah.healthinspectionrecords.constants.PathVariables;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
-import com.janeullah.healthinspectionrecords.util.FilesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -31,6 +31,7 @@ public class WebPageDownloader {
   private static final CountDownLatch COUNT_DOWN_LATCH =
       new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
   private WebPageProcessing webPageProcessing;
+  private PathVariables pathVariables;
 
   @Value("${DOWNLOAD_OVERRIDE}")
   private boolean isDownloadOverrideEnabled;
@@ -39,8 +40,10 @@ public class WebPageDownloader {
   private String dataExpirationInDays;
 
   @Autowired
-  public WebPageDownloader(WebPageProcessing webPageProcessing) {
+  public WebPageDownloader(WebPageProcessing webPageProcessing,
+                           PathVariables pathVariables) {
     this.webPageProcessing = webPageProcessing;
+    this.pathVariables = pathVariables;
   }
 
   // Return Map of County Name to County URL
@@ -56,7 +59,7 @@ public class WebPageDownloader {
     List<WebPageRequestAsync> results = new ArrayList<>();
     Map<String, String> urls = getUrls();
     urls.forEach(
-        (key, value) -> results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH)));
+        (key, value) -> results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH, pathVariables)));
     return results;
   }
 
@@ -78,7 +81,7 @@ public class WebPageDownloader {
   private boolean areFilesOlderThanLimit() {
     try {
       DateTime maxAgeDate = DateTime.now().minus(getMaxExpirationDate().get());
-      File[] files = FilesUtil.getFilesInDirectory(WebPageConstants.PATH_TO_PAGE_STORAGE);
+      File[] files = pathVariables.getFilesInDefaultDirectory();
       OptionalLong result =
           Stream.of(files)
               .mapToLong(File::lastModified)

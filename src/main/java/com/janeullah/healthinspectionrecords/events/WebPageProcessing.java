@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.janeullah.healthinspectionrecords.async.WebPageProcessAsync;
+import com.janeullah.healthinspectionrecords.constants.PathVariables;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
@@ -32,15 +33,18 @@ public class WebPageProcessing {
   private static final CountDownLatch COUNT_DOWN_LATCH =
       new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
   private RestaurantRepository restaurantRepository;
+  private PathVariables pathVariables;
 
   @Autowired
-  public WebPageProcessing(RestaurantRepository restaurantRepository) {
+  public WebPageProcessing(RestaurantRepository restaurantRepository,
+                           PathVariables pathVariables) {
     this.restaurantRepository = restaurantRepository;
+    this.pathVariables = pathVariables;
   }
 
   public void startProcessingOfDownloadedFiles() {
     try {
-      File[] files = FilesUtil.getFilesInDirectory(WebPageConstants.PATH_TO_PAGE_STORAGE);
+      File[] files = pathVariables.getFilesInDefaultDirectory();
       submitAsyncProcessingRequests(files);
       // TODO: figure out way to wait for all execution to be complete
     } catch (Exception e) {
