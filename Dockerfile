@@ -11,7 +11,7 @@ RUN apk add --no-cache curl
 # Copy the current directory contents into the container at /app
 ADD target/RestaurantScores*.jar app.jar
 
-# Setting environmental variables
+# Setting environment variables
 ENV JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
 
 # Actuator health check

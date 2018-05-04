@@ -1,5 +1,7 @@
 package com.janeullah.healthinspectionrecords.constants.counties;
 
+import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,6 +29,12 @@ public enum NEGACounties {
     return Stream.of(NEGACounties.values())
         .map(NEGACounties::getNormalizedName)
         .collect(Collectors.toList());
+  }
+
+  public static List<String> getExpectedFilesInDirectory() {
+    return getAllNEGACounties().stream()
+            .map(str -> str + WebPageConstants.PAGE_URL)
+            .collect(Collectors.toList());
   }
 
   public String getNormalizedName() {
