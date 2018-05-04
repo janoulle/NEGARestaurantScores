@@ -1,0 +1,39 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+networks:
+  restaurantscores:
+
+services:
+
+  #https://hub.docker.com/_/postgres/
+  restaurant-scores-db:
+    container_name: restaurantscores-db
+    image: postgres:latest
+    env_file:
+    - ../Docker/restaurantscores/environmentvariables-db.env
+    ports:
+    - "5433:5432"
+    networks:
+    - restaurantscores
+
+
+  restaurant-scores-server:
+    container_name: restaurantscores-server
+    build:
+      context: .
+    ports:
+    - "8080:8080"
+    - "8000:8000"
+    image: restaurantscores-server:latest
+    depends_on:
+     - restaurant-scores-db
+    links:
+    - restaurant-scores-db
+    env_file:
+    - ../Docker/restaurantscores/environmentvariables-server.env
+    environment:
+      SPRING_PROFILES_ACTIVE: postgresql
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000 -Xms128m -Xmx512m
+    networks:
+    - restaurantscores
