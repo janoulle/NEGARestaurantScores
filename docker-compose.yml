@@ -30,9 +30,15 @@ services:
      - restaurant-scores-db
     links:
     - restaurant-scores-db
+    expose:
+    - "8080"
+    - "8000"
+    volumes:
+    - ../Docker/restaurantscores/logs/:/usr/local/tomcat/logs
     env_file:
     - ../Docker/restaurantscores/environmentvariables-server.env
     environment:
+      CATALINA_HOME: /usr/local/tomcat
       SPRING_PROFILES_ACTIVE: postgresql
       JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000 -Xms128m -Xmx512m
     networks:
