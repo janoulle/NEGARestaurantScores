@@ -3,17 +3,16 @@
 <configuration scan="true">
     <property name="APPLICATION_ID" value="restaurant-scores" />
 
+    <!-- workaround for CATALINA_HOME_IS_UNDEFINED folder creation during local build-->
+    <if condition='isDefined("CATALINA_HOME")'>
+        <then><property name="LOG_FOLDER" value="${CATALINA_HOME}${file.separator}logs"/></then>
+        <else><property name="LOG_FOLDER" value="C:${file.separator}Users${file.separator}jane${file.separator}Repositories${file.separator}logs" /></else>
+    </if>
+
     <!-- http://www.mkyong.com/logging/logback-xml-example/,
     https://examples.javacodegeeks.com/enterprise-java/logback/logback-rollingfileappender-example/,
     https://gist.github.com/jcraane/5921329,
     https://www.mkyong.com/logging/logback-xml-example/ -->
-    <appender name="STDOUT_EXTRA" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
-            </Pattern>
-        </layout>
-    </appender>
 
     <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -31,12 +30,12 @@
 
     <!-- https://stackoverflow.com/questions/42410087/log4j-meaning-of-append-true-false -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${CATALINA_HOME}\${APPLICATION_ID}.log</file>
+        <file>${LOG_FOLDER}${file.separator}${APPLICATION_ID}.log</file>
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover. Make sure the path matches the one in the file element or else
              the rollover logs are placed in the working directory. -->
-            <fileNamePattern>${CATALINA_HOME}\${APPLICATION_ID}_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_FOLDER}${file.separator}${APPLICATION_ID}_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 
             <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
             <!--11-->

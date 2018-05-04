@@ -19,7 +19,11 @@ public class PathVariables {
     public File[] getFilesInDefaultDirectory() {
         try {
             File dir = Paths.get(pathToPageStorage).toFile();
-            return dir.listFiles();
+            File[] filesInDirectory = dir.listFiles();
+            if (filesInDirectory == null) {
+                throw new InvalidPathException(pathToPageStorage, pathToPageStorage + " directory is invalid");
+            }
+            return filesInDirectory;
         } catch (InvalidPathException | SecurityException e) {
             log.error("Unable to retrieve list of files", e);
         }
