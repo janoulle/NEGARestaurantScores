@@ -11,9 +11,12 @@ RUN apk add --no-cache curl
 # Copy the current directory contents into the container at /app
 ADD target/RestaurantScores*.jar app.jar
 
+# Setting environmental variables
+ENV JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
+
 # Actuator health check
 HEALTHCHECK --interval=15m --timeout=10s --retries=3 --start-period=1m CMD curl --fail http://localhost:8080/restaurantscores/health || exit 1
 
 # http://containertutorials.com/docker-compose/spring-boot-app.html
 # App entry point
-ENTRYPOINT exec java -Djava.security.egd=file:/dev/./urandom -jar /app.jar
+ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar

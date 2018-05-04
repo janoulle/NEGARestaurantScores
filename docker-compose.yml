@@ -39,6 +39,5 @@ services:
     environment:
     - CATALINA_HOME=/usr/local/tomcat
     - SPRING_PROFILES_ACTIVE=postgresql
-    - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000 -Xms128m -Xmx512m -Djava.security.egd=file:/dev/./urandom
     networks:
     - restaurantscores-network

@@ -105,10 +105,6 @@ docker {
     baseImage = 'openjdk:8-jdk-alpine'
 }
 
-task fooDocker(type: Docker) {
-    applicationName = "$rootProject.name"
-    tagVersion = '1.0'
-}
 
 task nginxDocker(type: Docker) {
     applicationName = "nginx"
@@ -117,7 +113,7 @@ task nginxDocker(type: Docker) {
     runCommand "apt-get install -y inotify-tools nginx apache2 openssh-server"
 }
 
-task image(type: Docker, dependsOn: build ) {
+task restaurantServerGenerateImage(type: Docker, dependsOn: build ) {
     project.group = ''
     applicationName = "restaurantscores-server"
     dockerfile = file('Dockerfile')
@@ -130,7 +126,7 @@ task image(type: Docker, dependsOn: build ) {
     }
 }
 
-task publishImage(type: Docker, dependsOn: build ) {
+task restaurantServerPublishImage(type: Docker, dependsOn: build ) {
     project.group = ''
     applicationName = "restaurantscores-server"
     push = true
