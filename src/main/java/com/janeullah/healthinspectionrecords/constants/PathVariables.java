@@ -20,11 +20,11 @@ import java.util.zip.ZipInputStream;
 @Component
 public class PathVariables {
 
-  @Value("${FULL_PATH_TO_PAGE_STORAGE}")
-  private String fullPathToPageStorage;
-
   @Value("${RELATIVE_PATH_TO_PAGE_STORAGE}")
   private String relativePathToPageStorage;
+
+  @Value("${CATALINA_HOME}")
+  private String catalinaHome;
 
   /**
    * https://stackoverflow.com/questions/18055189/why-is-my-uri-not-hierarchical
@@ -35,15 +35,15 @@ public class PathVariables {
   public File[] getFilesInDefaultDirectory() {
     try {
 
-      File original = Paths.get(fullPathToPageStorage).toFile();
+      File original = Paths.get(getPath()).toFile();
       File[] filesInDirectory = original.listFiles();
       if (filesInDirectory != null) {
         return filesInDirectory;
       }
 
-      return getFilesInDir();
+      log.error("Failed to fetch files in directory");
     } catch (InvalidPathException | SecurityException e) {
-      log.error("Failed to load directory with " + fullPathToPageStorage, e);
+      log.error("Failed to load directory with {] ", getPath(), e);
     }
     return new File[0];
   }
@@ -103,10 +103,14 @@ public class PathVariables {
   }
 
   public Path getFilePath(String relativePathName) {
-    return Paths.get(fullPathToPageStorage + File.separator + relativePathName);
+    return Paths.get(catalinaHome + File.separator +  relativePathToPageStorage + File.separator + relativePathName);
   }
 
   public File getDefaultFilePath(String fileName) {
-    return new File(fullPathToPageStorage + File.separator + fileName);
+    return new File(getPath() + File.separator + fileName);
+  }
+
+  private String getPath() {
+    return catalinaHome + File.separator + relativePathToPageStorage;
   }
 }

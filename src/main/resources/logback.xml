@@ -6,7 +6,7 @@
     <!-- workaround for CATALINA_HOME_IS_UNDEFINED folder creation during local build-->
     <if condition='isDefined("CATALINA_HOME")'>
         <then><property name="LOG_FOLDER" value="${CATALINA_HOME}${file.separator}logs"/></then>
-        <else><property name="LOG_FOLDER" value="C:${file.separator}Users${file.separator}jane${file.separator}Repositories${file.separator}logs" /></else>
+        <else><property name="LOG_FOLDER" value="C:${file.separator}Users${file.separator}jane${file.separator}Repositories${file.separator}Docker${file.separator}restaurantscores${file.separator}logs" /></else>
     </if>
 
     <!-- http://www.mkyong.com/logging/logback-xml-example/,

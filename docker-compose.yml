@@ -34,6 +34,7 @@ services:
     - "8000"
     volumes:
     - ../Docker/restaurantscores/logs/:/usr/local/tomcat/logs
+    - ../Docker/restaurantscores/downloads/webpages:/usr/local/tomcat/dowloads/webpages
     env_file:
     - ../Docker/restaurantscores/environmentvariables-server.env
     environment:

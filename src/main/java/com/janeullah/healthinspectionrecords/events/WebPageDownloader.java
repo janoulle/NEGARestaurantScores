@@ -70,7 +70,11 @@ public class WebPageDownloader {
    * @return boolean
    */
   public boolean isDownloadOverrideOrDataExpired() {
-    return isDownloadOverrideEnabled || areFilesOlderThanLimit();
+    return isDownloadOverrideEnabled || isFolderEmpty() || areFilesOlderThanLimit();
+  }
+
+  private boolean isFolderEmpty() {
+    return pathVariables.getFilesInDefaultDirectory().length == 0;
   }
 
   /**
