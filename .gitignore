@@ -53,6 +53,14 @@ hs_err_pid*
 
 # IntelliJ
 /out/
+build
+.gradle
+.idea
+out
+*.iml
+*.ipr
+*.iws
+.DS_Store
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -72,3 +80,5 @@ fabric.properties
 *runConfigurations.zip
 build.info
 logs.txt
+Procfile
+/Procfile
