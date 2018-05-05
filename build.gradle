@@ -137,14 +137,6 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
-
-/*docker {
-    dependsOn build
-    name "${project.group}/${bootJar.baseName}"
-    files bootJar.archivePath
-    buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
-}*/
-
 docker {
     maintainer = 'Jane Ullah <janeullah@gmail.com>'
     baseImage = 'openjdk:8-jdk-alpine'
@@ -161,7 +153,7 @@ task nginxDocker(type: Docker) {
 task restaurantServerGenerateImage(type: Docker, dependsOn: build ) {
     project.group = ''
     applicationName = "restaurantscores-server"
-    dockerfile = file('Dockerfile')
+    dockerfile = file("docker/$applicationName/Dockerfile")
     tagVersion = 'latest'
     doFirst {
         copy {
@@ -175,7 +167,7 @@ task restaurantServerPublishImage(type: Docker, dependsOn: build ) {
     project.group = ''
     applicationName = "restaurantscores-server"
     push = true
-    dockerfile = file('Dockerfile')
+    dockerfile = file("docker/$applicationName/Dockerfile")
     tagVersion = 'latest'
     doFirst {
         copy {

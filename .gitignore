@@ -65,8 +65,10 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+#Excluding various things
 /build/
 /.gradle/
-*_runConfigurations.zip
+*runConfigurations.zip
 build.info
 logs.txt
