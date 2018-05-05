@@ -17,37 +17,27 @@ RUN apk add --no-cache curl
 # Use for manual docker building i.e. docker build
 COPY build/libs/RestaurantScores*.jar app.jar
 
-ARG java_opts=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
-ARG server_port=8080
-ARG catalina_home=/usr/local/tomcat
-ARG spring_active_profile=postgresql
-
 # Setting environment variables
 # Note: this application relies on environment variables that contain secrets. Can pass along to image via:
 # https://stackoverflow.com/questions/30494050/how-do-i-pass-environment-variables-to-docker-containers
-ENV JAVA_OPTS $java_opts
+ENV JAVA_OPTS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
 
-ENV PORT $server_port
+ENV PORT 8080
 
 # Setting catalina home
-ENV CATALINA_HOME $catalina_home
+ENV CATALINA_HOME /usr/local/tomcat
 
 # Setting spring active profile
-ENV SPRING_PROFILES_ACTIVE $spring_active_profile
+ENV SPRING_PROFILES_ACTIVE postgresql
 
 # https://blog.codeship.com/a-beginners-guide-to-the-dockerfile/
 # Expose debug port and port 8080
 EXPOSE 8000 8080
 
 # https://spring.io/guides/gs/spring-boot-docker/
-VOLUME /tmp
-
 # https://stackoverflow.com/questions/41935435/understanding-volume-instruction-in-dockerfile
-# Setup logging volume
-VOLUME $CATALINA_HOME/logs
-
-# Setup volume for file downloads
-VOLUME $CATALINA_HOME/downloads/webpages
+# Setup logging volume and
+VOLUME [ "$CATALINA_HOME/logs", "$CATALINA_HOME/downloads/webpages"]
 
 # Actuator health check
 HEALTHCHECK --interval=15m --timeout=10s --retries=3 --start-period=1m CMD curl --fail http://localhost:8080/restaurantscores/health || exit 1
