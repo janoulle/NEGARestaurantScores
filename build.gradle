@@ -150,7 +150,9 @@ task nginxDocker(type: Docker) {
     runCommand "apt-get install -y inotify-tools nginx apache2 openssh-server"
 }
 
-task restaurantServerGenerateImage(type: Docker, dependsOn: ['build', 'clean'] ) {
+//TODO: figure out how to make this generate the following docker build command - docker build -t restaurantscores-server:latest -f docker\restaurantscores-server\Dockerfile .
+// atm, it generates docker build -t restaurantscores-server:latest /path/to/dockerfoldercontext which causes build issues :(
+task image(type: Docker, dependsOn: ['clean', 'build'] ) {
     project.group = ''
     applicationName = "restaurantscores-server"
     dockerfile = file("docker/$applicationName/Dockerfile")
@@ -163,7 +165,7 @@ task restaurantServerGenerateImage(type: Docker, dependsOn: ['build', 'clean'] )
     }
 }
 
-task restaurantServerPublishImage(type: Docker, dependsOn: ['build', 'clean'] ) {
+task publishImage(type: Docker, dependsOn: ['clean', 'build'] ) {
     project.group = ''
     applicationName = "restaurantscores-server"
     push = true
@@ -178,4 +180,5 @@ task restaurantServerPublishImage(type: Docker, dependsOn: ['build', 'clean'] ) 
 }
 
 //https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
-build.mustRunAfter clean
+//https://stackoverflow.com/questions/41532108/run-clean-task-before-every-build-automatically-in-gradle
+build.dependsOn clean
