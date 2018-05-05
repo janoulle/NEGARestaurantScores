@@ -13,11 +13,11 @@ buildscript {
 }
 
 apply plugin: 'java'
+//apply plugin: 'war'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 apply plugin: 'docker'
-//apply plugin: 'war'
 
 //https://stackoverflow.com/questions/17262856/gradle-how-to-set-the-project-name-group-version-plus-source-targetcompatibi
 group = projectGroup
@@ -43,6 +43,51 @@ dependencyManagement {
     }
 }
 
+/*http://mrhaki.blogspot.com/2009/10/groovy-goodness-executing-string-or.html
+  http://mrhaki.blogspot.com/2010/10/gradle-goodness-parse-output-from-exec.html */
+static String executeCmd(String cmd) {
+    def command = cmd?.execute()
+
+    return command?.text?.trim()
+}
+
+//https://stackoverflow.com/questions/11657295/count-the-number-of-commits-on-a-git-branch
+//https://stackoverflow.com/questions/15798862/what-does-git-rev-parse-do
+def getBuildInfo() {
+
+    String lastCommitId = executeCmd("git rev-parse HEAD")
+    String tag = executeCmd("git name-rev --tags --name-only $lastCommitId")
+
+    def buildInfo = [
+            'Main-Class' : 'com.janeullah.healthinspectionrecords.RestaurantScoresApplication',
+            'Implementation-Title'       : projectName,
+            'Implementation-Version'     : projectVersion,
+            'Build-Target'               : projectVersion.substring(projectVersion.indexOf("-") + 1),
+            'Build-Time'                 : new Date().format("YYYY-MM-dd"),
+            'Git-Branch'                 : executeCmd("git rev-parse --abbrev-ref HEAD"),
+            'Git-Branch-Commit-Count'    : executeCmd("git rev-list --count HEAD"),
+            'Git-Last-Commit-Id'         : lastCommitId,
+            'Git-Branch-Tag'             : tag == 'undefined' ? 'None' : tag,
+            'Gradle-Version'             : GradleVersion.current().getVersion(),
+            'Java-Version'               : org.gradle.internal.jvm.Jvm.current()
+    ]
+
+    buildInfo
+}
+
+/*https://stackoverflow.com/questions/8012048/groovy-write-out-the-list-to-a-file
+https://docs.gradle.org/current/userguide/tutorial_using_tasks.html#sec:using_methods */
+task writeBuildInfo (dependsOn: build) {
+    doLast {
+        def buildInfo = getBuildInfo()
+
+        String outputPath = "${projectDir}/build.info"
+        File file = new File(outputPath)
+        file.withWriter{ out ->
+            buildInfo.each {k, v -> out.println "${k}:${v}"}
+        }
+    }
+}
 
 dependencies {
 

@@ -68,3 +68,5 @@ fabric.properties
 /build/
 /.gradle/
 *_runConfigurations.zip
+build.info
+logs.txt
