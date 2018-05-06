@@ -1,0 +1,78 @@
+//Transmode docker tasks
+//https://github.com/Transmode/gradle-docker
+
+docker {
+    maintainer = 'Jane Ullah <janeullah@gmail.com>'
+    baseImage = 'openjdk:8-jdk-alpine'
+}
+
+// Not working: ADD failed: stat /var/lib/docker/tmp/docker-builder197037684/RestaurantScores-0.0.1-SNAPSHOT.jar: no such file or directory
+//https://github.com/Transmode/gradle-docker/issues/29 this plugin only works when Dockerfile is not 'external' :(
+task imageTransmodeA(type: Docker, dependsOn: ['clean', 'build', 'writeBuildInfo']) {
+    //setup name of image
+    project.group = ''
+    applicationName = "$dockerImageName"
+    tagVersion = "$dockerImageVersion"
+
+    //cmds to run
+    def args = ["java", "-DJAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
+
+    //setup dockerfile data
+
+    workingDir "."
+
+    runCommand "apk add --no-cache curl"
+
+    addFile "build/libs/$projectName-$projectVersion" + ".jar", "app.jar"
+
+    setEnvironment "JAVA_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000"
+
+    setEnvironment "PORT", "8080"
+
+    setEnvironment "CATALINA_HOME", "/usr/local/tomcat"
+
+    setEnvironment "SPRING_PROFILES_ACTIVE", "postgresql"
+
+    exposePort 8000
+
+    exposePort 8080
+
+    volume "/usr/local/tomcat/logs", "/usr/local/tomcat/downloads/webpages"
+
+    defaultCommand args
+
+}
+
+//https://github.com/Transmode/gradle-docker/issues/29 this plugin only works when Dockerfile is not 'external' :(
+// Fails with   COPY failed: no source files were specified
+task imageTransmodeB(type: Docker, dependsOn: ['clean', 'build']) {
+    project.group = ''
+    applicationName = "$dockerImageName"
+    tagVersion = "$dockerImageVersion"
+
+    dockerfile = file("docker/$applicationName/Dockerfile")
+
+    doFirst {
+        copy {
+            from jar
+            into "${stageDir}/target"
+        }
+    }
+}
+
+
+task publishImage(type: Docker, dependsOn: ['clean', 'build']) {
+    project.group = ''
+    applicationName = "restaurantscores-server"
+    push = true
+    dockerfile = file("docker/$applicationName/Dockerfile")
+    tagVersion = 'latest'
+    doFirst {
+        copy {
+            from jar
+            into "${stageDir}/target"
+        }
+    }
+}
+
+

@@ -18,6 +18,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 apply plugin: 'docker'
+apply from: 'transmodedockertasks.gradleks.gradle'
 
 //https://stackoverflow.com/questions/17262856/gradle-how-to-set-the-project-name-group-version-plus-source-targetcompatibi
 group = projectGroup
@@ -135,79 +136,6 @@ dependencies {
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-}
-
-docker {
-    maintainer = 'Jane Ullah <janeullah@gmail.com>'
-    baseImage = 'openjdk:8-jdk-alpine'
-}
-
-//https://github.com/Transmode/gradle-docker/issues/29 this plugin only works when Dockerfile is not 'external' :(
-task image(type: Docker, dependsOn: ['clean', 'build', 'writeBuildInfo'] ) {
-    //setup name of image
-    project.group = ''
-    applicationName = 'restaurantscores-server'
-    tagVersion = 'beta'
-
-    //cmds to run
-    def args = ["java", "-DJAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000", "-Djava.security.egd=file:/dev/./urandom",  "-jar", "/app.jar"]
-
-    //setup dockerfile data
-
-    workingDir "$projectDir"
-
-    runCommand "apk add --no-cache curl"
-
-    addFile "build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar", "app.jar"
-
-    setEnvironment "JAVA_OPTS", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000"
-
-    setEnvironment "PORT", "8080"
-
-    setEnvironment "CATALINA_HOME", "/usr/local/tomcat"
-
-    setEnvironment "SPRING_PROFILES_ACTIVE", "postgresql"
-
-    exposePort 8000
-
-    exposePort 8080
-
-    volume "/usr/local/tomcat/logs", "/usr/local/tomcat/downloads/webpages"
-
-    defaultCommand args
-
-}
-
-
-//https://github.com/Transmode/gradle-docker/issues/29 this plugin only works when Dockerfile is not 'external' :(
-//TODO: figure out how to make this generate the following docker build command - docker build -t restaurantscores-server:latest -f docker\restaurantscores-server\Dockerfile .
-// atm, it generates docker build -t restaurantscores-server:latest /path/to/dockerfoldercontext which causes build issues :(
-task imageB(type: Docker, dependsOn: ['clean', 'build'] ) {
-    project.group = ''
-    applicationName = "restaurantscores-server"
-    dockerfile = file("docker/$applicationName/Dockerfile")
-    tagVersion = 'beta'
-    doFirst {
-        copy {
-            from jar
-            into "${stageDir}/target"
-        }
-    }
-}
-
-
-task publishImage(type: Docker, dependsOn: ['clean', 'build'] ) {
-    project.group = ''
-    applicationName = "restaurantscores-server"
-    push = true
-    dockerfile = file("docker/$applicationName/Dockerfile")
-    tagVersion = 'latest'
-    doFirst {
-        copy {
-            from jar
-            into "${stageDir}/target"
-        }
-    }
 }
 
 //https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
