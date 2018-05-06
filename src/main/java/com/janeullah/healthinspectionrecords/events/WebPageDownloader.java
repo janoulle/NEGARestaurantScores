@@ -88,6 +88,7 @@ public class WebPageDownloader {
       File[] files = pathVariables.getFilesInDefaultDirectory();
       OptionalLong result =
           Stream.of(files)
+              .filter(Objects::nonNull)
               .mapToLong(File::lastModified)
               .filter(
                   lastModifiedDateTime ->
