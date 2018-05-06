@@ -27,8 +27,6 @@ apply plugin: 'io.spring.dependency-management'
 
 //Palantir docker tasks
 apply plugin: 'com.palantir.docker'
-apply plugin: 'com.palantir.docker-run'
-apply plugin: 'com.palantir.docker-compose'
 apply from: 'palantirdockertasks.gradle'
 
 
@@ -59,6 +57,7 @@ dependencyManagement {
         mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.228'
     }
 }
+
 
 /*http://mrhaki.blogspot.com/2009/10/groovy-goodness-executing-string-or.html
   http://mrhaki.blogspot.com/2010/10/gradle-goodness-parse-output-from-exec.html */
@@ -159,3 +158,5 @@ dependencies {
 build.dependsOn clean
 writeBuildInfo.dependsOn build
 
+//https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
+//bootRepackage.withJarTask = jar

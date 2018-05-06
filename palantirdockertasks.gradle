@@ -1,14 +1,31 @@
 //https://github.com/palantir/gradle-docker
+//https://spring.io/guides/gs/spring-boot-docker/
+//https://github.com/palantir/gradle-docker/issues/83
 
 docker {
+    //note: the jar task doesn't package up the app in a way that is runnable a spring application
+    //spring <2.x.x, bootRepackage is the task that repackages the jar so it'll be runnable as a spring application
+    dependsOn bootRepackage
     name "$dockerImageName:$dockerImageVersion"
     tags "$dockerImageVersion"
 
-    //located in the build context
+    //located in the build context which is a folder in build/docker
     dockerfile file("docker/Dockerfile")
-    files tasks.jar.outputs, "$projectDir/docker/$dockerImageName/gradletask/Dockerfile"
-    buildArgs([BUILD_VERSION: "$projectVersion"])
+
+    //directly reference the Jar file in the Dockerfile
+    def artifact = "$projectName-${projectVersion}.jar"
+
+    //https://spring.io/blog/2017/04/05/spring-boot-s-new-gradle-plugin
+    //https://docs.spring.io/spring-boot/docs/1.5.12.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
+    //tasks.jar.outputs is not appropriate for a Spring application
+    //copies the jar from the build/libs folder and Dockerfile artifacts to build/docker which allows me to
+    files "$libsDir/$artifact", "$projectDir/docker/$dockerImageName/Dockerfile"
+
+    //passing in the jar file location via --build-arg key=value
+    buildArgs(['JAR_FILE'     : artifact])
+
     //labels(['key': 'value'])
+
     pull false
     noCache true
 }

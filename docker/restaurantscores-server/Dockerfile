@@ -8,10 +8,13 @@ MAINTAINER "Jane Ullah <janeullah@gmail.com>"
 # http://blog.zot24.com/tips-tricks-with-alpine-docker/ For keeping size small
 RUN apk add --no-cache curl
 
+# Must pass the jar file location to docker at run time via --build-arg JAR_FILE=path/to/jarfile.jar
+ARG JAR_FILE
+
 # https://stackoverflow.com/questions/17466699/not-able-to-build-a-specific-dockerfile
 # https://www.ctl.io/developers/blog/post/dockerfile-add-vs-copy/
 # Copy the current directory contents into the container at /app
-COPY build/libs/RestaurantScores*.jar app.jar
+COPY ${JAR_FILE} app.jar
 
 # Setting environment variables
 # Note: this application relies on environment variables that contain secrets. Can pass along to image via:
