@@ -35,7 +35,7 @@ public class Restaurant implements Serializable {
   )
   private EstablishmentInfo establishmentInfo;
 
-  //TODO: review the need to do this.
+  //This was done to establish relationships during the data generation step before persisting to the db
   public void addInspectionReport(InspectionReport report) {
     this.inspectionReports.add(report);
     report.setRestaurant(this);
