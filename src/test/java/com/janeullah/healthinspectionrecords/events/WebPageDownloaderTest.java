@@ -15,7 +15,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-//https://stackoverflow.com/questions/17353327/populating-spring-value-during-unit-test?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 @RunWith(MockitoJUnitRunner.class)
 public class WebPageDownloaderTest {
 
@@ -69,4 +68,5 @@ public class WebPageDownloaderTest {
 
         assertTrue(webPageDownloader.isDownloadOverrideOrDataExpired());
     }
+
 }
