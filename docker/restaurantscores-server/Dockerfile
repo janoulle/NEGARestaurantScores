@@ -35,7 +35,7 @@ EXPOSE 8000 8080
 
 # https://spring.io/guides/gs/spring-boot-docker/
 # https://stackoverflow.com/questions/41935435/understanding-volume-instruction-in-dockerfile
-# Setup logging volume and
+# Setup logging volume and file download paths. If not mapped to host volume, it will save inside the container
 VOLUME [ "$CATALINA_HOME/logs", "$CATALINA_HOME/downloads/webpages"]
 
 # Actuator health check
