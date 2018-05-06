@@ -1,0 +1,1 @@
+web: java -DJAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000 -Dspring.profiles.active=postgresql -Dserver.port=8080 -Dserver.contextPath=/restaurantscores -jar build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar

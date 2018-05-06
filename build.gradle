@@ -63,7 +63,7 @@ def getBuildInfo() {
             'Implementation-Title'       : projectName,
             'Implementation-Version'     : projectVersion,
             'Build-Target'               : projectVersion.substring(projectVersion.indexOf("-") + 1),
-            'Build-Time'                 : new Date().format("YYYY-MM-dd"),
+            'Build-Time'                 : new Date().format("yyyy-MM-dd'T'HH:mm'Z'"),
             'Git-Branch'                 : executeCmd("git rev-parse --abbrev-ref HEAD"),
             'Git-Branch-Commit-Count'    : executeCmd("git rev-list --count HEAD"),
             'Git-Last-Commit-Id'         : lastCommitId,
@@ -142,14 +142,6 @@ docker {
     baseImage = 'openjdk:8-jdk-alpine'
 }
 
-
-task nginxDocker(type: Docker) {
-    applicationName = "nginx"
-    runCommand 'echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list'
-    runCommand "apt-get update"
-    runCommand "apt-get install -y inotify-tools nginx apache2 openssh-server"
-}
-
 //https://github.com/Transmode/gradle-docker/issues/29 this plugin only works when Dockerfile is not 'external' :(
 task image(type: Docker, dependsOn: ['clean', 'build'] ) {
     //setup name of image
@@ -221,3 +213,5 @@ task publishImage(type: Docker, dependsOn: ['clean', 'build'] ) {
 //https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
 //https://stackoverflow.com/questions/41532108/run-clean-task-before-every-build-automatically-in-gradle
 build.dependsOn clean
+writeBuildInfo.dependsOn build
+
