@@ -1,2 +1,14 @@
 //https://github.com/palantir/gradle-docker
 
+docker {
+    name "$dockerImageName:$dockerImageVersion"
+    tags "$dockerImageVersion"
+
+    //located in the build context
+    dockerfile file("docker/Dockerfile")
+    files tasks.jar.outputs, "$projectDir/docker/$dockerImageName/gradletask/Dockerfile"
+    buildArgs([BUILD_VERSION: "$projectVersion"])
+    //labels(['key': 'value'])
+    pull false
+    noCache true
+}

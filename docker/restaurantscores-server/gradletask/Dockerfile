@@ -11,7 +11,8 @@ RUN apk add --no-cache curl
 # https://stackoverflow.com/questions/17466699/not-able-to-build-a-specific-dockerfile
 # https://www.ctl.io/developers/blog/post/dockerfile-add-vs-copy/
 # Copy the current directory contents into the container at /app
-COPY build/libs/RestaurantScores*.jar app.jar
+# Use for gradle docker building since a task copies the jar
+COPY RestaurantScores*.jar app.jar
 
 # Setting environment variables
 # Note: this application relies on environment variables that contain secrets. Can pass along to image via:
