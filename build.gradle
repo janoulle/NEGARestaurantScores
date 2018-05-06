@@ -18,7 +18,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: "io.spring.dependency-management"
 apply plugin: 'docker'
-apply from: 'transmodedockertasks.gradleks.gradle'
+apply from: 'transmodedockertasks.gradle'
 
 //https://stackoverflow.com/questions/17262856/gradle-how-to-set-the-project-name-group-version-plus-source-targetcompatibi
 group = projectGroup
