@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
@@ -18,7 +18,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -26,6 +25,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @RunWith(MockitoJUnitRunner.class)
 public class WebPageDownloaderTest {
 
+    public static final String IS_DOWNLOAD_OVERRIDE_ENABLED = "isDownloadOverrideEnabled";
     @InjectMocks
     private WebPageDownloader webPageDownloader;
 
@@ -42,7 +42,7 @@ public class WebPageDownloaderTest {
 
     @Test
     public void testNoDownloadNeededScenario() {
-        ReflectionTestUtils.setField(webPageDownloader, "isDownloadOverrideEnabled", false);
+        ReflectionTestUtils.setField(webPageDownloader, IS_DOWNLOAD_OVERRIDE_ENABLED, false);
         ReflectionTestUtils.setField(webPageDownloader, "dataExpirationInDays", "7");
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(new File[1]);
 
@@ -51,14 +51,14 @@ public class WebPageDownloaderTest {
 
     @Test
     public void testDownloadNeededScenarioDueToOverrideSet() {
-        ReflectionTestUtils.setField(webPageDownloader, "isDownloadOverrideEnabled", true);
+        ReflectionTestUtils.setField(webPageDownloader, IS_DOWNLOAD_OVERRIDE_ENABLED, true);
 
         assertTrue(webPageDownloader.isDownloadOverrideOrDataExpired());
     }
 
     @Test
     public void testDownloadNeededScenarioDueToEmptyFolder() {
-        ReflectionTestUtils.setField(webPageDownloader, "isDownloadOverrideEnabled", false);
+        ReflectionTestUtils.setField(webPageDownloader, IS_DOWNLOAD_OVERRIDE_ENABLED, false);
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(new File[0]);
 
         assertTrue(webPageDownloader.isDownloadOverrideOrDataExpired());
@@ -66,7 +66,7 @@ public class WebPageDownloaderTest {
 
     @Test
     public void testDownloadNeededScenarioDueToExpiredFiles() {
-        ReflectionTestUtils.setField(webPageDownloader, "isDownloadOverrideEnabled", false);
+        ReflectionTestUtils.setField(webPageDownloader, IS_DOWNLOAD_OVERRIDE_ENABLED, false);
         ReflectionTestUtils.setField(webPageDownloader, "dataExpirationInDays", "1");
 
         File[] files = new File[1];
@@ -93,7 +93,9 @@ public class WebPageDownloaderTest {
 
         ReflectionTestUtils.setField(webPageDownloader, "mapOfUrlsToDownloads", map);
 
-        when(pathVariables.getDefaultFilePath(anyString())).thenReturn(new File("downloads/test/file.html"));
+        //Commented out for unhappy path (this method never gets called) as an unnecessary stubbing
+        //when(pathVariables.getDefaultFilePath(anyString())).thenReturn(new File("downloads/test/file.html"));
+
         webPageDownloader.initiateDownloadsAndProcessFiles();
 
         verify(webPageProcessing, times(1)).startProcessingOfDownloadedFiles();
