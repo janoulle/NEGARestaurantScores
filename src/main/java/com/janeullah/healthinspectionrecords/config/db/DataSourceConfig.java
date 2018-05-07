@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -28,9 +29,17 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(basePackages = {"com.janeullah.healthinspectionrecords.repository"})
 public class DataSourceConfig {
 
+  @Bean
+  @Primary
+  @ConfigurationProperties("spring.datasource")
+  public DataSourceProperties dataSourceProperties() {
+    return new DataSourceProperties();
+  }
+
   @Bean(name = "dataSource")
+  @Primary
   @ConfigurationProperties("spring.datasource")
   public DataSource dataSource() {
-    return new DataSourceProperties().initializeDataSourceBuilder().build();
+    return dataSourceProperties().initializeDataSourceBuilder().build();
   }
 }
