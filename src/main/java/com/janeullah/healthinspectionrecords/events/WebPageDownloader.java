@@ -109,6 +109,8 @@ public class WebPageDownloader {
   public void initiateDownloadsAndProcessFiles() {
     try {
       asyncDownloadWebPages();
+
+      //wait for all downloads to complete
       COUNT_DOWN_LATCH.await();
 
       log.info("file downloads completed.");
