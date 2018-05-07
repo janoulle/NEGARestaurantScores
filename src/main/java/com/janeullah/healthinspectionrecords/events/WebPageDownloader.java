@@ -39,6 +39,8 @@ public class WebPageDownloader {
   @Value("${DATA_EXPIRATION_IN_DAYS}")
   private String dataExpirationInDays;
 
+  private static Map<String, String> mapOfUrlsToDownloads;
+
   @Autowired
   public WebPageDownloader(WebPageProcessing webPageProcessing,
                            PathVariables pathVariables) {
@@ -47,18 +49,16 @@ public class WebPageDownloader {
   }
 
   // Return Map of County Name to County URL
-  private static Map<String, String> getUrls() {
-    Map<String, String> results = new ConcurrentHashMap<>();
+  static {
+    mapOfUrlsToDownloads = new ConcurrentHashMap<>();
     for (String county : WebPageConstants.COUNTY_LIST) {
-      results.put(county, String.format(WebPageConstants.URL, county));
+      mapOfUrlsToDownloads.put(county, String.format(WebPageConstants.URL, county));
     }
-    return results;
   }
 
   private List<WebPageRequestAsync> populateListOfAsyncWebRequestToBeMade() {
     List<WebPageRequestAsync> results = new ArrayList<>();
-    Map<String, String> urls = getUrls();
-    urls.forEach(
+    mapOfUrlsToDownloads.forEach(
         (key, value) -> results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH, pathVariables)));
     return results;
   }
@@ -110,8 +110,10 @@ public class WebPageDownloader {
     try {
       asyncDownloadWebPages();
 
-      //wait for all downloads to complete
+      //wait for download step to complete
       COUNT_DOWN_LATCH.await();
+
+      //TODO: include some way to verify the downloads were actually successful e.g. via callBacks perhaps
 
       log.info("file downloads completed.");
       webPageProcessing.startProcessingOfDownloadedFiles();
