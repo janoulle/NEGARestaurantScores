@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.5.12.RELEASE'
+        springBootVersion = '2.0.1.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -28,6 +28,7 @@ apply plugin: 'io.spring.dependency-management'
 //Palantir docker tasks
 apply plugin: 'com.palantir.docker'
 apply from: 'palantirdockertasks.gradle'
+apply from: 'releasemanagement.gradle'
 
 
 //Transmode docker tasks
@@ -58,54 +59,8 @@ dependencyManagement {
     }
 }
 
-
-/*http://mrhaki.blogspot.com/2009/10/groovy-goodness-executing-string-or.html
-  http://mrhaki.blogspot.com/2010/10/gradle-goodness-parse-output-from-exec.html */
-static String executeCmd(String cmd) {
-    def command = cmd?.execute()
-
-    return command?.text?.trim()
-}
-
-//https://stackoverflow.com/questions/11657295/count-the-number-of-commits-on-a-git-branch
-//https://stackoverflow.com/questions/15798862/what-does-git-rev-parse-do
-def getBuildInfo() {
-
-    String lastCommitId = executeCmd("git rev-parse HEAD")
-    String tag = executeCmd("git name-rev --tags --name-only $lastCommitId")
-
-    def buildInfo = [
-            'Main-Class' : 'com.janeullah.healthinspectionrecords.RestaurantScoresApplication',
-            'Implementation-Title'       : projectName,
-            'Implementation-Version'     : projectVersion,
-            'Build-Target'               : projectVersion.substring(projectVersion.indexOf("-") + 1),
-            'Build-Time'                 : new Date().format("yyyy-MM-dd'T'HH:mm'Z'"),
-            'Git-Branch'                 : executeCmd("git rev-parse --abbrev-ref HEAD"),
-            'Git-Branch-Commit-Count'    : executeCmd("git rev-list --count HEAD"),
-            'Git-Last-Commit-Id'         : lastCommitId,
-            'Git-Branch-Tag'             : tag == 'undefined' ? 'None' : tag,
-            'Gradle-Version'             : GradleVersion.current().getVersion(),
-            'Java-Version'               : org.gradle.internal.jvm.Jvm.current()
-    ]
-
-    buildInfo
-}
-
-/*https://stackoverflow.com/questions/8012048/groovy-write-out-the-list-to-a-file
-https://docs.gradle.org/current/userguide/tutorial_using_tasks.html#sec:using_methods */
-task writeBuildInfo (dependsOn: build) {
-    doLast {
-        def buildInfo = getBuildInfo()
-
-        String outputPath = "${projectDir}/build.info"
-        File file = new File(outputPath)
-        file.withWriter{ out ->
-            buildInfo.each {k, v -> out.println "${k}:${v}"}
-        }
-    }
-}
-
 dependencies {
+    runtime("org.springframework.boot:spring-boot-properties-migrator")
 
     //2. bridge logging from JCL to SLF4j
     compile 'org.slf4j:jcl-over-slf4j:1.7.12'
@@ -116,10 +71,9 @@ dependencies {
     compile 'org.codehaus.janino:janino:3.0.6'
 
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile('com.h2database:h2')
-    compile('postgresql:postgresql:9.0-801.jdbc4')
-    compile('mysql:mysql-connector-java:6.0.4')
-    compile('org.xerial:sqlite-jdbc:3.16.1')
+
+    //todo: find actual version and reference.
+    runtime('org.postgresql:postgresql')
     compile('javax.inject:javax.inject:1')
     compileOnly "org.projectlombok:lombok:1.16.16"
     compile("org.springframework.boot:spring-boot-starter-cache")

@@ -23,7 +23,7 @@ public class HealthCheckController {
 
   @RequestMapping(value = "/isAlive", method = RequestMethod.GET)
   @ResponseStatus(HttpStatus.OK)
-  public String writeRecordsToDB() {
+  public String checkIsAlive() {
     return "OK";
   }
 
