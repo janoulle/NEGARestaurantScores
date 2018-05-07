@@ -1,7 +1,6 @@
 package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.constants.PathVariables;
-import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.FileHelper;
 import org.junit.Before;
@@ -39,6 +38,6 @@ public class WebPageProcessingTest {
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(files);
 
         webPageProcessing.startProcessingOfDownloadedFiles();
-        verify(restaurantRepository, times(10)).save(anyListOf(Restaurant.class));
+        verify(restaurantRepository, times(10)).saveAll(anyList());
     }
 }

@@ -33,7 +33,7 @@ public class ViolationsController {
   )
   public Violation getViolationById(@PathVariable("id") long id) {
     log.info("getting violation id {}", id);
-    return violationRepository.findOne(id);
+    return violationRepository.findById(id).orElse(null);
   }
 
   @Cacheable("violationsByCategory")

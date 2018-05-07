@@ -95,6 +95,6 @@ public class WebPageProcessing {
 
   @Transactional
   private synchronized void persistRestaurantData(List<Restaurant> restaurants) {
-    restaurantRepository.save(restaurants);
+    restaurantRepository.saveAll(restaurants);
   }
 }

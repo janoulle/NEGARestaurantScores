@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
 @Slf4j
@@ -108,7 +109,8 @@ public class RestaurantController {
   )
   public Restaurant getRestaurantById(@PathVariable("id") long id) {
     log.info("getting restaurant id {}", id);
-    return restaurantRepository.findOne(id);
+    Optional<Restaurant> found = restaurantRepository.findById(id);
+    return found.orElse(null);
   }
 
   @Cacheable("scoresGreaterThan")
