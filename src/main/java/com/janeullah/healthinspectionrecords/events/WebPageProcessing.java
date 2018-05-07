@@ -46,7 +46,9 @@ public class WebPageProcessing {
     try {
       File[] files = pathVariables.getFilesInDefaultDirectory();
       submitAsyncProcessingRequests(files);
-      // TODO: figure out way to wait for all execution to be complete
+
+      //wait for processing to complete
+      COUNT_DOWN_LATCH.await();
     } catch (Exception e) {
       log.error("Exception in startProcessingOfDownloadedFiles", e);
     }
