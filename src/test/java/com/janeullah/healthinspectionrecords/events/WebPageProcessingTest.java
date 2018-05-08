@@ -1,10 +1,9 @@
 package com.janeullah.healthinspectionrecords.events;
 
+import com.janeullah.healthinspectionrecords.async.WebPageProcessService;
 import com.janeullah.healthinspectionrecords.constants.PathVariables;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.FileHelper;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
 
 import static org.mockito.Mockito.*;
 
@@ -26,20 +27,20 @@ public class WebPageProcessingTest {
     private PathVariables pathVariables;
 
     @Mock
-    private RestaurantRepository restaurantRepository;
+    private WebPageProcessService webPageProcessService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Ignore("Need to debug why the expected count doesn't match the actual atm")
+    //@Ignore("Need to debug why the expected count doesn't match the actual atm")
     @Test
     public void testWebPageProcessingSuccess() {
         File[] files = FileHelper.getFilesInDirectory("/downloads/webpages");
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(files);
 
         webPageProcessing.startProcessingOfDownloadedFiles();
-        verify(restaurantRepository, times(10)).saveAll(anyList());
+        verify(webPageProcessService, times(10)).submitFileForProcessing(any(Path.class),any(CountDownLatch.class));
     }
 }

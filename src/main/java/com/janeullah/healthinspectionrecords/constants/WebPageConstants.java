@@ -14,7 +14,5 @@ public class WebPageConstants {
   public static final String VIOLATION_CODE_PREFIX = "Violation of :";
   public static final String VIOLATION_CODE_SUFFIX = ".";
 
-  public static final String PATH_TO_PAGE_STORAGE = System.getenv("FULL_PATH_TO_PAGE_STORAGE");
-
   private WebPageConstants() {}
 }

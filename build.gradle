@@ -114,3 +114,14 @@ build.dependsOn clean
 
 //https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
 //bootRepackage.withJarTask = jar
+
+//https://docs.gradle.org/4.6/userguide/userguide_single.html#sec:java_test
+//https://docs.gradle.org/4.6/dsl/org.gradle.api.tasks.testing.logging.TestLoggingContainer.html
+//http://mrhaki.blogspot.com/2013/05/gradle-goodness-show-more-information.html
+test {
+    //debug true
+
+    testLogging {
+        exceptionFormat "full"
+    }
+}
