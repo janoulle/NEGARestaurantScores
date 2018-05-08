@@ -30,8 +30,8 @@ public class WebPageProcessing {
       for (File file : files) {
         webPageProcessService.submitFileForProcessing(file.toPath(), countDownLatch);
       }
-      // wait for processing to complete
-      countDownLatch.await();
+
+      webPageProcessService.waitForAllProcessing(countDownLatch);
     } catch (Exception e) {
       log.error("Exception in startProcessingOfDownloadedFiles", e);
     }

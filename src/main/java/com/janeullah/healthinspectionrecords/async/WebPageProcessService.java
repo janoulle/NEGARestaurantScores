@@ -39,8 +39,7 @@ public class WebPageProcessService {
       Preconditions.checkArgument(
           StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
       ListenableFuture<List<Restaurant>> future =
-          EXECUTOR_SERVICE.submit(
-              new WebPageProcessAsync(FilesUtil.extractCounty(file), file));
+          EXECUTOR_SERVICE.submit(new WebPageProcessAsync(FilesUtil.extractCounty(file), file));
       registerCallbackForFuture(countyFile, countDownLatch, future);
       return Optional.of(future);
     } catch (SecurityException e) {
@@ -49,9 +48,8 @@ public class WebPageProcessService {
     return Optional.empty();
   }
 
-  private void registerCallbackForFuture(String countyFile,
-                                         CountDownLatch countDownLatch,
-                                         ListenableFuture<List<Restaurant>> future) {
+  private void registerCallbackForFuture(
+      String countyFile, CountDownLatch countDownLatch, ListenableFuture<List<Restaurant>> future) {
     Futures.addCallback(
         future,
         new FutureCallback<List<Restaurant>>() {
@@ -74,5 +72,10 @@ public class WebPageProcessService {
   @Transactional
   private synchronized void persistRestaurantData(List<Restaurant> restaurants) {
     restaurantRepository.saveAll(restaurants);
+  }
+
+  public void waitForAllProcessing(CountDownLatch countDownLatch) throws InterruptedException {
+    // wait for processing to complete
+    countDownLatch.await();
   }
 }

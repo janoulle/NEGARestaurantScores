@@ -15,8 +15,7 @@ import java.net.URISyntaxException;
 import java.util.concurrent.CountDownLatch;
 
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,5 +41,12 @@ public class WebPageProcessServiceTest {
         latch.await();
 
         verify(restaurantRepository, times(1)).saveAll(anyList());
+    }
+
+    @Test
+    public void testWaitForAllProcessing() throws InterruptedException {
+        CountDownLatch latch = mock(CountDownLatch.class);
+        webPageProcessService.waitForAllProcessing(latch);
+        verify(latch).await();
     }
 }
