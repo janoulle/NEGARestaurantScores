@@ -5,7 +5,7 @@
 docker {
     //note: the jar task doesn't package up the app in a way that is runnable a spring application
     //spring <2.x.x, bootRepackage is the task that repackages the jar so it'll be runnable as a spring application
-    dependsOn build
+    dependsOn clean, build
 
     name "$dockerImageName:$dockerImageVersion"
     tags "$dockerImageVersion"

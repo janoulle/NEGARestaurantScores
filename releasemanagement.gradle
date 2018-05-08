@@ -19,7 +19,7 @@ def getBuildInfo() {
             'Main-Class' : 'com.janeullah.healthinspectionrecords.RestaurantScoresApplication',
             'Implementation-Title'       : projectName,
             'Implementation-Version'     : projectVersion,
-            'Build-Target'               : projectVersion.substring(projectVersion.indexOf("-") + 1),
+            'Build-Target'               : projectVersionType,
             'Build-Time'                 : new Date().format("yyyy-MM-dd'T'HH:mm'Z'"),
             'Git-Branch'                 : executeCmd("git rev-parse --abbrev-ref HEAD"),
             'Git-Branch-Commit-Count'    : executeCmd("git rev-list --count HEAD"),
@@ -42,6 +42,57 @@ task writeBuildInfo () {
         File file = new File(outputPath)
         file.withWriter{ out ->
             buildInfo.each {k, v -> out.println "${k}:${v}"}
+        }
+    }
+}
+
+//https://docs.gradle.org/current/userguide/tutorial_using_tasks.html#sec:build_scripts_are_code
+/*task distribution {
+    doLast {
+        println "We build the zip with version=$version"
+    }
+}
+
+task release(dependsOn: 'distribution') {
+    doLast {
+        println 'We release now'
+    }
+}
+
+gradle.taskGraph.whenReady {taskGraph ->
+    if (taskGraph.hasTask(release)) {
+        ext.version = '1.0'
+    } else {
+        version = '1.0-SNAPSHOT'
+    }
+}*/
+
+def dockerTag(String dockerImageName, String dockerImageVersion, String remoteDetails) {
+    exec {
+        executable "docker"
+        args "tag", "$dockerImageName:$dockerImageVersion", "$remoteDetails"
+    }
+}
+
+//https://stackoverflow.com/questions/22449649/run-shell-command-in-gradle-but-not-inside-a-task
+def dockerPush(String remoteDetails) {
+    exec {
+        executable "docker"
+        args "push", "$remoteDetails"
+    }
+}
+
+
+task buildAndTagImage(dependsOn: ['clean','docker']) {
+    doLast {
+        //TODO: pass repos in as args when invoking gradle task
+        def remoteRegistries = file("../Docker/restaurantscores/repos.json")
+        def parsedJson = new groovy.json.JsonSlurper().parseText(remoteRegistries.text)
+
+        parsedJson?.each {key, value ->
+            def remoteDetails = "${value}:$dockerImageVersion"
+            dockerTag(dockerImageName, dockerImageVersion, remoteDetails)
+            dockerPush(remoteDetails)
         }
     }
 }

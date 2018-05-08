@@ -1,6 +1,7 @@
 buildscript {
     ext {
         springBootVersion = '2.0.1.RELEASE'
+        projectVersion = "$projectVersionId-$projectVersionType"
     }
     repositories {
         mavenCentral()
@@ -110,7 +111,6 @@ dependencies {
 //https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
 //https://stackoverflow.com/questions/41532108/run-clean-task-before-every-build-automatically-in-gradle
 build.dependsOn clean
-writeBuildInfo.dependsOn build
 
 //https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
 //bootRepackage.withJarTask = jar
