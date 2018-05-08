@@ -20,7 +20,7 @@ services:
     - restaurantscores-network
 
   restaurantscores-server:
-    image: janoulle/com.janeullah.healthinspectionrecords:latest
+    image: restaurantscores-server:beta
     container_name: restaurantscores-server
     ports:
     - "8080:8080"
