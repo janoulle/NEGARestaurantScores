@@ -5,6 +5,8 @@
 docker {
     //note: the jar task doesn't package up the app in a way that is runnable a spring application
     //spring <2.x.x, bootRepackage is the task that repackages the jar so it'll be runnable as a spring application
+
+    //alternately, run the docker task with like this gradlew clean build docker --console=plain --stacktrace -PdockerImageVersion=beta if you don't want to include the dependsOn
     dependsOn bootJar
 
     name "$dockerImageName:$dockerImageVersion"
