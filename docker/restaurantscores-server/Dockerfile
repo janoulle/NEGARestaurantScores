@@ -40,7 +40,7 @@ VOLUME [ "$CATALINA_HOME/logs", "$CATALINA_HOME/downloads/webpages"]
 
 # https://docs.docker.com/engine/reference/builder/#healthcheck
 # Spring actuator health check
-HEALTHCHECK --interval=15m --timeout=10s --retries=3 --start-period=1m CMD curl --fail http://localhost:8080/restaurantscores/health || exit 1
+HEALTHCHECK --interval=15m --timeout=10s --retries=3 --start-period=1m CMD curl --fail http://localhost:8080/restaurantscores/actuator/health || exit 1
 
 # http://containertutorials.com/docker-compose/spring-boot-app.html
 # App entry point that must be used
