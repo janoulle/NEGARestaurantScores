@@ -18,8 +18,8 @@ docker {
     //https://spring.io/blog/2017/04/05/spring-boot-s-new-gradle-plugin
     //https://docs.spring.io/spring-boot/docs/1.5.12.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
     //tasks.jar.outputs is not appropriate for a Spring application
-    //tasks.bootRepackage.outputs is not appropriate either. Need to figure out how to get the archivePath from this task
-    //copies the jar from the build/libs folder and Dockerfile artifacts to build/docker which allows me to
+    //tasks.bootRepackage.outputs is not appropriate either.
+    //copies the jar from the build/libs folder and Dockerfile artifacts to build/docker
     def artifact = "$projectName-${projectVersion}.jar"
 
     files "$libsDir/$artifact", "$projectDir/docker/$dockerImageName/Dockerfile"
