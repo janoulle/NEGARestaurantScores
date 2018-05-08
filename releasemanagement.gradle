@@ -82,11 +82,12 @@ def dockerPush(String remoteDetails) {
     }
 }
 
-
 task buildAndTagImage(dependsOn: ['clean','docker']) {
     doLast {
         //TODO: pass repos in as args when invoking gradle task
-        def remoteRegistries = file("../Docker/restaurantscores/repos.json")
+        //file("../Docker/restaurantscores/repos.json")
+
+        def remoteRegistries = file("$pathToRepos")
         def parsedJson = new groovy.json.JsonSlurper().parseText(remoteRegistries.text)
 
         parsedJson?.each {key, value ->
