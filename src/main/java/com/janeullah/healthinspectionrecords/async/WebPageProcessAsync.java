@@ -21,19 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /** Author: Jane Ullah Date: 9/18/2016 */
 @Slf4j
 public class WebPageProcessAsync implements Callable<List<Restaurant>> {
-  private final CountDownLatch doneSignal;
   private Path url;
   private Elements hiddenDivs;
   private String county;
 
-  public WebPageProcessAsync(String county, Path url, CountDownLatch doneSignal) {
-    this.doneSignal = doneSignal;
+  public WebPageProcessAsync(String county, Path url) {
     this.county = county;
     this.url = url;
   }
@@ -87,8 +84,6 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
       return ingestJsoupData();
     } catch (Exception e) {
       log.error("Exception processing the downloaded web page for  {}", county, e);
-    } finally {
-      doneSignal.countDown();
     }
     return new ArrayList<>();
   }

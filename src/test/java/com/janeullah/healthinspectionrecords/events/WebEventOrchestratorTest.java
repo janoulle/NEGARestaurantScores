@@ -1,9 +1,11 @@
 package com.janeullah.healthinspectionrecords.events;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.*;
@@ -19,6 +21,11 @@ public class WebEventOrchestratorTest {
 
     @Mock
     private WebPageProcessing webPageProcessing;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void testIsDownloadOverrideOrDataExpired_False() {

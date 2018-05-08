@@ -40,8 +40,8 @@ public class WebPageProcessService {
           StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
       ListenableFuture<List<Restaurant>> future =
           EXECUTOR_SERVICE.submit(
-              new WebPageProcessAsync(FilesUtil.extractCounty(file), file, countDownLatch));
-      registerCallbackForFuture(countyFile, future);
+              new WebPageProcessAsync(FilesUtil.extractCounty(file), file));
+      registerCallbackForFuture(countyFile, countDownLatch, future);
       return Optional.of(future);
     } catch (SecurityException e) {
       log.error("SecurityException caught during async file processing", e);
@@ -49,8 +49,9 @@ public class WebPageProcessService {
     return Optional.empty();
   }
 
-  private void registerCallbackForFuture(
-      String countyFile, ListenableFuture<List<Restaurant>> future) {
+  private void registerCallbackForFuture(String countyFile,
+                                         CountDownLatch countDownLatch,
+                                         ListenableFuture<List<Restaurant>> future) {
     Futures.addCallback(
         future,
         new FutureCallback<List<Restaurant>>() {
@@ -59,11 +60,13 @@ public class WebPageProcessService {
             log.info(
                 "Web Page Processing completed for county: {} size: {}", countyFile, result.size());
             persistRestaurantData(result);
+            countDownLatch.countDown();
           }
 
           @Override
           public void onFailure(Throwable thrown) {
             log.error("Failure during Future callback for async file processing", thrown);
+            countDownLatch.countDown();
           }
         });
   }

@@ -2,7 +2,6 @@ package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageProcessService;
 import com.janeullah.healthinspectionrecords.constants.PathVariables;
-import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,8 +13,6 @@ import java.util.concurrent.CountDownLatch;
 @Slf4j
 @Component
 public class WebPageProcessing {
-  private static final CountDownLatch COUNT_DOWN_LATCH =
-      new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
   private PathVariables pathVariables;
   private WebPageProcessService webPageProcessService;
 
@@ -29,11 +26,12 @@ public class WebPageProcessing {
   public void startProcessingOfDownloadedFiles() {
     try {
       File[] files = pathVariables.getFilesInDefaultDirectory();
+      CountDownLatch countDownLatch = new CountDownLatch(files.length);
       for (File file : files) {
-        webPageProcessService.submitFileForProcessing(file.toPath(), COUNT_DOWN_LATCH);
+        webPageProcessService.submitFileForProcessing(file.toPath(), countDownLatch);
       }
       // wait for processing to complete
-      COUNT_DOWN_LATCH.await();
+      countDownLatch.await();
     } catch (Exception e) {
       log.error("Exception in startProcessingOfDownloadedFiles", e);
     }

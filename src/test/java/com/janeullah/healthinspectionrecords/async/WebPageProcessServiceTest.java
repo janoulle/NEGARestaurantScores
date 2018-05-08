@@ -2,10 +2,12 @@ package com.janeullah.healthinspectionrecords.async;
 
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.FileHelper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
@@ -25,6 +27,11 @@ public class WebPageProcessServiceTest {
 
     @Mock
     private RestaurantRepository restaurantRepository;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void testSubmitFileForProcessing() throws InterruptedException, URISyntaxException {

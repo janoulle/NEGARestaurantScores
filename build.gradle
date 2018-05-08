@@ -119,9 +119,14 @@ build.dependsOn clean
 //https://docs.gradle.org/4.6/dsl/org.gradle.api.tasks.testing.logging.TestLoggingContainer.html
 //http://mrhaki.blogspot.com/2013/05/gradle-goodness-show-more-information.html
 test {
-    //debug true
+    debug true
 
     testLogging {
         exceptionFormat "full"
     }
+}
+
+//intellij generates this out directory and need to clean this out
+clean {
+    delete "$projectDir/out"
 }
