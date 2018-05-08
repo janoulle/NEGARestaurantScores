@@ -18,10 +18,12 @@ docker {
     //tasks.jar.outputs is not appropriate for a Spring application
     //tasks.bootRepackage.outputs is not appropriate either. Need to figure out how to get the archivePath from this task
     //copies the jar from the build/libs folder and Dockerfile artifacts to build/docker which allows me to
-    files bootJar.archivePath, "$projectDir/docker/$dockerImageName/Dockerfile"
+    def artifact = "$projectName-${projectVersion}.jar"
+
+    files "$libsDir/$artifact", "$projectDir/docker/$dockerImageName/Dockerfile"
 
     //passing in the jar file location via --build-arg key=value
-    buildArgs(['JAR_FILE'     : "${bootJar.archiveName}"])
+    buildArgs(['JAR_FILE'     : artifact])
 
     pull false
     noCache true
