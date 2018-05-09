@@ -6,7 +6,9 @@ networks:
 
 services:
 
-  #https://hub.docker.com/_/postgres/
+  # https://hub.docker.com/_/postgres/
+  # https://docs.docker.com/compose/compose-file/#variable-substitution
+  # https://docs.docker.com/compose/environment-variables/#substitute-environment-variables-in-compose-files
   restaurantscores-db:
     image: postgres:latest
     container_name: restaurantscores-db
@@ -20,7 +22,7 @@ services:
     - restaurantscores-network
 
   restaurantscores-server:
-    image: restaurantscores-server:latest
+    image: restaurantscores-server:beta
     container_name: restaurantscores-server
     ports:
     - "8080:8080"
@@ -40,6 +42,7 @@ services:
     environment:
     - CATALINA_HOME=/usr/local/tomcat
     - SPRING_PROFILES_ACTIVE=postgresql
+    - SERVER_PORT=8080
     #- SERVER_SERVLET_CONTEXT_PATH=/restaurantscores
     networks:
     - restaurantscores-network
