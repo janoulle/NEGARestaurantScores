@@ -29,7 +29,6 @@ public class PathVariables {
   /**
    * https://stackoverflow.com/questions/18055189/why-is-my-uri-not-hierarchical
    *
-   *
    * @return
    */
   public File[] getFilesInDefaultDirectory() {
@@ -51,16 +50,18 @@ public class PathVariables {
   /**
    * https://stackoverflow.com/questions/18247669/read-directory-inside-jar-with-inputstreamreader
    * http://www.uofr.net/~greg/java/get-resource-listing.html
+   *
    * @return
    */
   private File[] getFilesInDir() {
 
-    //if null, fall back to fetching the exact resources that should be present
+    // if null, fall back to fetching the exact resources that should be present
     List<String> fileResourceNames = NEGACounties.getExpectedFilesInDirectory();
     File[] filesInDirectory = new File[fileResourceNames.size()];
     for (int i = 0; i < fileResourceNames.size(); i++) {
       String fileResource = fileResourceNames.get(i);
-      try (InputStream inputStream = PathVariables.class.getResourceAsStream(relativePathToPageStorage + fileResource)){
+      try (InputStream inputStream =
+          PathVariables.class.getResourceAsStream(relativePathToPageStorage + fileResource)) {
 
         File file = new File("");
         OutputStream outputStream = new FileOutputStream(file);
@@ -79,9 +80,9 @@ public class PathVariables {
    * https://coderanch.com/t/568837/java/Reading-directory-files-InputStream
    * https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
    * https://stackoverflow.com/questions/11012819/how-can-i-get-a-resource-folder-from-inside-my-jar-file
-   * */
+   */
   private void readingFromJar() {
-    //attempt to read from jar
+    // attempt to read from jar
     CodeSource src = PathVariables.class.getProtectionDomain().getCodeSource();
     if (src == null) {
       log.error("Unable to fetch code source");
@@ -89,7 +90,9 @@ public class PathVariables {
     }
     URL jar = src.getLocation();
     try (ZipInputStream zip = new ZipInputStream(jar.openStream())) {
-      for (ZipEntry nextEntry = zip.getNextEntry(); nextEntry != null; nextEntry = zip.getNextEntry()) {
+      for (ZipEntry nextEntry = zip.getNextEntry();
+          nextEntry != null;
+          nextEntry = zip.getNextEntry()) {
         String name = nextEntry.getName();
         if (name.contains("RESOURCE_NAME")) {
           // grab the file
@@ -103,7 +106,12 @@ public class PathVariables {
   }
 
   public Path getFilePath(String relativePathName) {
-    return Paths.get(catalinaHome + File.separator +  relativePathToPageStorage + File.separator + relativePathName);
+    return Paths.get(
+        catalinaHome
+            + File.separator
+            + relativePathToPageStorage
+            + File.separator
+            + relativePathName);
   }
 
   public File getDefaultFilePath(String fileName) {

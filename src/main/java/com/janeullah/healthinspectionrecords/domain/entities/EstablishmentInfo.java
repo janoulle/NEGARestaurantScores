@@ -32,5 +32,4 @@ public class EstablishmentInfo implements Serializable {
   @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinColumn(name = "restaurant_id", foreignKey = @ForeignKey(name = "FK_restaurant_id"))
   private Restaurant restaurant;
-
 }

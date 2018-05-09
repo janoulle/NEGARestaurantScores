@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
 @Data
-@ToString(exclude="inspectionReport")
+@ToString(exclude = "inspectionReport")
 @Entity
 @Table(name = "ir_violations")
 public class Violation implements Serializable {
@@ -44,5 +44,4 @@ public class Violation implements Serializable {
     foreignKey = @ForeignKey(name = "FK_inspection_report_id")
   )
   private InspectionReport inspectionReport;
-
 }

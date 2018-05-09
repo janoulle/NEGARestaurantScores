@@ -22,7 +22,8 @@ public class WebPageRequestAsync implements Callable<String> {
   private String name;
   private PathVariables pathVariables;
 
-  public WebPageRequestAsync(String url, String name, CountDownLatch doneSignal, PathVariables pathVariables) {
+  public WebPageRequestAsync(
+      String url, String name, CountDownLatch doneSignal, PathVariables pathVariables) {
     this.url = url;
     this.name = name;
     this.doneSignal = doneSignal;

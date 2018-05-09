@@ -45,8 +45,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
   @Cacheable("allFlattenedRestaurantsFromRepository")
   @Query(
     value =
-            "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant" +
-                    "(r.id,ir.score,r.criticalCount,r.nonCriticalCount,r.establishmentInfo.name,ir.dateReported,r.establishmentInfo.address,r.establishmentInfo.county) "
+        "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant"
+            + "(r.id,ir.score,r.criticalCount,r.nonCriticalCount,r.establishmentInfo.name,ir.dateReported,r.establishmentInfo.address,r.establishmentInfo.county) "
             + "from InspectionReport ir inner join ir.restaurant r ORDER BY r.establishmentInfo.name ASC"
   )
   List<FlattenedRestaurant> findAllFlattenedRestaurants();

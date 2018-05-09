@@ -14,7 +14,7 @@ import java.util.List;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
 @Data
-@ToString(exclude={"restaurant"})
+@ToString(exclude = {"restaurant"})
 @Entity
 @Table(name = "ir_inspectionreport")
 public class InspectionReport implements Serializable {
@@ -53,7 +53,6 @@ public class InspectionReport implements Serializable {
   @Column(name = "score")
   private int score;
 
-
   /**
    * http://www.thoughts-on-java.org/persist-localdate-localdatetime-jpa/
    * https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
@@ -75,13 +74,14 @@ public class InspectionReport implements Serializable {
   }
 
   // @Transient - https://stackoverflow.com/questions/20597930/using-a-transient-field-in-hql
-//  @PostLoad
-//  public void getCriticalViolationsCount() {
-//    Map<Severity, Long> mapOfSeverityToViolations = violations
-//                    .stream()
-//                    .collect(Collectors.groupingBy(Violation::getSeverity, Collectors.counting()));
-//    criticalCount =  mapOfSeverityToViolations.get(Severity.CRITICAL).intValue();
-//    nonCriticalCount =  mapOfSeverityToViolations.get(Severity.NONCRITICAL).intValue();
-//  }
+  //  @PostLoad
+  //  public void getCriticalViolationsCount() {
+  //    Map<Severity, Long> mapOfSeverityToViolations = violations
+  //                    .stream()
+  //                    .collect(Collectors.groupingBy(Violation::getSeverity,
+  // Collectors.counting()));
+  //    criticalCount =  mapOfSeverityToViolations.get(Severity.CRITICAL).intValue();
+  //    nonCriticalCount =  mapOfSeverityToViolations.get(Severity.NONCRITICAL).intValue();
+  //  }
 
 }

@@ -21,12 +21,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-/**
- * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html
- */
+/** https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html */
 @Slf4j
 @Service
-public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService implements ElasticSearchable<HttpStatus> {
+public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService
+    implements ElasticSearchable<HttpStatus> {
 
   @Value("${AWS_ES_SERVICE_NAME}")
   private String awsElasticSearchServiceName;
@@ -83,6 +82,4 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
     }
     return new ResponseEntity<>(HttpStatus.OK);
   }
-
-
 }

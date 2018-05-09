@@ -32,9 +32,10 @@ public enum NEGACounties {
   }
 
   public static List<String> getExpectedFilesInDirectory() {
-    return getAllNEGACounties().stream()
-            .map(str -> str + WebPageConstants.PAGE_URL)
-            .collect(Collectors.toList());
+    return getAllNEGACounties()
+        .stream()
+        .map(str -> str + WebPageConstants.PAGE_URL)
+        .collect(Collectors.toList());
   }
 
   public String getNormalizedName() {

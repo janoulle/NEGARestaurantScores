@@ -5,11 +5,13 @@ import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 import static com.janeullah.healthinspectionrecords.external.firebase.FirebaseDataProcessing.replaceInvalidCharsInKey;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
@@ -23,25 +25,19 @@ public class FlattenedRestaurant {
   private String address;
   private String county;
 
-  @JsonIgnore
-  private FlattenedInspectionReport inspectionReport;
+  @JsonIgnore private FlattenedInspectionReport inspectionReport;
 
-  public String getNameKey() {
-    String nameAndId = name + StringUtilities.HYPHEN.getValue() + id;
-    return replaceInvalidCharsInKey(nameAndId);
-  }
-
-  //TODO: figure out how to cast directly via HQL in RestaurantRepository class
-  //https://stackoverflow.com/questions/4791325/how-do-i-write-hql-query-with-cast
+  // TODO: figure out how to cast directly via HQL in RestaurantRepository class
+  // https://stackoverflow.com/questions/4791325/how-do-i-write-hql-query-with-cast
   public FlattenedRestaurant(
-          Long id,
-          int score,
-          Integer criticalViolations,
-          Integer nonCriticalViolations,
-          String name,
-          LocalDate lastDateReported,
-          String address,
-          String county) {
+      Long id,
+      int score,
+      Integer criticalViolations,
+      Integer nonCriticalViolations,
+      String name,
+      LocalDate lastDateReported,
+      String address,
+      String county) {
     this.id = id;
     this.score = score;
     this.criticalViolations = criticalViolations != null ? criticalViolations : 0;
@@ -52,4 +48,8 @@ public class FlattenedRestaurant {
     this.county = county;
   }
 
+  public String getNameKey() {
+    String nameAndId = name + StringUtilities.HYPHEN.getValue() + id;
+    return replaceInvalidCharsInKey(nameAndId);
+  }
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 9/23/2017
  */
 @Service
-public abstract class ElasticSearchDocumentService{
+public abstract class ElasticSearchDocumentService {
 
   protected RemoteRestClient restClient;
 

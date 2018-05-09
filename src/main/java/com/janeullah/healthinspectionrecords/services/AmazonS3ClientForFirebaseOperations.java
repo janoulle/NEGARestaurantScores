@@ -1,6 +1,5 @@
 package com.janeullah.healthinspectionrecords.services;
 
-import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -51,7 +50,7 @@ public class AmazonS3ClientForFirebaseOperations {
    *
    * @return InputStream of the item from S3
    */
-  public InputStream getFirebaseCredentials() throws SdkClientException {
+  public InputStream getFirebaseCredentials() {
     S3Object object =
         s3client.getObject(new GetObjectRequest(negaReadOnlyBucketName, negaBucketFileNameKey));
     log.info("Content-Type: {}", object.getObjectMetadata().getContentType());

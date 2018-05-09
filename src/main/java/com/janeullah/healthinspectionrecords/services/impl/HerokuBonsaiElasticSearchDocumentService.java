@@ -19,7 +19,8 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService implements ElasticSearchable<String> {
+public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService
+    implements ElasticSearchable<String> {
 
   @Value("${BONSAI_URL}")
   private String herokuBonsaiUrl;

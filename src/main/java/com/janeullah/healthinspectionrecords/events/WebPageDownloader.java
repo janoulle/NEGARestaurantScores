@@ -30,23 +30,7 @@ public class WebPageDownloader {
   // perform work
   private static final CountDownLatch COUNT_DOWN_LATCH =
       new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
-  private WebPageProcessing webPageProcessing;
-  private PathVariables pathVariables;
-
-  @Value("${DOWNLOAD_OVERRIDE}")
-  private boolean isDownloadOverrideEnabled;
-
-  @Value("${DATA_EXPIRATION_IN_DAYS}")
-  private String dataExpirationInDays;
-
   private static Map<String, String> mapOfUrlsToDownloads;
-
-  @Autowired
-  public WebPageDownloader(WebPageProcessing webPageProcessing,
-                           PathVariables pathVariables) {
-    this.webPageProcessing = webPageProcessing;
-    this.pathVariables = pathVariables;
-  }
 
   // Return Map of County Name to County URL
   static {
@@ -56,10 +40,24 @@ public class WebPageDownloader {
     }
   }
 
+  private WebPageProcessing webPageProcessing;
+  private PathVariables pathVariables;
+  @Value("${DOWNLOAD_OVERRIDE}")
+  private boolean isDownloadOverrideEnabled;
+  @Value("${DATA_EXPIRATION_IN_DAYS}")
+  private String dataExpirationInDays;
+
+  @Autowired
+  public WebPageDownloader(WebPageProcessing webPageProcessing, PathVariables pathVariables) {
+    this.webPageProcessing = webPageProcessing;
+    this.pathVariables = pathVariables;
+  }
+
   private List<WebPageRequestAsync> populateListOfAsyncWebRequestToBeMade() {
     List<WebPageRequestAsync> results = new ArrayList<>();
     mapOfUrlsToDownloads.forEach(
-        (key, value) -> results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH, pathVariables)));
+        (key, value) ->
+            results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH, pathVariables)));
     return results;
   }
 
@@ -110,10 +108,11 @@ public class WebPageDownloader {
     try {
       asyncDownloadWebPages();
 
-      //wait for download step to complete
+      // wait for download step to complete
       COUNT_DOWN_LATCH.await();
 
-      //TODO: include some way to verify the downloads were actually successful e.g. via callBacks perhaps
+      // TODO: include some way to verify the downloads were actually successful e.g. via callBacks
+      // perhaps
 
       log.info("file downloads completed.");
       webPageProcessing.startProcessingOfDownloadedFiles();

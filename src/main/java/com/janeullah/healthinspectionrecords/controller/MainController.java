@@ -62,23 +62,27 @@ public class MainController {
 
   @RequestMapping(value = "/seedElasticSearchDBLocal", method = RequestMethod.POST)
   public ResponseEntity<HttpStatus> seedElasticSearchDBLocal() {
-    List<FlattenedRestaurant> flattenedRestaurants = restaurantRepository.findAllFlattenedRestaurants();
-    ResponseEntity<String> result = localhostElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
+    List<FlattenedRestaurant> flattenedRestaurants =
+        restaurantRepository.findAllFlattenedRestaurants();
+    ResponseEntity<String> result =
+        localhostElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
     return new ResponseEntity<>(result.getStatusCode());
   }
 
   @RequestMapping(value = "/seedElasticSearchDBAWS", method = RequestMethod.POST)
   public ResponseEntity<HttpStatus> seedElasticSearchDBAWS() {
-    List<FlattenedRestaurant> flattenedRestaurants = restaurantRepository.findAllFlattenedRestaurants();
+    List<FlattenedRestaurant> flattenedRestaurants =
+        restaurantRepository.findAllFlattenedRestaurants();
 
     return awsElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
   }
 
   @RequestMapping(value = "/seedElasticSearchDBHeroku", method = RequestMethod.POST)
   public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
-    List<FlattenedRestaurant> flattenedRestaurants =  restaurantRepository.findAllFlattenedRestaurants();
-    ResponseEntity<String> result = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
+    List<FlattenedRestaurant> flattenedRestaurants =
+        restaurantRepository.findAllFlattenedRestaurants();
+    ResponseEntity<String> result =
+        herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
     return new ResponseEntity<>(result.getStatusCode());
   }
-
 }

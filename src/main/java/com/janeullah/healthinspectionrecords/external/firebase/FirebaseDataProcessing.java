@@ -110,19 +110,17 @@ public class FirebaseDataProcessing {
           restaurantsInCounty
               .stream()
               .collect(Collectors.toMap(createUniqueKey, getTrimmedRestaurantData));
-      countiesAndRestaurants.put(county, County.builder()
-              .name(county)
-              .restaurants(mapOfRestaurantsInCounty)
-              .build());
+      countiesAndRestaurants.put(
+          county, County.builder().name(county).restaurants(mapOfRestaurantsInCounty).build());
     }
     return countiesAndRestaurants;
   }
 
   private FlattenedRestaurant processRestaurant(Restaurant restaurant) {
     return FlattenedRestaurant.builder()
-            .name(restaurant.getEstablishmentInfo().getName())
-            .address(restaurant.getEstablishmentInfo().getAddress())
-            .build();
+        .name(restaurant.getEstablishmentInfo().getName())
+        .address(restaurant.getEstablishmentInfo().getAddress())
+        .build();
   }
 
   /**
@@ -139,25 +137,26 @@ public class FirebaseDataProcessing {
         .stream()
         .flatMap(List::stream)
         .map(mapRestaurantEntityToFlattenedRestaurant)
-            .filter(Objects::nonNull)
+        .filter(Objects::nonNull)
         .collect(Collectors.toMap(createUniqueKeyFromFlattenedRestaurant, Function.identity()));
   }
 
   private FlattenedInspectionReport createFlattenedInspectionReport(
       InspectionReport inspectionReport) {
     return FlattenedInspectionReport.builder()
-            .dateReported(String.valueOf(inspectionReport.getDateReported()))
-            .id(inspectionReport.getRestaurant().getId())
-            .name(inspectionReport.getRestaurant().getEstablishmentInfo().getName())
-            .score(inspectionReport.getScore())
-            .violations(createFlattenedViolations(inspectionReport))
-            .build();
+        .dateReported(String.valueOf(inspectionReport.getDateReported()))
+        .id(inspectionReport.getRestaurant().getId())
+        .name(inspectionReport.getRestaurant().getEstablishmentInfo().getName())
+        .score(inspectionReport.getScore())
+        .violations(createFlattenedViolations(inspectionReport))
+        .build();
   }
 
   private List<FlattenedViolation> createFlattenedViolations(InspectionReport inspectionReport) {
     List<FlattenedViolation> flattenedViolations = new ArrayList<>();
     for (Violation violation : inspectionReport.getViolations()) {
-      FlattenedViolation flattenedViolation = FlattenedViolation.builder()
+      FlattenedViolation flattenedViolation =
+          FlattenedViolation.builder()
               .category(violation.getCategory())
               .inspectionType(String.valueOf(inspectionReport.getInspectionType()))
               .section(violation.getSection())
