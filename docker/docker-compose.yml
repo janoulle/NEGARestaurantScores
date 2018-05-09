@@ -40,5 +40,6 @@ services:
     environment:
     - CATALINA_HOME=/usr/local/tomcat
     - SPRING_PROFILES_ACTIVE=postgresql
+    #- SERVER_SERVLET_CONTEXT_PATH=/restaurantscores
     networks:
     - restaurantscores-network

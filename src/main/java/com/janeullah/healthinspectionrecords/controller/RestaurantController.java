@@ -32,7 +32,7 @@ public class RestaurantController {
     method = {RequestMethod.GET},
     produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public Iterable<FlattenedRestaurant> fetchAllFlattened() {
+  public List<FlattenedRestaurant> fetchAllFlattened() {
     return restaurantRepository.findAllFlattenedRestaurants();
   }
 
@@ -42,7 +42,7 @@ public class RestaurantController {
     method = {RequestMethod.GET},
     produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public Iterable<Restaurant> fetchAll() {
+  public List<Restaurant> fetchAll() {
     return restaurantRepository.findAll();
   }
 
