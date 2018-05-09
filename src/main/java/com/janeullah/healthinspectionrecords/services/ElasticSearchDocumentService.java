@@ -1,6 +1,5 @@
 package com.janeullah.healthinspectionrecords.services;
 
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,14 +12,11 @@ import org.springframework.stereotype.Service;
 public abstract class ElasticSearchDocumentService{
 
   protected RemoteRestClient restClient;
-  protected RestaurantRepository restaurantRepository;
 
   public ElasticSearchDocumentService() {}
 
   @Autowired
-  public ElasticSearchDocumentService(RemoteRestClient restClient,
-                                      RestaurantRepository restaurantRepository) {
+  public ElasticSearchDocumentService(RemoteRestClient restClient) {
     this.restClient = restClient;
-    this.restaurantRepository = restaurantRepository;
   }
 }

@@ -2,7 +2,6 @@ package com.janeullah.healthinspectionrecords.services.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Map;
 
 
@@ -27,9 +25,8 @@ public class LocalhostElasticSearchDocumentService extends ElasticSearchDocument
   public LocalhostElasticSearchDocumentService() {}
 
   @Autowired
-  public LocalhostElasticSearchDocumentService(RemoteRestClient restClient,
-                                               RestaurantRepository restaurantRepository) {
-    super(restClient, restaurantRepository);
+  public LocalhostElasticSearchDocumentService(RemoteRestClient restClient) {
+    super(restClient);
   }
 
   @PostConstruct
@@ -37,20 +34,13 @@ public class LocalhostElasticSearchDocumentService extends ElasticSearchDocument
     return localhostUrl.concat("/restaurants/restaurant/{id}");
   }
 
-  // replace pathvariable with map value
   @Override
-  public ResponseEntity<String> addRestaurantDocument(
-      Long id, FlattenedRestaurant flattenedRestaurant) {
+  public ResponseEntity<String> addRestaurantDocument(Long id,
+                                                      FlattenedRestaurant flattenedRestaurant) {
     Map<String, Long> vars = ImmutableMap.of("id", id);
     return restClient
         .getRestTemplate()
         .postForEntity(getLocalhostUrl(), flattenedRestaurant, String.class, vars);
   }
-
-  @Override
-  public ResponseEntity<String> addRestaurantDocuments(List<FlattenedRestaurant> restaurants) {
-    return null;
-  }
-
 
 }

@@ -1,7 +1,6 @@
 package com.janeullah.healthinspectionrecords.domain.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,6 @@ import static com.janeullah.healthinspectionrecords.external.firebase.FirebaseDa
 @AllArgsConstructor
 @Builder
 @Data
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class FlattenedRestaurant {
   private Long id;
   private int score;

@@ -10,7 +10,6 @@ import com.amazonaws.http.HttpResponse;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsErrorHandler;
 import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsResponseHandler;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
@@ -21,8 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html
@@ -49,9 +46,8 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
   public AwsElasticSearchDocumentService() {}
 
   @Autowired
-  public AwsElasticSearchDocumentService(RemoteRestClient restClient,
-                                         RestaurantRepository restaurantRepository) {
-    super(restClient, restaurantRepository);
+  public AwsElasticSearchDocumentService(RemoteRestClient restClient) {
+    super(restClient);
   }
 
   @Override
@@ -86,11 +82,6 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @Override
-  public ResponseEntity<HttpStatus> addRestaurantDocuments(List<FlattenedRestaurant> restaurants) {
-    return null;
   }
 
 

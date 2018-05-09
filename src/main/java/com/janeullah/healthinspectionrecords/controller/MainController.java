@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /** TODO: add auth for this controller class Author: Jane Ullah Date: 3/28/2017 */
 @Slf4j
 @RequestMapping("/admin")
@@ -60,52 +62,23 @@ public class MainController {
 
   @RequestMapping(value = "/seedElasticSearchDBLocal", method = RequestMethod.POST)
   public ResponseEntity<HttpStatus> seedElasticSearchDBLocal() {
-    Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantRepository.findAllFlattenedRestaurants();
-    for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
-      ResponseEntity<String> status =
-          localhostElasticSearchDocumentService.addRestaurantDocument(
-              flattenedRestaurant.getId(), flattenedRestaurant);
-      if (!status.getStatusCode().is2xxSuccessful()) {
-        log.error(
-            "Failed to write data about restaurant={} to the db with response={}",
-            flattenedRestaurant,
-            status.getBody());
-      }
-    }
-    return new ResponseEntity<>(HttpStatus.OK);
+    List<FlattenedRestaurant> flattenedRestaurants = restaurantRepository.findAllFlattenedRestaurants();
+    ResponseEntity<String> result = localhostElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
+    return new ResponseEntity<>(result.getStatusCode());
   }
 
   @RequestMapping(value = "/seedElasticSearchDBAWS", method = RequestMethod.POST)
   public ResponseEntity<HttpStatus> seedElasticSearchDBAWS() {
-    Iterable<FlattenedRestaurant> flattenedRestaurants = restaurantRepository.findAllFlattenedRestaurants();
-    for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
-      ResponseEntity<HttpStatus> resp =
-          awsElasticSearchDocumentService.addRestaurantDocument(
-              flattenedRestaurant.getId(), flattenedRestaurant);
-      if (!resp.getStatusCode().is2xxSuccessful()) {
-        log.error("Failed to write data about restaurant={} to the db", flattenedRestaurant);
-      }
-    }
-    return new ResponseEntity<>(HttpStatus.OK);
+    List<FlattenedRestaurant> flattenedRestaurants = restaurantRepository.findAllFlattenedRestaurants();
+
+    return awsElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
   }
 
-  // todo: consolidate into single method with clean method of swapping implementation server (aws,
-  // heroku, local)
   @RequestMapping(value = "/seedElasticSearchDBHeroku", method = RequestMethod.POST)
   public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
-    Iterable<FlattenedRestaurant> flattenedRestaurants =  restaurantRepository.findAllFlattenedRestaurants();
-    for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
-      ResponseEntity<String> resp =
-          herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(
-              flattenedRestaurant.getId(), flattenedRestaurant);
-      if (!resp.getStatusCode().is2xxSuccessful()) {
-        log.error(
-            "Failed to write data about restaurant={} to the db with response={}",
-            flattenedRestaurant,
-            resp);
-      }
-    }
-    return new ResponseEntity<>(HttpStatus.OK);
+    List<FlattenedRestaurant> flattenedRestaurants =  restaurantRepository.findAllFlattenedRestaurants();
+    ResponseEntity<String> result = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
+    return new ResponseEntity<>(result.getStatusCode());
   }
 
 }
