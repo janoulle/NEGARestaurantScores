@@ -2,6 +2,7 @@ package com.janeullah.healthinspectionrecords.repository;
 
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,10 +42,11 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
       "select r from Violation v inner join v.inspectionReport ir inner join ir.restaurant r where v.severity = 3")
   List<Restaurant> findRestaurantsWithCriticalViolations();
 
+  @Cacheable("allFlattenedRestaurantsFromRepository")
   @Query(
     value =
             "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant" +
-                    "(r.id,ir.score,0,0,r.establishmentInfo.name,ir.dateReported,r.establishmentInfo.address,r.establishmentInfo.county) "
+                    "(r.id,ir.score,r.criticalCount,r.nonCriticalCount,r.establishmentInfo.name,ir.dateReported,r.establishmentInfo.address,r.establishmentInfo.county) "
             + "from InspectionReport ir inner join ir.restaurant r ORDER BY r.establishmentInfo.name ASC"
   )
   List<FlattenedRestaurant> findAllFlattenedRestaurants();

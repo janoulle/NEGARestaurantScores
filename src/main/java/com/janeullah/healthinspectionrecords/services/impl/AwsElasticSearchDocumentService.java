@@ -10,6 +10,7 @@ import com.amazonaws.http.HttpResponse;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsErrorHandler;
 import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsResponseHandler;
+import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
@@ -17,22 +18,18 @@ import com.janeullah.healthinspectionrecords.util.AwsV4RequestSigner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
+import java.util.List;
 
 /**
- * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html Author:
- * Jane Ullah Date: 9/24/2017
+ * https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html
  */
 @Slf4j
 @Service
-@Scope(value = SCOPE_SINGLETON)
-public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService
-    implements ElasticSearchable {
+public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService implements ElasticSearchable<HttpStatus> {
 
   @Value("${AWS_ES_SERVICE_NAME}")
   private String awsElasticSearchServiceName;
@@ -52,8 +49,9 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
   public AwsElasticSearchDocumentService() {}
 
   @Autowired
-  public AwsElasticSearchDocumentService(RemoteRestClient restClient) {
-    super(restClient);
+  public AwsElasticSearchDocumentService(RemoteRestClient restClient,
+                                         RestaurantRepository restaurantRepository) {
+    super(restClient, restaurantRepository);
   }
 
   @Override
@@ -89,4 +87,11 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
     }
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<HttpStatus> addRestaurantDocuments(List<FlattenedRestaurant> restaurants) {
+    return null;
+  }
+
+
 }

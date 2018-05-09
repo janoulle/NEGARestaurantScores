@@ -38,16 +38,16 @@ public class FlattenedRestaurant {
   public FlattenedRestaurant(
           Long id,
           int score,
-          int criticalViolations,
-          int nonCriticalViolations,
+          Integer criticalViolations,
+          Integer nonCriticalViolations,
           String name,
           LocalDate lastDateReported,
           String address,
           String county) {
     this.id = id;
     this.score = score;
-    this.criticalViolations = criticalViolations;
-    this.nonCriticalViolations = nonCriticalViolations;
+    this.criticalViolations = criticalViolations != null ? criticalViolations : 0;
+    this.nonCriticalViolations = nonCriticalViolations != null ? nonCriticalViolations : 0;
     this.name = name;
     this.dateReported = lastDateReported == null ? "" : lastDateReported.toString();
     this.address = address;

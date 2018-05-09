@@ -2,13 +2,13 @@ package com.janeullah.healthinspectionrecords.services.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
+import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +16,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
-
-/** Author: jane Date: 10/21/2017 */
 @Slf4j
 @Service
-@Scope(value = SCOPE_SINGLETON)
-public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService
-    implements ElasticSearchable {
+public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService implements ElasticSearchable<String> {
 
   @Value("${BONSAI_URL}")
   private String herokuBonsaiUrl;
@@ -39,8 +35,9 @@ public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocum
   public HerokuBonsaiElasticSearchDocumentService() {}
 
   @Autowired
-  public HerokuBonsaiElasticSearchDocumentService(RemoteRestClient restClient) {
-    super(restClient);
+  public HerokuBonsaiElasticSearchDocumentService(RemoteRestClient restClient,
+                                                  RestaurantRepository restaurantRepository) {
+    super(restClient, restaurantRepository);
   }
 
   // replace pathvariable with map value
@@ -56,6 +53,23 @@ public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocum
             HttpMethod.POST,
             requestWithHeaders,
             String.class);
+  }
+
+  @Override
+  public ResponseEntity<String> addRestaurantDocuments(List<FlattenedRestaurant> restaurants) {
+//    for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
+//      updateViolationInformation(flattenedRestaurant);
+//      ResponseEntity<String> status =
+//              localhostElasticSearchDocumentService.addRestaurantDocument(
+//                      flattenedRestaurant.getId(), flattenedRestaurant);
+//      if (!status.getStatusCode().is2xxSuccessful()) {
+//        log.error(
+//                "Failed to write data about restaurant={} to the db with response={}",
+//                flattenedRestaurant,
+//                status.getBody());
+//      }
+//    }
+    return null;
   }
 
   private Map<String, String> getAuthHeaders() {

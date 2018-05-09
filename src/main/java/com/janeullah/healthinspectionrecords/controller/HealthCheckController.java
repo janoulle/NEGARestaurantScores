@@ -29,8 +29,11 @@ public class HealthCheckController {
 
   @RequestMapping(value = "/testFirebaseConnectivity", method = RequestMethod.GET)
   public ResponseEntity<HttpStatus> testFirebaseConnectivity() {
-    return firebaseInitialization.isDatabaseInitialized()
-        ? new ResponseEntity<>(HttpStatus.OK)
-        : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+    if (firebaseInitialization.isDatabaseInitialized()) {
+      firebaseInitialization.printCounties();
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
   }
 }

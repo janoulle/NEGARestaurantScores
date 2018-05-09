@@ -2,11 +2,8 @@ package com.janeullah.healthinspectionrecords.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.janeullah.healthinspectionrecords.constants.InspectionType;
-import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.Data;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,11 +11,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
 @Data
-@ToString(exclude="restaurant")
+@ToString(exclude={"restaurant"})
 @Entity
 @Table(name = "ir_inspectionreport")
 public class InspectionReport implements Serializable {
@@ -77,5 +73,15 @@ public class InspectionReport implements Serializable {
     setViolations(violations);
     violations.forEach(violation -> violation.setInspectionReport(this));
   }
+
+  // @Transient - https://stackoverflow.com/questions/20597930/using-a-transient-field-in-hql
+//  @PostLoad
+//  public void getCriticalViolationsCount() {
+//    Map<Severity, Long> mapOfSeverityToViolations = violations
+//                    .stream()
+//                    .collect(Collectors.groupingBy(Violation::getSeverity, Collectors.counting()));
+//    criticalCount =  mapOfSeverityToViolations.get(Severity.CRITICAL).intValue();
+//    nonCriticalCount =  mapOfSeverityToViolations.get(Severity.NONCRITICAL).intValue();
+//  }
 
 }

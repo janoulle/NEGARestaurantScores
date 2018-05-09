@@ -1,6 +1,9 @@
 package com.janeullah.healthinspectionrecords.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +12,7 @@ import java.util.List;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
 @Data
+@ToString(exclude = {"criticalCount", "nonCriticalCount"})
 @Entity
 @Table(name = "ir_restaurants")
 public class Restaurant implements Serializable {
@@ -34,6 +38,32 @@ public class Restaurant implements Serializable {
     foreignKey = @ForeignKey(name = "FK_establishment_info_id")
   )
   private EstablishmentInfo establishmentInfo;
+
+  @JsonIgnore
+  @Formula(
+          "(SELECT COUNT(ir_violations.id)\n"
+                  + "  FROM ir_restaurants INNER JOIN \n"
+                  + "  ir_inspectionreport ON ir_restaurants.id = ir_inspectionreport.restaurant_id  INNER JOIN\n"
+                  + "  ir_violations ON ir_inspectionreport.id = ir_violations.inspection_report_id \n"
+                  + "  WHERE ir_violations.severity = 3 and ir_inspectionreport.restaurant_id = id\n"
+                  + "  GROUP BY ir_violations.severity)")
+  private Integer criticalCount;
+
+  /*
+   Notes:
+   1. setting to Integer since an empty result set translates to null which an int can't handle
+   2. PostLoad/Transient doesn't work for use in a repository
+   3. Ignoring this from output because the lists of violations are already emitted
+   */
+  @JsonIgnore
+  @Formula(
+          "(SELECT COUNT(ir_violations.id)\n"
+                  + "  FROM ir_restaurants INNER JOIN \n"
+                  + "  ir_inspectionreport ON ir_restaurants.id = ir_inspectionreport.restaurant_id  INNER JOIN\n"
+                  + "  ir_violations ON ir_inspectionreport.id = ir_violations.inspection_report_id \n"
+                  + "  WHERE ir_violations.severity = 2 and ir_inspectionreport.restaurant_id = id\n"
+                  + "  GROUP BY ir_violations.severity)")
+  private Integer nonCriticalCount;
 
   //This was done to establish relationships during the data generation step before persisting to the db
   public void addInspectionReport(InspectionReport report) {
