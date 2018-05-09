@@ -129,3 +129,12 @@ test {
 clean {
     delete "$projectDir/out"
 }
+
+//https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-jars
+bootJar {
+    manifest {
+        attributes(
+                'Implementation-Title':   "$projectName",
+                'Implementation-Version': "$projectVersionId-$projectVersionType")
+    }
+}
