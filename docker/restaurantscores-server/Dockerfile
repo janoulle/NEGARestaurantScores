@@ -11,6 +11,9 @@ RUN apk add --no-cache curl
 # Must pass the jar file location to docker at run time via --build-arg JAR_FILE=path/to/jarfile.jar
 ARG JAR_FILE
 
+# Must pass in the port
+ARG PORT
+
 # https://stackoverflow.com/questions/17466699/not-able-to-build-a-specific-dockerfile
 # https://www.ctl.io/developers/blog/post/dockerfile-add-vs-copy/
 # Copy the current directory contents into the container at /app
@@ -20,8 +23,6 @@ COPY ${JAR_FILE} app.jar
 # Note: this application relies on environment variables that contain secrets. Can pass along to image via:
 # https://stackoverflow.com/questions/30494050/how-do-i-pass-environment-variables-to-docker-containers
 ENV JAVA_OPTS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
-
-ENV PORT 8080
 
 # Setting catalina home
 ENV CATALINA_HOME /usr/local/tomcat
@@ -44,8 +45,11 @@ HEALTHCHECK --interval=15m --timeout=10s --retries=3 --start-period=1m CMD curl 
 
 # http://containertutorials.com/docker-compose/spring-boot-app.html
 # App entry point that must be used
-ENTRYPOINT ["java"]
+# ENTRYPOINT ["java"]
 
 # Using cmd since it can be overridden at run time and Heroku deployment requires this
 # https://www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/
-CMD ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
+# https://docs.docker.com/engine/reference/builder/#cmd
+# If you want shell processing then either use the shell form or execute a shell directly, for example: [ "sh", "-c", "echo $HOME" ]
+# https://stackoverflow.com/questions/23071214/use-environment-variables-in-cmd
+CMD exec java $JAVA_OPTS -Dserver.port=$PORT -Djava.security.egd=file:/dev/./urandom -jar /app.jar

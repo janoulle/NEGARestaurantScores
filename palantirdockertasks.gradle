@@ -25,7 +25,8 @@ docker {
     files "$libsDir/$artifact", "$projectDir/docker/$dockerImageName/Dockerfile"
 
     //passing in the jar file location via --build-arg key=value
-    buildArgs(['JAR_FILE'     : artifact])
+    buildArgs(['JAR_FILE': artifact,
+               'PORT'    : '8080'])
 
     pull false
     noCache true
