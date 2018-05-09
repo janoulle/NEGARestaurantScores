@@ -57,9 +57,10 @@ public class InspectionReport implements Serializable {
    * http://www.thoughts-on-java.org/persist-localdate-localdatetime-jpa/
    * https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
    * http://stackoverflow.com/questions/20331163/how-to-format-joda-time-datetime-to-only-mm-dd-yyyy
-   *
+   * Used by a converter
    * @param date date inspection was conducted
    */
+  @SuppressWarnings("Unused")
   private void setDateReported(String date) {
     setDateReported(LocalDate.parse(date, MMddYYYY_PATTERN));
   }

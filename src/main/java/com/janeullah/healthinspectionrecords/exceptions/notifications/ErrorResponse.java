@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.domain.notifications;
+package com.janeullah.healthinspectionrecords.exceptions.notifications;
 
 /** Author: jane Date: 4/28/2017 */
 public class ErrorResponse {

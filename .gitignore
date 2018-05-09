@@ -80,6 +80,3 @@ fabric.properties
 *runConfigurations.zip
 build.info
 logs.txt
-
-#Heroku
-Procfile

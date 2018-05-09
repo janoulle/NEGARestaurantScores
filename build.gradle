@@ -61,7 +61,6 @@ dependencyManagement {
 }
 
 dependencies {
-    runtime("org.springframework.boot:spring-boot-properties-migrator")
 
     //2. bridge logging from JCL to SLF4j
     compile 'org.slf4j:jcl-over-slf4j:1.7.12'
