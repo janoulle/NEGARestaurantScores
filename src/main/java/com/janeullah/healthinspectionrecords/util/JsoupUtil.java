@@ -6,7 +6,6 @@ import com.google.common.primitives.Ints;
 import com.janeullah.healthinspectionrecords.constants.InspectionType;
 import com.janeullah.healthinspectionrecords.constants.Severity;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
-import com.janeullah.healthinspectionrecords.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.domain.entities.InspectionReport;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
@@ -25,10 +24,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.janeullah.healthinspectionrecords.constants.WebSelectorConstants.*;
+
 /** Author: Jane Ullah Date: 9/18/2016 */
 @Slf4j
 public class JsoupUtil {
-  private static final Pattern leadingDigitMatcher = Pattern.compile("^[0-9]+");
+  private static final Pattern LEADING_DIGIT_MATCHER = Pattern.compile("^[0-9]+");
   private static final String DIV = "div#";
   private static final String FWD_SLASH = " / ";
   // 10 represents the count of chars in a date e.g. mm/dd/yyyy has exactly 10 chars
@@ -37,8 +38,8 @@ public class JsoupUtil {
   private JsoupUtil() {}
 
   private static EstablishmentInfo extractEstablishmentInfoFromElement(Element rowElement) {
-    Element address = rowElement.select(WebSelectorConstants.RESTAURANT_ADDRESS_SELECTOR).first();
-    Element name = rowElement.select(WebSelectorConstants.RESTAURANT_NAME_SELECTOR).first();
+    Element address = rowElement.select(RESTAURANT_ADDRESS_SELECTOR).first();
+    Element name = rowElement.select(RESTAURANT_NAME_SELECTOR).first();
     EstablishmentInfo info = new EstablishmentInfo();
     if (name != null && StringUtils.isNotBlank(name.text())) {
       info.setName(name.text().trim());
@@ -50,7 +51,7 @@ public class JsoupUtil {
   }
 
   private static Optional<InspectionType> extractInspectionTypeFromElement(Element rowElement) {
-    Element type = rowElement.select(WebSelectorConstants.INSPECTION_TYPE_SELECTOR).first();
+    Element type = rowElement.select(INSPECTION_TYPE_SELECTOR).first();
     try {
       if (type != null && StringUtils.isNotBlank(type.text())) {
         // TODO: verify this logic
@@ -74,7 +75,7 @@ public class JsoupUtil {
    * @return score as int
    */
   private static int extractScoreFromElement(Element rowElement) {
-    Elements potentialScore = rowElement.select(WebSelectorConstants.SCORE_SELECTOR);
+    Elements potentialScore = rowElement.select(SCORE_SELECTOR);
     try {
       if (potentialScore != null) {
         List<String> splits = new ArrayList<>();
@@ -86,7 +87,7 @@ public class JsoupUtil {
 
         String lastDigitMatched = "";
         for (String split : splits) {
-          Matcher matcher = leadingDigitMatcher.matcher(split);
+          Matcher matcher = LEADING_DIGIT_MATCHER.matcher(split);
           if (matcher.lookingAt()) {
             lastDigitMatched = matcher.group();
           }
@@ -110,7 +111,7 @@ public class JsoupUtil {
    * @return JodaTime DateTime object representing the date the inspection was conducted
    */
   private static Optional<LocalDate> extractMostRecentDateFromElement(Element rowElement) {
-    Element when = rowElement.select(WebSelectorConstants.DATE_SELECTOR).first();
+    Element when = rowElement.select(DATE_SELECTOR).first();
     try {
       if (when != null && StringUtils.isNotBlank(when.text())) {
         if (when.text().length() > DATE_CHAR_COUNT) {
@@ -134,10 +135,10 @@ public class JsoupUtil {
     List<Violation> violations = new ArrayList<>();
     violations.addAll(
         extractViolations(
-            WebSelectorConstants.CRITICAL, Severity.CRITICAL, cellElement, hiddenDiv));
+            CRITICAL, Severity.CRITICAL, cellElement, hiddenDiv));
     violations.addAll(
         extractViolations(
-            WebSelectorConstants.NOT_CRITICAL, Severity.NONCRITICAL, cellElement, hiddenDiv));
+            NOT_CRITICAL, Severity.NONCRITICAL, cellElement, hiddenDiv));
     return violations;
   }
 
@@ -160,7 +161,7 @@ public class JsoupUtil {
     String violationHrefId;
     String hiddenText = "";
     if (hasViolationHrefId(hrefId, severity)) {
-      violationHrefId = hrefId.substring(WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length());
+      violationHrefId = hrefId.substring(HREF_PREFIX_FOR_VIOLATIONS.length());
       hiddenText = extractHiddenTextForViolation(violationHrefId, hiddenDivs);
     }
 
@@ -171,7 +172,7 @@ public class JsoupUtil {
   private static boolean hasViolationHrefId(String hrefId, Severity severity) {
     return StringUtils.isNotBlank(hrefId)
         && (severity == Severity.NONCRITICAL || severity == Severity.CRITICAL)
-        && hrefId.length() > WebSelectorConstants.HREF_PREFIX_FOR_VIOLATIONS.length();
+        && hrefId.length() > HREF_PREFIX_FOR_VIOLATIONS.length();
   }
 
   private static String extractCategoryFromSummary(String violationSummary) {
@@ -207,15 +208,15 @@ public class JsoupUtil {
     try {
       EstablishmentInfo info = extractEstablishmentInfoFromElement(rowElement);
       int score = extractScoreFromElement(rowElement);
-      Optional<LocalDate> when = extractMostRecentDateFromElement(rowElement);
+      Optional<LocalDate> dateReported = extractMostRecentDateFromElement(rowElement);
       Optional<InspectionType> typeOfInspection = extractInspectionTypeFromElement(rowElement);
       List<Violation> violations = extractViolations(rowElement, hiddenDivs);
 
       InspectionReport report = new InspectionReport();
       report.setScore(score);
-      when.ifPresent(report::setDateReported);
-      typeOfInspection.ifPresent(report::setInspectionType);
       report.addViolations(violations);
+      dateReported.ifPresent(report::setDateReported);
+      typeOfInspection.ifPresent(report::setInspectionType);
 
       Restaurant restaurant = new Restaurant();
       restaurant.setEstablishmentInfo(info);
