@@ -10,22 +10,19 @@ import com.amazonaws.http.HttpResponse;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsErrorHandler;
 import com.janeullah.healthinspectionrecords.external.aws.SimpleAwsResponseHandler;
-import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
-import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import com.janeullah.healthinspectionrecords.util.AwsV4RequestSigner;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-/** https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html */
+/** https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-indexing.html
+ * http://docs.aws.amazon.com/general/latest/gr/signature-v4-examples.html */
 @Slf4j
 @Service
-public class AwsElasticSearchDocumentService extends ElasticSearchDocumentService
-    implements ElasticSearchable<HttpStatus> {
+public class AwsElasticSearchDocumentService implements ElasticSearchable<HttpStatus> {
 
   @Value("${AWS_ES_SERVICE_NAME}")
   private String awsElasticSearchServiceName;
@@ -41,13 +38,6 @@ public class AwsElasticSearchDocumentService extends ElasticSearchDocumentServic
 
   @Value("${AWS_ES_URL}")
   private String awsElasticSearchUrl;
-
-  public AwsElasticSearchDocumentService() {}
-
-  @Autowired
-  public AwsElasticSearchDocumentService(RemoteRestClient restClient) {
-    super(restClient);
-  }
 
   @Override
   public ResponseEntity<HttpStatus> addRestaurantDocument(

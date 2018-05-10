@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.1.RELEASE'
+        springBootVersion = '2.0.2.RELEASE'
         projectVersion = "$projectVersionId-$projectVersionType"
     }
     repositories {
@@ -10,7 +10,6 @@ buildscript {
         }
     }
     dependencies {
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.0.RC2"
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         //classpath 'se.transmode.gradle:gradle-docker:1.2'
 
@@ -125,7 +124,7 @@ test {
     }
 }
 
-//intellij generates this out directory and need to clean this out
+//intellij generates this out directory when running tests with coverage and need to clean this out
 clean {
     delete "$projectDir/out"
 }

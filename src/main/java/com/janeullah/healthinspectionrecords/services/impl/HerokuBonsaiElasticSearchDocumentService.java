@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.services.impl;
 import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
-import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocumentService
-    implements ElasticSearchable<String> {
+public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchable<String> {
 
   @Value("${BONSAI_URL}")
   private String herokuBonsaiUrl;
@@ -31,14 +29,13 @@ public class HerokuBonsaiElasticSearchDocumentService extends ElasticSearchDocum
   @Value("${BONSAI_PASSWORD}")
   private String herokuBonsaiPassword;
 
-  public HerokuBonsaiElasticSearchDocumentService() {}
+  private RemoteRestClient restClient;
 
   @Autowired
   public HerokuBonsaiElasticSearchDocumentService(RemoteRestClient restClient) {
-    super(restClient);
+    this.restClient = restClient;
   }
 
-  // replace pathvariable with map value
   @Override
   public ResponseEntity<String> addRestaurantDocument(
       Long id, FlattenedRestaurant flattenedRestaurant) {

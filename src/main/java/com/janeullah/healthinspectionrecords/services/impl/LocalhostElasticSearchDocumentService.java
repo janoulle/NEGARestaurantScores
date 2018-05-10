@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.services.impl;
 import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
-import com.janeullah.healthinspectionrecords.services.ElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +15,16 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class LocalhostElasticSearchDocumentService extends ElasticSearchDocumentService
-    implements ElasticSearchable<String> {
+public class LocalhostElasticSearchDocumentService implements ElasticSearchable<String> {
 
   @Value("${LOCAL_ES_URL}")
   private String localhostUrl;
 
-  public LocalhostElasticSearchDocumentService() {}
+  private RemoteRestClient restClient;
 
   @Autowired
   public LocalhostElasticSearchDocumentService(RemoteRestClient restClient) {
-    super(restClient);
+    this.restClient = restClient;
   }
 
   @PostConstruct

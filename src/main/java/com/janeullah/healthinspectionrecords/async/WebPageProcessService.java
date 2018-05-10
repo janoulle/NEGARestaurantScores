@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.EXECUTOR_SERVICE;
@@ -32,7 +31,7 @@ public class WebPageProcessService {
     this.restaurantRepository = restaurantRepository;
   }
 
-  public Optional<ListenableFuture<List<Restaurant>>> submitFileForProcessing(
+  public void submitFileForProcessing(
       Path file, CountDownLatch countDownLatch) {
     try {
       String countyFile = FilenameUtils.getName(file.getFileName().toString());
@@ -41,11 +40,9 @@ public class WebPageProcessService {
       ListenableFuture<List<Restaurant>> future =
           EXECUTOR_SERVICE.submit(new WebPageProcessAsync(FilesUtil.extractCounty(file), file));
       registerCallbackForFuture(countyFile, countDownLatch, future);
-      return Optional.of(future);
     } catch (SecurityException e) {
       log.error("SecurityException caught during async file processing", e);
     }
-    return Optional.empty();
   }
 
   private void registerCallbackForFuture(
