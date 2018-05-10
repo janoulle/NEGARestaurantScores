@@ -22,7 +22,7 @@ services:
     - restaurantscores-network
 
   restaurantscores-server:
-    image: restaurantscores-server:beta
+    image: restaurantscores-server:latest
     container_name: restaurantscores-server
     ports:
     - "8080:8080"
