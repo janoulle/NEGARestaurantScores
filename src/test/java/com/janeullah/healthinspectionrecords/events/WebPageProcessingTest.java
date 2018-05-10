@@ -2,7 +2,7 @@ package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageProcessService;
 import com.janeullah.healthinspectionrecords.constants.PathVariables;
-import com.janeullah.healthinspectionrecords.util.FileHelper;
+import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +36,7 @@ public class WebPageProcessingTest {
 
     @Test
     public void testWebPageProcessingSuccessful() throws InterruptedException {
-        File[] files = FileHelper.getFilesInDirectory("/downloads/webpages");
+        File[] files = TestFileUtil.getFilesInDirectory("/downloads/webpages");
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(files);
 
         webPageProcessing.startProcessingOfDownloadedFiles();

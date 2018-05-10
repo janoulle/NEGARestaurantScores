@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.async;
 
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import com.janeullah.healthinspectionrecords.util.FileHelper;
+import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ public class WebPageProcessServiceTest {
     @Test
     public void testSubmitFileForProcessing() throws InterruptedException, URISyntaxException {
         CountDownLatch latch = new CountDownLatch(1);
-        File file = FileHelper.getFilesInDirectory("/downloads/webpages")[0];
+        File file = TestFileUtil.getFilesInDirectory("/downloads/webpages")[0];
 
         webPageProcessService.submitFileForProcessing(file.toPath(), latch);
         latch.await();

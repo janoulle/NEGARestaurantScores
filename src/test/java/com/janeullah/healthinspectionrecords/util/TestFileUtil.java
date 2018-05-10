@@ -5,7 +5,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-public class FileHelper {
+public class TestFileUtil {
 
     public static File[] getFilesInDirectory(String path) {
         try {
