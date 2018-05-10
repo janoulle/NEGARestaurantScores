@@ -15,7 +15,6 @@ import com.janeullah.healthinspectionrecords.services.AmazonS3ClientForFirebaseO
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -26,15 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
-
 /**
  * Author: jane Date: 4/14/2017
  * https://github.com/firebase/quickstart-java/blob/master/database/src/main/java/com/google/firebase/quickstart/Database.java
  */
 @Slf4j
 @Service
-@Scope(value = SCOPE_SINGLETON)
 public class FirebaseInitialization {
   private DatabaseReference database;
   private FirebaseDataProcessing firebaseDataProcessing;

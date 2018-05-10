@@ -52,6 +52,7 @@ public class TestUtil {
             .nonCriticalViolations(5)
             .score(84)
             .dateReported("2018-01-29")
+            .id(1L)
             .build();
   }
 }
