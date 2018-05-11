@@ -1,5 +1,10 @@
+# Prerequisites
+
+1. Docker
+2. Postman (for easy api querying)
+
 # Docker build instructions
-1. To build, tag, and push, run ```gradlew buildAndTagImage --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION -PpathToRepos=/path/to/repos.json```. The `pathToRepos` property should be .json file containing a map of key:value pairs where the value is the remote repository name
+1. To build, tag, and push, run ```gradlew buildAndTagImage --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION -PpathToRepos=/path/to/repos.json```. The `pathToRepos` property should be .json file containing a map of key:value pairs where the value is the remote repository name. You can create an empty json file containing an empty map i.e. `{}` to skip the remote tagging/pushing steps
 2. To just build the image, run ```gradlew docker --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION```
 3. Note: the --console and --stacktrace flags are for troubleshooting purposes
 4. To manually build this image i.e. with the docker commands, this application takes in two build arg. Here's a sample working command: ```gradlew clean build && docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=path/to/file.sh -t restaurantscores-server:YOUR_VERSION -f docker\restaurantscores-server\Dockerfile .```
@@ -11,3 +16,23 @@
 2. Review docker-compose.yml and provide the paths to the .env files specified.
 3. In the docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
 4. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers.
+
+# What is this application
+
+1. This is a web service that can perform the following actions
+    1. fetches 10 webpages from http://publichealthathens.com/wp/programs/restaurantinspections/
+    2. processes the downloaded files and stores the data into the postgresql database. The database model is referenced below: ![alt text](src/main/resources/restaurantscores-erd.png "Entity Relationship diagram for RestaurantScores project")
+    3. offers apis to query the processed data (review the exposed endpoints in the *Controller.java classes and select *ControllerTest.java classes
+2. Optionally, there are endpoints to push the data in the postgresql datastore to Firebase and Heroku Bonsai. These rely on *your* own Google|Heroku api keys/secrets.
+    1. The data is transformed for storage into Firebase. Sample of the generated data: [firebase data](src/main/resources/firebase-schema.json). This data powers a separate project of mine (shameless plug - [NorthEast Georgia Health Inspection Records Android app](http://bit.ly/negarestauranthealthinspections) )
+    2. The Heroku push requires the Bonsai addon and the creation of a `restaurants` index. This is used to power searching for the aforementioned Android app.
+
+# Additional Notes
+
+1. The postgresql database is accessible at port 5433. If using pgAdmin to connect to the database, you'll get a series of alarming alerts because the admin pack extension is not installed. You can still browse the database once you get past the alerts.
+2. This application runs on post 8080 (see [docker-compose.yml](docker/docker-compose.yml) to change this setting.
+3. The context of this application is `/restaurantscores` and the active spring profile is `postgresql`
+
+# In case of problems running the app
+
+1. Please create a github issue with detailed logs and steps to reproduce.
