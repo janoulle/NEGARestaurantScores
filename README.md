@@ -12,7 +12,7 @@
 
 # Docker run instructions
 
-1. This application relies on environment variables for the app to start. Review Requirements.txt as a sample .env file and provide the needed values. The key names are hopefully clear enough to understand the values to be provided.
+1. This application relies on environment variables for the app to start. Review [Requirements.txt](Requirements.txt) as a sample .env file and provide the needed values. The key names are hopefully clear enough to understand the values to be provided.
 2. Review docker-compose.yml and provide the paths to the .env files specified.
 3. In the docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
 4. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers.
