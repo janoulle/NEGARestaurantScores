@@ -22,7 +22,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
   List<Restaurant> findByEstablishmentInfoCountyIgnoreCase(String county);
 
-  List<Restaurant> findByEstablishmentInfoNameAndEstablishmentInfoCountyIgnoreCase(
+  List<Restaurant> findByEstablishmentInfoNameIgnoreCaseAndEstablishmentInfoCountyIgnoreCase(
       String name, String county);
 
   List<Restaurant> findByEstablishmentInfoNameContaining(String name);

@@ -97,7 +97,7 @@ public class RestaurantController {
   public List<Restaurant> getRestaurantByNameAndCounty(
       @RequestHeader("name") String name, @RequestHeader("county") String county) {
     log.info("finding restaurant by name {} and county {}", name, county);
-    return restaurantRepository.findByEstablishmentInfoNameAndEstablishmentInfoCountyIgnoreCase(
+    return restaurantRepository.findByEstablishmentInfoNameIgnoreCaseAndEstablishmentInfoCountyIgnoreCase(
         name, county);
   }
 
