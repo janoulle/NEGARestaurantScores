@@ -2,7 +2,6 @@ package com.janeullah.healthinspectionrecords.services.impl;
 
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
-import com.janeullah.healthinspectionrecords.rest.RestClientTemplateBuilder;
 import com.janeullah.healthinspectionrecords.util.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +31,6 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     @Mock
     private RemoteRestClient restClient;
-    @Mock
-    private RestClientTemplateBuilder restClientTemplateBuilder;
 
     @Before
     public void setup() {
