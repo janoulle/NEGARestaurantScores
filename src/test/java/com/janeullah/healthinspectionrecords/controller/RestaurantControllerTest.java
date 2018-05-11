@@ -55,6 +55,8 @@ public class RestaurantControllerTest {
   @Test
   public void testGetAllRestaurants() throws Exception {
     Restaurant restaurant = TestUtil.getSingleRestaurant();
+    restaurant.setId(1L);
+    restaurant.getEstablishmentInfo().setId(4L);
 
     when(restaurantRepository.findAll()).thenReturn(Collections.singletonList(restaurant));
 

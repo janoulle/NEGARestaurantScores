@@ -12,7 +12,7 @@ import java.util.List;
  * Author: Jane Ullah Date: 9/19/2016
  */
 @Repository
-public interface HealthRecordRepository extends JpaRepository<InspectionReport, Long> {
+public interface InspectionReportRepository extends JpaRepository<InspectionReport, Long> {
   List<InspectionReport> findByRestaurant(Restaurant restaurant);
 
   // https://spring.io/blog/2011/04/26/advanced-spring-data-jpa-specifications-and-querydsl/

@@ -14,31 +14,45 @@ import java.util.Collections;
 
 public class TestUtil {
 
-  public static Violation getSingleViolation(long id, Severity sev, String notes) {
+  public static Violation getSingleViolation() {
+    return getSingleViolation(null, Severity.CRITICAL, "Blah");
+  }
+
+  public static Violation getSingleViolation(Long id, Severity sev, String notes) {
     Violation violation = new Violation();
     violation.setId(id);
     violation.setSeverity(sev);
     violation.setNotes(notes);
+    violation.setCategory("4-D");
     return violation;
   }
 
-  public static Restaurant getSingleRestaurant() {
-    EstablishmentInfo establishmentInfo = new EstablishmentInfo();
-    establishmentInfo.setId(4L);
-    establishmentInfo.setCounty("Walton");
-    establishmentInfo.setAddress("195 MLK JR. BLVD. MONROE GA, 30655");
-    establishmentInfo.setName("ZAXBY'S-MONROE");
-
+  //need to avoid PersistentObjectException: detached entity passed to persist
+  public static InspectionReport getSingleInspectionReport() {
     InspectionReport inspectionReport = new InspectionReport();
     inspectionReport.setDateReported(LocalDate.parse("05/05/2018", DateTimeFormatter.ofPattern("MM/dd/yyyy")));
     inspectionReport.setInspectionType(InspectionType.ROUTINE);
     inspectionReport.setScore(85);
-    inspectionReport.setViolations(Collections.singletonList(getSingleViolation(1, Severity.CRITICAL, "Cook handled toast with bare hands. It was discarded.")));
+
+    Violation v = getSingleViolation(null, Severity.CRITICAL, "Cook handled toast with bare hands. It was discarded.");
+    v.setInspectionReport(inspectionReport);
+
+    inspectionReport.addViolations(Collections.singletonList(v));
+    return inspectionReport;
+  }
+
+  // https://stackoverflow.com/questions/6378526/org-hibernate-persistentobjectexception-detached-entity-passed-to-persist
+  public static Restaurant getSingleRestaurant() {
+
+    EstablishmentInfo establishmentInfo = new EstablishmentInfo();
+    establishmentInfo.setCounty("Walton");
+    establishmentInfo.setAddress("195 MLK JR. BLVD. MONROE GA, 30655");
+    establishmentInfo.setName("ZAXBY'S-MONROE");
 
     Restaurant restaurant = new Restaurant();
-    restaurant.setId(1L);
+
     restaurant.setEstablishmentInfo(establishmentInfo);
-    restaurant.setInspectionReports(Collections.singletonList(inspectionReport));
+    restaurant.addInspectionReport(getSingleInspectionReport());
 
     return restaurant;
   }
