@@ -17,6 +17,11 @@
 3. In the docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
 4. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers.
 
+# Health Checks
+
+1. Type `docker ps` at your terminal and you should see the restaurantscores-server app is UP.
+2. Alternately, ping `http://localhost:8080/restaurantscores/actuator/health` and you should get a 200 http status code response back and status with a value of 'UP'
+
 # What is this application
 
 1. This is a web service that can perform the following actions
