@@ -12,10 +12,19 @@
 
 # Docker run instructions
 
-1. This application relies on environment variables for the app to start. Review [Requirements.txt](Requirements.txt) as a sample .env file and provide the needed values. The key names are hopefully clear enough to understand the values to be provided.
-2. Review docker-compose.yml and provide the paths to the .env files specified.
-3. In the docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
-4. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers.
+1. This application relies on environment variables for the app and the database to start.
+2. You will need to provide the .env file paths in the docker-compose.yml file or modify the yaml file directly. For an overview of what environment variables are required, review [Requirements.txt](Requirements.txt) as a sample .env file.
+3. postgres:latest db environment variable requirements:
+    1. POSTGRES_DB=healthinspections
+    2. POSTGRES_USER=postgres
+    3. POSTGRES_PASSWORD=YOUR_PASSWORD
+4. restaurant-scores:latest environment variable requirements:
+    1. JDBC_DATABASE_URL -> the url to your postgres db. To use the dockerized postgresql container, update this environment var to look like ```JDBC_DATABASE_URL=jdbc:postgresql://restaurantscores-db:5432/healthinspections```.
+    2. JDBC_DATABASE_USERNAME and JDBC_DATABASE_PASSWORD should be db username and password. Note: POSTGRES_PASSWORD needs to match JDBC_DATABASE_PASSWORD.
+    3. RELATIVE_PATH_TO_PAGE_STORAGE needs to be a relative path that ends in a slash
+    4. APP_DATA_FOLDER needs to be a fully qualified path that does not end in a slash. The two are concatenated in [firebase data](src/main/java/com/janeullah/healthinspectionrecords/domain/PathVariables.java)
+5. In the docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
+6. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers.
 
 # Health Checks
 
