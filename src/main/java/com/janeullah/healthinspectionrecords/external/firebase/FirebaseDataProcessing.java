@@ -99,7 +99,7 @@ public class FirebaseDataProcessing {
         .replaceFrom(key, StringUtils.EMPTY);
   }
 
-  public Map<String, County> createAndRetrieveMapOfCounties(
+  Map<String, County> createAndRetrieveMapOfCounties(
       Map<String, List<Restaurant>> mapOfCountiesToRestaurants) {
     Map<String, County> countiesAndRestaurants = new HashMap<>();
     for (String county : WebPageConstants.COUNTY_LIST) {
@@ -130,7 +130,7 @@ public class FirebaseDataProcessing {
    * @param mapOfCountiesToRestaurants Map of County to List of Retaurant entities for that county
    * @return Map of county to flattened restaurant
    */
-  public Map<String, FlattenedRestaurant> flattenMapOfRestaurants(
+  Map<String, FlattenedRestaurant> flattenMapOfRestaurants(
       Map<String, List<Restaurant>> mapOfCountiesToRestaurants) {
     return mapOfCountiesToRestaurants
         .values()
@@ -170,7 +170,7 @@ public class FirebaseDataProcessing {
     return flattenedViolations;
   }
 
-  public Map<String, FlattenedInspectionReport> createAndRetrieveViolations(
+  Map<String, FlattenedInspectionReport> createAndRetrieveViolations(
       Map<String, FlattenedRestaurant> restaurantData) {
     return restaurantData
         .values()

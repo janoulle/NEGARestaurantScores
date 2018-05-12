@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /** Author: Jane Ullah Date: 9/20/2016 */
+/**
+ * Methods in this restcontroller are invoked by whomever is running the program.
+ */
+@SuppressWarnings("unused")
 @Slf4j
 @RestController
 @RequestMapping("/violations")

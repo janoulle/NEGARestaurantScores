@@ -1,8 +1,8 @@
 package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageRequestAsync;
-import com.janeullah.healthinspectionrecords.constants.PathVariables;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -104,7 +104,7 @@ public class WebPageDownloader {
     return new AtomicLong((long) daysToExpire * DateTimeConstants.MILLIS_PER_DAY);
   }
 
-  public void initiateDownloadsAndProcessFiles() {
+  void initiateDownloadsAndProcessFiles() {
     try {
       asyncDownloadWebPages();
 

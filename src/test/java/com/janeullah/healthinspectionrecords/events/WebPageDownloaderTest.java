@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.events;
 
-import com.janeullah.healthinspectionrecords.constants.PathVariables;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import org.apache.commons.collections4.map.HashedMap;
 import org.joda.time.DateTime;
 import org.junit.Before;

@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.async;
 
-import com.janeullah.healthinspectionrecords.constants.PathVariables;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

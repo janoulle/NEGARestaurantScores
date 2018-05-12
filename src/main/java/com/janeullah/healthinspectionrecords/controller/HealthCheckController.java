@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Methods in this restcontroller are invoked by whomever is running the program.
+ */
+@SuppressWarnings("unused")
 @Slf4j
 @RestController
 @RequestMapping("/healthcheck")

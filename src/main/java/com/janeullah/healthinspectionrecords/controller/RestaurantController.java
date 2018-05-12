@@ -1,6 +1,5 @@
 package com.janeullah.healthinspectionrecords.controller;
 
-import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
@@ -15,6 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
+/**
+ * Methods in this restcontroller are invoked by whomever is running the program.
+ */
+@SuppressWarnings("unused")
 @Slf4j
 @RestController
 @RequestMapping("/restaurants")
@@ -44,15 +47,6 @@ public class RestaurantController {
   )
   public List<Restaurant> fetchAll() {
     return restaurantRepository.findAll();
-  }
-
-  @RequestMapping(
-    value = "/countylist",
-    method = {RequestMethod.GET},
-    produces = MediaType.APPLICATION_JSON_VALUE
-  )
-  public List<String> fetchCounties() {
-    return WebPageConstants.COUNTY_LIST;
   }
 
   @Cacheable("restaurantsByCounty")

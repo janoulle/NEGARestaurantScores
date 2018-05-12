@@ -60,7 +60,7 @@ public class InspectionReport implements Serializable {
    * Used by a converter
    * @param date date inspection was conducted
    */
-  @SuppressWarnings("Unused")
+  @SuppressWarnings("unused")
   private void setDateReported(String date) {
     setDateReported(LocalDate.parse(date, MMddYYYY_PATTERN));
   }
@@ -73,16 +73,5 @@ public class InspectionReport implements Serializable {
     setViolations(violations);
     violations.forEach(violation -> violation.setInspectionReport(this));
   }
-
-  // @Transient - https://stackoverflow.com/questions/20597930/using-a-transient-field-in-hql
-  //  @PostLoad
-  //  public void getCriticalViolationsCount() {
-  //    Map<Severity, Long> mapOfSeverityToViolations = violations
-  //                    .stream()
-  //                    .collect(Collectors.groupingBy(Violation::getSeverity,
-  // Collectors.counting()));
-  //    criticalCount =  mapOfSeverityToViolations.get(Severity.CRITICAL).intValue();
-  //    nonCriticalCount =  mapOfSeverityToViolations.get(Severity.NONCRITICAL).intValue();
-  //  }
 
 }

@@ -33,7 +33,11 @@ public class AmazonS3ClientForFirebaseOperations {
   @Value("${NEGA_BUCKET_NAME_READONLY}")
   private String negaReadOnlyBucketName;
 
-  // https://medium.com/oril/uploading-files-to-aws-s3-bucket-using-spring-boot-483fcb6f8646
+  /**
+   * https://medium.com/oril/uploading-files-to-aws-s3-bucket-using-spring-boot-483fcb6f8646
+   * Suppressing because this method is called by Spring to setup the s3 client
+   */
+  @SuppressWarnings("unused")
   @PostConstruct
   private void initializeAmazon() {
     AWSCredentials credentials = new BasicAWSCredentials(negaBucketAccessKey, negaBucketSecretKey);

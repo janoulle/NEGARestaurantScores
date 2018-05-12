@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /** TODO: add auth for this controller class Author: Jane Ullah Date: 3/28/2017 */
+/**
+ * Methods in this restcontroller are invoked by whomever is running the program.
+ */
+@SuppressWarnings("unused")
 @Slf4j
 @RequestMapping("/admin")
 @RestController

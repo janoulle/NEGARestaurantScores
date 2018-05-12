@@ -47,6 +47,10 @@ public class FirebaseInitialization {
     this.amazonS3ClientForFirebaseOperations = amazonS3ClientForFirebaseOperations;
   }
 
+  /**
+   * This is used by Spring to initialized the database reference for firebase
+   */
+  @SuppressWarnings("unused")
   @PostConstruct
   private void connectToFirebaseApp() {
     try (InputStream is = amazonS3ClientForFirebaseOperations.getFirebaseCredentials()) {

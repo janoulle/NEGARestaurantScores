@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageProcessService;
-import com.janeullah.healthinspectionrecords.constants.PathVariables;
+import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ public class WebPageProcessing {
     this.pathVariables = pathVariables;
   }
 
-  public void startProcessingOfDownloadedFiles() {
+  void startProcessingOfDownloadedFiles() {
     try {
       File[] files = pathVariables.getFilesInDefaultDirectory();
       CountDownLatch countDownLatch = new CountDownLatch(files.length);

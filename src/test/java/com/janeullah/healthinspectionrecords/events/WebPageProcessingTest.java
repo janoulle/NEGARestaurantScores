@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageProcessService;
-import com.janeullah.healthinspectionrecords.constants.PathVariables;
+import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import org.junit.Before;
 import org.junit.Test;
