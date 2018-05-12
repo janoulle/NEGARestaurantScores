@@ -7,10 +7,12 @@ import com.janeullah.healthinspectionrecords.domain.entities.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.domain.entities.InspectionReport;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
+import org.assertj.core.util.Lists;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.List;
 
 public class TestUtil {
 
@@ -55,6 +57,33 @@ public class TestUtil {
     restaurant.addInspectionReport(getSingleInspectionReport());
 
     return restaurant;
+  }
+
+  // https://stackoverflow.com/questions/6378526/org-hibernate-persistentobjectexception-detached-entity-passed-to-persist
+  public static List<Restaurant> getRestaurants() {
+
+    EstablishmentInfo establishmentInfo = new EstablishmentInfo();
+    establishmentInfo.setCounty("Walton");
+    establishmentInfo.setAddress("195 MLK JR. BLVD. MONROE GA, 30655");
+    establishmentInfo.setName("ZAXBY'S-MONROE");
+
+    Restaurant restaurant = new Restaurant();
+
+    restaurant.setEstablishmentInfo(establishmentInfo);
+    restaurant.addInspectionReport(getSingleInspectionReport());
+
+
+    EstablishmentInfo establishmentInfo2 = new EstablishmentInfo();
+    establishmentInfo2.setCounty("Clark");
+    establishmentInfo2.setAddress("400 CLAYTON STREET STE B ATHENS GA, 30601");
+    establishmentInfo2.setName("9d's");
+
+    Restaurant restaurant2 = new Restaurant();
+
+    restaurant2.setEstablishmentInfo(establishmentInfo2);
+    restaurant2.addInspectionReport(getSingleInspectionReport());
+
+    return Lists.newArrayList(restaurant, restaurant2);
   }
 
   public static FlattenedRestaurant getSingleFlattenedRestaurant() {
