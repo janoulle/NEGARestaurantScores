@@ -2,7 +2,6 @@ package com.janeullah.healthinspectionrecords.async;
 
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.constants.WebSelectorConstants;
-import com.janeullah.healthinspectionrecords.domain.entities.EstablishmentInfo;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.util.JsoupUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +9,7 @@ import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
 
@@ -30,7 +30,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
   private Elements hiddenDivs;
   private String county;
 
-  public WebPageProcessAsync(String county, Path url) {
+  WebPageProcessAsync(String county, Path url) {
     this.county = county;
     this.url = url;
   }
@@ -38,20 +38,14 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
   private List<Restaurant> ingestJsoupData() {
     List<Restaurant> restaurantsInFile = new ArrayList<>();
     Optional<Elements> jsoupList = processFile();
-    jsoupList.ifPresent(
-        iterable ->
-            iterable.forEach(
-                entry -> {
-                  Optional<Restaurant> restaurant = JsoupUtil.assemblePOJO(entry, hiddenDivs);
-                  restaurant.ifPresent(
-                      createdRestaurant -> {
-                        if (createdRestaurant.getEstablishmentInfo() == null) {
-                          createdRestaurant.setEstablishmentInfo(new EstablishmentInfo());
-                        }
-                        createdRestaurant.getEstablishmentInfo().setCounty(county);
-                        restaurantsInFile.add(createdRestaurant);
-                      });
-                }));
+    if (!jsoupList.isPresent()) {
+      return restaurantsInFile;
+    }
+
+    for (Element entry : jsoupList.get()) {
+      Optional<Restaurant> restaurant = JsoupUtil.assemblePOJO(county, entry, hiddenDivs);
+      restaurant.ifPresent(restaurantsInFile::add);
+    }
     return restaurantsInFile;
   }
 

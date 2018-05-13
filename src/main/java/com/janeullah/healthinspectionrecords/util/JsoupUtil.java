@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Selector;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -204,9 +205,8 @@ public class JsoupUtil {
     return StringUtils.EMPTY;
   }
 
-  public static Optional<Restaurant> assemblePOJO(Element rowElement, Elements hiddenDivs) {
+  public static Optional<Restaurant> assemblePOJO(String county, Element rowElement, Elements hiddenDivs) {
     try {
-      EstablishmentInfo info = extractEstablishmentInfoFromElement(rowElement);
       int score = extractScoreFromElement(rowElement);
       Optional<LocalDate> dateReported = extractMostRecentDateFromElement(rowElement);
       Optional<InspectionType> typeOfInspection = extractInspectionTypeFromElement(rowElement);
@@ -219,10 +219,12 @@ public class JsoupUtil {
       typeOfInspection.ifPresent(report::setInspectionType);
 
       Restaurant restaurant = new Restaurant();
+      EstablishmentInfo info = extractEstablishmentInfoFromElement(rowElement);
+      info.setCounty(county);
       restaurant.setEstablishmentInfo(info);
       restaurant.addInspectionReport(report);
       return Optional.of(restaurant);
-    } catch (Exception e) {
+    } catch (Selector.SelectorParseException e) {
       log.error(
           "Exception while putting together Restaurant POJO from rowElement {}",
           rowElement.toString(),
