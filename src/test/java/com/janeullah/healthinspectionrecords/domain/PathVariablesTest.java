@@ -28,7 +28,7 @@ public class PathVariablesTest {
 
   @Test
   public void testGetFilesInDefaultDirectory_Success() {
-    ReflectionTestUtils.setField(pathVariables, "catalinaHome", "");
+    ReflectionTestUtils.setField(pathVariables, "appDataFolder", "");
     File[] files = pathVariables.getFilesInDefaultDirectory();
     assertNotNull(files);
     assertEquals(10, files.length);
@@ -36,7 +36,7 @@ public class PathVariablesTest {
 
   @Test
   public void testGetFilesInDefaultDirectory_Error() {
-    ReflectionTestUtils.setField(pathVariables, "catalinaHome", "bad");
+    ReflectionTestUtils.setField(pathVariables, "appDataFolder", "bad");
     File[] files = pathVariables.getFilesInDefaultDirectory();
     assertNotNull(files);
     assertEquals(0, files.length);
