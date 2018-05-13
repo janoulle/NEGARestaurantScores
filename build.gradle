@@ -44,10 +44,6 @@ repositories {
     mavenCentral()
 }
 
-configurations.all {
-    exclude group: "commons-logging", module: "commons-logging"
-}
-
 configurations {
     providedRuntime
 }
@@ -76,6 +72,7 @@ dependencies {
     compile('javax.inject:javax.inject:1')
     compileOnly "org.projectlombok:lombok:1.16.16"
     compile("org.springframework.boot:spring-boot-starter-cache")
+//    compile("javax.cache:cache-api")
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
     compile('org.springframework.boot:spring-boot-starter-web')
@@ -90,9 +87,6 @@ dependencies {
     compile 'com.amazonaws:aws-java-sdk-s3'
     compile 'com.amazonaws:aws-java-sdk-ec2'
     compile 'com.amazonaws:aws-java-sdk-dynamodb'
-    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.4'
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
-    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
     compile 'org.elasticsearch.client:elasticsearch-rest-client-sniffer:5.6.1'
 
     compile("org.springframework.boot:spring-boot-devtools")
@@ -131,17 +125,9 @@ clean {
     delete "$projectDir/out"
 }
 
-//https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-jars
-bootJar {
-    manifest {
-        attributes(
-                'Implementation-Title':   "$projectName",
-                'Implementation-Version': "$projectVersionId-$projectVersionType")
-    }
-}
-
 //https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-wars
-bootWar {
+//https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-jars
+[bootJar, bootWar].each {
     manifest {
         attributes(
                 'Implementation-Title':   "$projectName",

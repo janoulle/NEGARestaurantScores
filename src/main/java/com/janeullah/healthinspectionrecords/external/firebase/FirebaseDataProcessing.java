@@ -13,7 +13,6 @@ import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -79,9 +78,9 @@ public class FirebaseDataProcessing {
               .address(restaurant.getEstablishmentInfo().getAddress())
               .county(restaurant.getEstablishmentInfo().getCounty())
               .criticalViolations(
-                  MapUtils.getInteger(mapOfSeverityToViolations, Severity.CRITICAL, 0))
+                  mapOfSeverityToViolations.getOrDefault(Severity.CRITICAL, 0L).intValue())
               .nonCriticalViolations(
-                  MapUtils.getInteger(mapOfSeverityToViolations, Severity.NONCRITICAL, 0))
+                  mapOfSeverityToViolations.getOrDefault(Severity.NONCRITICAL, 0L).intValue())
               .dateReported(inspectionReport.getDateReported().toString())
               .inspectionReport(createFlattenedInspectionReport(inspectionReport))
               .build();
