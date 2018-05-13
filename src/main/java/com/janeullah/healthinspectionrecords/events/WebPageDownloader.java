@@ -11,8 +11,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.OptionalLong;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
@@ -42,8 +47,10 @@ public class WebPageDownloader {
 
   private WebPageProcessing webPageProcessing;
   private PathVariables pathVariables;
+
   @Value("${DOWNLOAD_OVERRIDE}")
   private boolean isDownloadOverrideEnabled;
+
   @Value("${DATA_EXPIRATION_IN_DAYS}")
   private String dataExpirationInDays;
 
@@ -51,14 +58,6 @@ public class WebPageDownloader {
   public WebPageDownloader(WebPageProcessing webPageProcessing, PathVariables pathVariables) {
     this.webPageProcessing = webPageProcessing;
     this.pathVariables = pathVariables;
-  }
-
-  private List<WebPageRequestAsync> populateListOfAsyncWebRequestToBeMade() {
-    List<WebPageRequestAsync> results = new ArrayList<>();
-    mapOfUrlsToDownloads.forEach(
-        (key, value) ->
-            results.add(new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH, pathVariables)));
-    return results;
   }
 
   /**
@@ -104,17 +103,16 @@ public class WebPageDownloader {
     return new AtomicLong((long) daysToExpire * DateTimeConstants.MILLIS_PER_DAY);
   }
 
+  // TODO: include some way to verify the downloads were actually successful e.g. via callBacks
   void initiateDownloadsAndProcessFiles() {
     try {
       asyncDownloadWebPages();
 
-      // wait for download step to complete
       COUNT_DOWN_LATCH.await();
 
-      // TODO: include some way to verify the downloads were actually successful e.g. via callBacks
-      // perhaps
+      log.info("event=file_download message=\"file downloads completed.\"");
+      log.info("event=file_processing message=\"Initiating processing of downloaded files\"");
 
-      log.info("file downloads completed.");
       webPageProcessing.startProcessingOfDownloadedFiles();
     } catch (InterruptedException e) {
       log.error("Interrupt while waiting for downloads to complete", e);
@@ -128,15 +126,13 @@ public class WebPageDownloader {
    * http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
    * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
    */
-  private List<Future<String>> asyncDownloadWebPages() {
-    List<WebPageRequestAsync> callablePageRequests =
-        Collections.synchronizedList(populateListOfAsyncWebRequestToBeMade());
-    List<Future<String>> futures = new ArrayList<>(callablePageRequests.size());
-    callablePageRequests.forEach(
-        webPageRequest -> {
-          futures.add(webPageDownloadCompletionService.submit(webPageRequest));
-          log.info("Download request submitted for {}", webPageRequest.getName());
+  private void asyncDownloadWebPages() {
+    mapOfUrlsToDownloads.forEach(
+        (key, value) -> {
+          WebPageRequestAsync request =
+              new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH, pathVariables);
+          webPageDownloadCompletionService.submit(request);
+          log.info("Download request submitted for {}", request.getName());
         });
-    return futures;
   }
 }

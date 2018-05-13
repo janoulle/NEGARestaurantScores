@@ -23,8 +23,8 @@ public class PathVariables {
   @Value("${RELATIVE_PATH_TO_PAGE_STORAGE}")
   private String relativePathToPageStorage;
 
-  @Value("${CATALINA_HOME}")
-  private String catalinaHome;
+  @Value("${APP_DATA_FOLDER}")
+  private String appDataFolder;
 
   /**
    * Get list of files in the configured directory.
@@ -51,6 +51,6 @@ public class PathVariables {
   }
 
   private String getPath() {
-    return catalinaHome + File.separator + relativePathToPageStorage;
+    return appDataFolder + File.separator + relativePathToPageStorage;
   }
 }

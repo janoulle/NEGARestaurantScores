@@ -35,8 +35,8 @@ COPY ${JAR_FILE} app.jar
 # https://stackoverflow.com/questions/30494050/how-do-i-pass-environment-variables-to-docker-containers
 ENV JAVA_OPTS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
 
-# Setting catalina home
-ENV CATALINA_HOME /usr/local/tomcat
+# Setting app folder home
+ENV APP_DATA_FOLDER /usr/local/tomcat
 
 # Setting spring active profile
 # Comment out for each running container to set this field
@@ -50,7 +50,7 @@ EXPOSE 8000 8080
 # https://spring.io/guides/gs/spring-boot-docker/
 # https://stackoverflow.com/questions/41935435/understanding-volume-instruction-in-dockerfile
 # Setup logging volume and file download paths. If not mapped to host volume, it will save inside the container
-VOLUME [ "$CATALINA_HOME/logs", "$CATALINA_HOME/downloads/webpages"]
+VOLUME [ "$APP_DATA_FOLDER/logs", "$APP_DATA_FOLDER/downloads/webpages"]
 
 # https://docs.docker.com/engine/reference/builder/#healthcheck
 # Spring actuator health check
