@@ -67,7 +67,22 @@ gradle.taskGraph.whenReady {taskGraph ->
     }
 }*/
 
-def dockerTag(String dockerImageName, String dockerImageVersion, String remoteDetails) {
+private String getRemoteDetails(String dockerImageName, String dockerImageVersion, String key, String value) {
+    def remoteDetails = ''
+    if (key == "docker") {
+        remoteDetails = "$value:$dockerImageVersion"
+    } else if (key == "microsoft") {
+        remoteDetails = "$value/$dockerImageName:$dockerImageVersion"
+    } else if (key == "heroku") {
+        remoteDetails = "$value"
+    }
+    println remoteDetails
+    remoteDetails
+}
+
+
+def dockerTag(String dockerImageName, String dockerImageVersion, String key, String value) {
+    def remoteDetails = getRemoteDetails(dockerImageName, dockerImageVersion, key, value)
     exec {
         executable "docker"
         args "tag", "$dockerImageName:$dockerImageVersion", "$remoteDetails"
@@ -75,7 +90,9 @@ def dockerTag(String dockerImageName, String dockerImageVersion, String remoteDe
 }
 
 //https://stackoverflow.com/questions/22449649/run-shell-command-in-gradle-but-not-inside-a-task
-def dockerPush(String remoteDetails) {
+def dockerPush(String dockerImageName, String dockerImageVersion, String key, String value) {
+
+    def remoteDetails = getRemoteDetails(dockerImageName, dockerImageVersion, key, value)
     exec {
         executable "docker"
         args "push", "$remoteDetails"
@@ -84,16 +101,15 @@ def dockerPush(String remoteDetails) {
 
 task buildAndTagImage(dependsOn: ['clean','docker']) {
     doLast {
-        //TODO: pass repos in as args when invoking gradle task
         //file("../Docker/restaurantscores/repos.json")
 
         def remoteRegistries = file("$pathToRepos")
         def parsedJson = new groovy.json.JsonSlurper().parseText(remoteRegistries?.text)
 
         parsedJson?.each { key, value ->
-            def remoteDetails = "${value}:$dockerImageVersion"
-            dockerTag(dockerImageName, dockerImageVersion, remoteDetails)
-            dockerPush(remoteDetails)
+            println "value:$value"
+            dockerTag(dockerImageName, dockerImageVersion, key, value)
+            dockerPush(dockerImageName, dockerImageVersion, key, value)
         }
     }
 }
