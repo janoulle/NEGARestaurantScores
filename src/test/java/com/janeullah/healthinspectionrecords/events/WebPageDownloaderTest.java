@@ -2,7 +2,6 @@ package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.domain.PathVariables;
-import org.apache.commons.collections4.map.HashedMap;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
@@ -25,7 +25,8 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @RunWith(MockitoJUnitRunner.class)
 public class WebPageDownloaderTest {
 
-    public static final String IS_DOWNLOAD_OVERRIDE_ENABLED = "isDownloadOverrideEnabled";
+    private static final String IS_DOWNLOAD_OVERRIDE_ENABLED = "isDownloadOverrideEnabled";
+
     @InjectMocks
     private WebPageDownloader webPageDownloader;
 
@@ -86,7 +87,7 @@ public class WebPageDownloaderTest {
     @Test
     public void testInitiateDownloadsAndProcessFilesWithBadUrl() {
         //faking the url to hit
-        Map<String, String> map = new HashedMap<>();
+        Map<String, String> map = new HashMap<>();
         for (String county : WebPageConstants.COUNTY_LIST) {
             map.put(county, "http://xyx.com" + county);
         }
