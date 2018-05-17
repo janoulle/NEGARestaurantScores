@@ -71,7 +71,7 @@ private String getRemoteDetails(String dockerImageName, String dockerImageVersio
     def remoteDetails = ''
     if (key == "docker") {
         remoteDetails = "$value:$dockerImageVersion"
-    } else if (key == "microsoft") {
+    } else if (key == "microsoft" || key == "amazon") {
         remoteDetails = "$value/$dockerImageName:$dockerImageVersion"
     } else if (key == "heroku") {
         remoteDetails = "$value"
