@@ -35,7 +35,7 @@ public class WebPageProcessServiceTest {
     @Test
     public void testSubmitFileForProcessing() throws InterruptedException, URISyntaxException {
         CountDownLatch latch = new CountDownLatch(1);
-        File file = TestFileUtil.getFilesInDirectory("/downloads/webpages")[0];
+        File file = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages")[0];
 
         webPageProcessService.submitFileForProcessing(file.toPath(), latch);
         latch.await();

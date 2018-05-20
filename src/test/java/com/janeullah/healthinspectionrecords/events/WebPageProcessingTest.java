@@ -36,7 +36,7 @@ public class WebPageProcessingTest {
 
     @Test
     public void testWebPageProcessingSuccessful() throws InterruptedException {
-        File[] files = TestFileUtil.getFilesInDirectory("/downloads/webpages");
+        File[] files = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages");
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(files);
 
         webPageProcessing.startProcessingOfDownloadedFiles();

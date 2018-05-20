@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -31,9 +32,13 @@ public class WebPageProcessService {
     this.restaurantRepository = restaurantRepository;
   }
 
-  public void submitFileForProcessing(
+  public void submitFileForProcessing(@NotNull
       Path file, CountDownLatch countDownLatch) {
     try {
+      if (file.getFileName() == null || StringUtils.isBlank(file.getFileName().toString())) {
+        return;
+      }
+
       String countyFile = FilenameUtils.getName(file.getFileName().toString());
       Preconditions.checkArgument(
           StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());

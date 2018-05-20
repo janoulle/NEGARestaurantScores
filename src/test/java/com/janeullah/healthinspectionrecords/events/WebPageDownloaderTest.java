@@ -74,9 +74,7 @@ public class WebPageDownloaderTest {
         DateTime lastModifiedTime = new DateTime();
         lastModifiedTime.minusDays(2);
 
-        File file = new File("testfile.txt");
-        file.setLastModified(lastModifiedTime.getMillis());
-        files[0] = file;
+        files[0] = new File("testfile.txt");
 
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(files);
 

@@ -23,7 +23,7 @@ public class PathVariablesTest {
     ReflectionTestUtils.setField(
         pathVariables,
         "relativePathToPageStorage",
-        "downloads" + File.separator + "webpages" + File.separator);
+        "." + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "downloads" + File.separator + "webpages" + File.separator);
   }
 
   @Test
