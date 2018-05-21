@@ -30,9 +30,8 @@ public class RestaurantController {
   }
 
   @Cacheable("allFlattenedRestaurants")
-  @RequestMapping(
+  @GetMapping(
     value = "/allFlattened",
-    method = {RequestMethod.GET},
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<FlattenedRestaurant> fetchAllFlattened() {
@@ -40,9 +39,8 @@ public class RestaurantController {
   }
 
   @Cacheable("allRestaurants")
-  @RequestMapping(
+  @GetMapping(
     value = "/all",
-    method = {RequestMethod.GET},
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> fetchAll() {
@@ -50,9 +48,8 @@ public class RestaurantController {
   }
 
   @Cacheable("restaurantsByCounty")
-  @RequestMapping(
+  @GetMapping(
     value = "/county/{county}",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantByCounty(@PathVariable("county") @NotNull String county) {
@@ -61,9 +58,8 @@ public class RestaurantController {
   }
 
   @Cacheable("restaurantsByName")
-  @RequestMapping(
+  @GetMapping(
     value = "/name/{name}",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantByName(@PathVariable("name") @NotNull String name) {
@@ -72,9 +68,8 @@ public class RestaurantController {
   }
 
   @Cacheable("restaurantsContainingName")
-  @RequestMapping(
+  @GetMapping(
     value = "/contains/{name}",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantLikeName(@PathVariable("name") @NotNull String name) {
@@ -83,9 +78,8 @@ public class RestaurantController {
   }
 
   @Cacheable("restaurantsByNameAndCounty")
-  @RequestMapping(
+  @GetMapping(
     value = "/search/",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantByNameAndCounty(
@@ -96,9 +90,8 @@ public class RestaurantController {
   }
 
   @Cacheable("restaurantById")
-  @RequestMapping(
+  @GetMapping(
     value = "/id/{id}",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public Restaurant getRestaurantById(@PathVariable("id") long id) {
@@ -108,9 +101,8 @@ public class RestaurantController {
   }
 
   @Cacheable("scoresGreaterThan")
-  @RequestMapping(
+  @GetMapping(
     value = "/score/greaterorequal/{score}",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantsWithScoresGreaterThanOrEqual(
@@ -119,9 +111,8 @@ public class RestaurantController {
   }
 
   @Cacheable("scoresLesserThan")
-  @RequestMapping(
+  @GetMapping(
     value = "/score/lesserorequal/{score}",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantsWithScoresLessThanOrEqual(
@@ -130,9 +121,8 @@ public class RestaurantController {
   }
 
   @Cacheable("scoresBetweenRange")
-  @RequestMapping(
+  @GetMapping(
     value = "/score/lower={lower}&upper={upper}",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantsWithScoresGreaterThanOrEqual(
@@ -141,9 +131,8 @@ public class RestaurantController {
   }
 
   @Cacheable("restaurantsWithCriticalViolations")
-  @RequestMapping(
+  @GetMapping(
     value = "/violations/critical",
-    method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public List<Restaurant> getRestaurantsWithCriticalViolations() {

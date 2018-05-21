@@ -6,7 +6,7 @@
     <!-- workaround for {VAR}_HOME_IS_UNDEFINED folder creation during local build-->
     <if condition='isDefined("APP_DATA_FOLDER")'>
         <then><property name="LOG_FOLDER" value="${APP_DATA_FOLDER}${file.separator}logs"/></then>
-        <else><property name="LOG_FOLDER" value="C:${file.separator}Users${file.separator}jane${file.separator}Repositories${file.separator}Docker${file.separator}restaurantscores${file.separator}logs" /></else>
+        <else><property name="LOG_FOLDER" value="F:${file.separator}Repositories${file.separator}Docker${file.separator}restaurantscores${file.separator}logs" /></else>
     </if>
 
     <!-- http://www.mkyong.com/logging/logback-xml-example/,

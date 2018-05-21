@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,21 +47,21 @@ public class MainController {
     this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
   }
 
-  @RequestMapping(value = "/initializeLocalDB", method = RequestMethod.PUT)
+  @PutMapping(value = "/initializeLocalDB")
   @ResponseStatus(HttpStatus.OK)
   public void writeRecordsToDB() {
     webEventOrchestrator.processAndSaveAllRestaurants();
     log.info("Processing initiated");
   }
 
-  @RequestMapping(value = "/initializeFirebaseDB", method = RequestMethod.PUT)
+  @PutMapping(value = "/initializeFirebaseDB")
   public ResponseEntity<HttpStatus> writeRecordsToFirebase() {
     return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
         ? new ResponseEntity<>(HttpStatus.OK)
         : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
   }
 
-  @RequestMapping(value = "/seedElasticSearchDBLocal", method = RequestMethod.POST)
+  @PostMapping(value = "/seedElasticSearchDBLocal")
   public ResponseEntity<HttpStatus> seedElasticSearchDBLocal() {
     List<FlattenedRestaurant> flattenedRestaurants =
         restaurantRepository.findAllFlattenedRestaurants();
@@ -73,7 +70,7 @@ public class MainController {
     return new ResponseEntity<>(result.getStatusCode());
   }
 
-  @RequestMapping(value = "/seedElasticSearchDBAWS", method = RequestMethod.POST)
+  @PostMapping(value = "/seedElasticSearchDBAWS")
   public ResponseEntity<HttpStatus> seedElasticSearchDBAWS() {
     List<FlattenedRestaurant> flattenedRestaurants =
         restaurantRepository.findAllFlattenedRestaurants();
@@ -81,7 +78,7 @@ public class MainController {
     return awsElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
   }
 
-  @RequestMapping(value = "/seedElasticSearchDBHeroku", method = RequestMethod.POST)
+  @PostMapping(value = "/seedElasticSearchDBHeroku")
   public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
     List<FlattenedRestaurant> flattenedRestaurants =
         restaurantRepository.findAllFlattenedRestaurants();
