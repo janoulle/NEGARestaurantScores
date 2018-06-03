@@ -1,6 +1,7 @@
 package com.janeullah.healthinspectionrecords.domain;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +52,8 @@ public class PathVariables {
   }
 
   private String getPath() {
-    return appDataFolder + File.separator + relativePathToPageStorage;
+    return StringUtils.isNotBlank(appDataFolder)
+        ? appDataFolder + File.separator + relativePathToPageStorage
+        : relativePathToPageStorage;
   }
 }

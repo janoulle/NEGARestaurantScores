@@ -1,5 +1,7 @@
 # Java Gradle CircleCI 2.0 configuration file
 # https://circleci.com/docs/2.0/sample-config/
+# https://github.com/CircleCI-Public/circleci-demo-java-spring/blob/master/.circleci/config.yml
+# https://springframework.guru/using-circleci-to-build-spring-boot-microservices/
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2
@@ -11,9 +13,14 @@ jobs:
     docker:
       - image: circleci/openjdk:8-jdk
 
+    branches:
+      ignore:
+        - develop
+        - /feature-.*/
 
     environment:
       # Customize the JVM maximum heap limit
+      TEST_REPORTS: /tmp/test-reports
       JVM_OPTS: -Xmx3200m
       TERM: dumb
 
@@ -24,6 +31,7 @@ jobs:
       - restore_cache:
           keys:
           - RestaurantScores-{{ checksum "build.gradle" }}
+          - RestaurantScores-
 
       - run: gradle dependencies
 
@@ -32,8 +40,14 @@ jobs:
             - ~/.gradle
           key: RestaurantScores-{{ checksum "build.gradle" }}
 
-      - run: gradle test
+      - run: gradle --console=plain --stacktrace test
+
+      # https://circleci.com/docs/2.0/configuration-reference/#store_test_results
+      # Upload test results
+      - store_test_results:
+          path: /tmp/test-reports
 
       - store_artifacts:
-          path: target/RestaurantScores-0.0.1-SNAPSHOT.jar
+          path: /tmp/artifacts
+          destination: build
 
