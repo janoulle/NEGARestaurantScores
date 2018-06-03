@@ -20,6 +20,7 @@ jobs:
 
     environment:
       # Customize the JVM maximum heap limit
+      TEST_REPORTS: ~/tmp/test-reports
       JVM_OPTS: -Xmx3200m
       TERM: dumb
 
@@ -47,14 +48,14 @@ jobs:
       - run:
           name: Save test results
           command: |
-            mkdir -p ~/junit/
-            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+            mkdir -p ~/tmp/test-reports/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/tmp/test-reports/ \;
           when: always
 
       - store_test_results:
-          path: ~/junit
+          path: ~/tmp/test-reports
       - store_artifacts:
-          path: ~/junit
+          path: ~/tmp/test-reports
 
       # https://circleci.com/docs/2.0/artifacts/#artifacts-overview
       # https://circleci.com/docs/2.0/configuration-reference/#the-when-attribute
@@ -62,7 +63,8 @@ jobs:
           name: Creating Artifacts folder
           command: |
               mkdir -p ~/tmp/artifacts/
-              cp .*/build/libs/*.jar ~/tmp/artifacts/
+              ls -ltr
+              cp build/libs/*.jar ~/tmp/artifacts/
           when: on_success
 
       - store_artifacts:
