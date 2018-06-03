@@ -1,22 +1,16 @@
 # Java Gradle CircleCI 2.0 configuration file
-#
+# https://circleci.com/docs/2.0/sample-config/
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2
 jobs:
   build:
+
+    working_directory: ~/RestaurantScores
+
     docker:
-      # specify the version you desire here
       - image: circleci/openjdk:8-jdk
-#        environment:
-#          TEST_DATABASE_URL: postgresql://root@localhost/circle_test
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.6.5-alpine-ram
-
-    working_directory: ~/repo
 
     environment:
       # Customize the JVM maximum heap limit
@@ -29,18 +23,17 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - RestaurantScores-{{ checksum "build.gradle" }}
 
       - run: gradle dependencies
 
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: RestaurantScores-{{ checksum "build.gradle" }}
 
-      # run tests!
       - run: gradle test
 
+      - store_artifacts:
+          path: target/RestaurantScores-0.0.1-SNAPSHOT.jar
 
