@@ -33,14 +33,14 @@ jobs:
           - RestaurantScores-{{ checksum "build.gradle" }}
           - RestaurantScores-
 
-      - run: gradle dependencies
+      - run: ./gradlew dependencies
 
       - save_cache:
           paths:
             - ~/.gradle
           key: RestaurantScores-{{ checksum "build.gradle" }}
 
-      - run: gradle --console=plain --stacktrace clean test
+      - run: ./gradlew --console=plain --stacktrace clean test
 
       # https://circleci.com/docs/2.0/configuration-reference/#store_test_results
       # https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
@@ -63,8 +63,8 @@ jobs:
           name: Creating Artifacts folder
           command: |
               mkdir -p ~/tmp/artifacts/
+              ./gradlew -i bootJar -x test
               ls -ltr build/
-              gradle -i build -x test
               cp build/libs/*.jar ~/tmp/artifacts/
           when: on_success
 
