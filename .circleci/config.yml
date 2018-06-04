@@ -6,7 +6,7 @@
 #
 version: 2
 jobs:
-  test-build-docker:
+  build:
 
     working_directory: ~/RestaurantScores
 
