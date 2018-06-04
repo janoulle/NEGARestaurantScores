@@ -27,11 +27,11 @@ jobs:
     steps:
       - checkout
 
-      -run:
-        name: Change gradle wrapper permissions
-        command: |
-          chmod +x ./gradlew
-        when: always
+      - run:
+          name: Change gradle wrapper permissions
+          command: |
+            chmod +x ./gradlew
+          when: always
 
       # Download and cache dependencies
       - restore_cache:
