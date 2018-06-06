@@ -109,8 +109,9 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
+            ls -ltr docker/
             TAG="0.1.$CIRCLE_BUILD_NUM"
-            docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:$TAG -f docker\restaurantscores-server\Dockerfile .
+            docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:$TAG -f docker/restaurantscores-server/Dockerfile .
             docker tag restaurantscores-server:$TAG janoulle/com.janeullah.healthinspectionrecords:$TAG
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push janoulle/com.janeullah.healthinspectionrecords:$TAG
