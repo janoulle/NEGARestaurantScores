@@ -9,10 +9,10 @@ jobs:
   build:
 
     # https://circleci.com/docs/1.0/configuration/#branches
-    general:
-      branches:
-        only:
-          - master # list of branches to build
+    # https://circleci.com/docs/2.0/configuration-reference/
+    branches:
+      only:
+        - master
 
     working_directory: ~/RestaurantScores
 
