@@ -78,18 +78,6 @@ jobs:
       - store_artifacts:
           path: ~/tmp/artifacts
 
-      # https://github.com/CircleCI-Public/circleci-demo-docker/blob/master/.circleci/config.yml
-#      - run:
-#          name: Waiting for Postgres to be ready
-#          command: |
-#            for i in `seq 1 10`;
-#            do
-#              nc -z localhost 5432 && echo Success && exit 0
-#              echo -n .
-#              sleep 1
-#            done
-#            echo Failed waiting for Postgress && exit 1
-
       - setup_remote_docker:
           docker_layer_caching: true
 
@@ -98,25 +86,25 @@ jobs:
       - run:
           name: Install Docker client
           command: |
-            set -x
-            VER="17.09.0-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            sudo mv -f /tmp/docker/* /usr/bin
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              set -x
+              VER="17.09.0-ce"
+              curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+              tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+              sudo mv -f /tmp/docker/* /usr/bin
+            fi
 
       # build, tag, and push Docker image
-      # TAG="0.1.$CIRCLE_BUILD_NUM"
       # todo: get jar dynamically
       - run:
           name: Build Docker Image
           command: |
-            ls -ltr docker/
-            docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:latest -f docker/restaurantscores-server/Dockerfile .
-            docker tag restaurantscores-server:latest janoulle/com.janeullah.healthinspectionrecords:latest
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker push $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ls -ltr docker/
+              docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:latest -f docker/restaurantscores-server/Dockerfile .
+              docker tag restaurantscores-server:latest janoulle/com.janeullah.healthinspectionrecords:latest
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker push $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
+            fi
 
-  # one job = one container. On Free plan so no-go
-#  docker_build:
-#      - image: circleci/openjdk:8-jdk
 
