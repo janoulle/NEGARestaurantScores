@@ -6,18 +6,18 @@
 #
 version: 2
 jobs:
+  # https://circleci.com/docs/1.0/configuration/#branches
+  general:
+    branches:
+      only:
+        - master # list of branches to build
+
   build:
 
     working_directory: ~/RestaurantScores
 
     docker:
       - image: circleci/openjdk:8-jdk
-
-    # https://circleci.com/docs/1.0/configuration/#branches
-    general:
-      branches:
-        only:
-          - master # list of branches to build
 
     environment:
       # Customize the JVM maximum heap limit
