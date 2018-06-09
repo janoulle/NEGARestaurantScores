@@ -6,13 +6,13 @@
 #
 version: 2
 jobs:
-  # https://circleci.com/docs/1.0/configuration/#branches
-  general:
-    branches:
-      only:
-        - master # list of branches to build
-
   build:
+
+    # https://circleci.com/docs/1.0/configuration/#branches
+    general:
+      branches:
+        only:
+          - master # list of branches to build
 
     working_directory: ~/RestaurantScores
 
