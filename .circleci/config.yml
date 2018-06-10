@@ -13,6 +13,7 @@ jobs:
     branches:
       only:
         - master
+        - feature/heroku-deployment
 
     working_directory: ~/RestaurantScores
 
