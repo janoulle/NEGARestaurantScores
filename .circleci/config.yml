@@ -109,6 +109,8 @@ jobs:
               docker login -u $HEROKU_EMAIL -p $HEROKU_AUTH_TOKEN registry.heroku.com
               docker tag restaurantscores-server:latest $HEROKU_REGISTRY_RESTAURANTSCORES_REPO
               docker push $HEROKU_REGISTRY_RESTAURANTSCORES_REPO
+              wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+              heroku --version
               heroku container:release
             fi
           when: on_success
