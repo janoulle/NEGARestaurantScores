@@ -96,6 +96,7 @@ jobs:
             fi
 
       # build, tag, and push Docker image
+      # todo: update to use stdin for password
       # todo: get jar dynamically
       - run:
           name: Build, Tag, and Push Docker Image
