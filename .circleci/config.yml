@@ -100,6 +100,7 @@ jobs:
       - run:
           name: Build, Tag, and Push Docker Image
           command: |
+          echo $CIRCLE_BRANCH
             if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == 'feature/heroku-deployment']; then
               ls -ltr docker/
               docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:latest -f docker/restaurantscores-server/Dockerfile .
