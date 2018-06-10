@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Install Docker client
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == 'feature/heroku-deployment']; then
               set -x
               VER="17.09.0-ce"
               curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
@@ -100,7 +100,7 @@ jobs:
       - run:
           name: Build, Tag, and Push Docker Image
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == 'feature/heroku-deployment']; then
               ls -ltr docker/
               docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:latest -f docker/restaurantscores-server/Dockerfile .
               docker tag restaurantscores-server:latest $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
