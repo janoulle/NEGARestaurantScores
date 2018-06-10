@@ -13,6 +13,7 @@ jobs:
     branches:
       only:
         - master
+        - feature/heroku-deployment
 
     working_directory: ~/RestaurantScores
 
@@ -97,14 +98,17 @@ jobs:
       # build, tag, and push Docker image
       # todo: get jar dynamically
       - run:
-          name: Build Docker Image
+          name: Build, Tag, and Push Docker Image
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ls -ltr docker/
               docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:latest -f docker/restaurantscores-server/Dockerfile .
-              docker tag restaurantscores-server:latest janoulle/com.janeullah.healthinspectionrecords:latest
+              docker tag restaurantscores-server:latest $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
               docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker push $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
+              docker login -u $HEROKU_EMAIL -p $HEROKU_AUTH_TOKEN registry.heroku.com
+              docker tag restaurantscores-server:latest $HEROKU_REGISTRY_RESTAURANTSCORES_REPO
+              docker push $HEROKU_REGISTRY_RESTAURANTSCORES_REPO
             fi
-
+          when: on_success
 
