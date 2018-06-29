@@ -10,7 +10,6 @@ import java.util.List;
 
 /** Author: Jane Ullah Date: 10/21/2017 */
 public interface ElasticSearchable<T> {
-  Logger log = LoggerFactory.getLogger(ElasticSearchable.class);
 
   ResponseEntity<T> addRestaurantDocument(Long id, FlattenedRestaurant restaurant);
 
@@ -20,7 +19,7 @@ public interface ElasticSearchable<T> {
           addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
       // TODO: figure out best way to report errors
       if (!status.getStatusCode().is2xxSuccessful()) {
-        log.error(
+        LogHolder.LOGGER.error(
             "Failed to write data about restaurant={} to the db with response={} and statusCode={}",
             flattenedRestaurant,
             status.getBody(),
@@ -30,4 +29,10 @@ public interface ElasticSearchable<T> {
     }
     return new ResponseEntity<>(HttpStatus.OK);
   }
+}
+
+// https://stackoverflow.com/questions/28720845/logging-from-default-interface-methods
+final class LogHolder {
+  private LogHolder() { }
+  static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchable.class);
 }
