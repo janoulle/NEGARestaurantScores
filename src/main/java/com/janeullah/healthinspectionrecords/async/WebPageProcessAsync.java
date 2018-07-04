@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.async;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import com.janeullah.healthinspectionrecords.util.JsoupUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +42,8 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     }
 
     for (Element entry : jsoupList.get()) {
-      Optional<Restaurant> restaurant = JsoupUtil.assemblePOJO(county, entry, hiddenDivs);
+      RestaurantProcessor restaurantProcessor = new RestaurantProcessor(county, entry, hiddenDivs);
+      Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
       restaurant.ifPresent(restaurantsInFile::add);
     }
     return restaurantsInFile;

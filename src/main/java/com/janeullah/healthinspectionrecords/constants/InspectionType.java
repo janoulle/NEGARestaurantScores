@@ -1,6 +1,7 @@
 package com.janeullah.healthinspectionrecords.constants;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /** Author: Jane Ullah Date: 9/17/2016 */
 public enum InspectionType {
@@ -14,11 +15,10 @@ public enum InspectionType {
     this.value = type;
   }
 
-  public static InspectionType asInspectionType(String str) {
+  public static Optional<InspectionType> asInspectionType(String str) {
     return Arrays.stream(InspectionType.values())
         .filter(me -> me.getValue().equalsIgnoreCase(str))
-        .findFirst()
-        .orElse(null);
+        .findFirst();
   }
 
   String getValue() {
