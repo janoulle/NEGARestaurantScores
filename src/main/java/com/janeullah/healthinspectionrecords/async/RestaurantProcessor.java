@@ -34,11 +34,15 @@ class RestaurantProcessor {
     private Elements hiddenDivs;
 
     private static final Pattern LEADING_DIGIT_MATCHER = Pattern.compile("^[0-9]+");
-    private static final String DIV = "div#";
-    private static final String FWD_SLASH = " / ";
     // 10 represents the count of chars in a date e.g. mm/dd/yyyy has exactly 10 chars
     private static final int DATE_CHAR_COUNT = 10;
 
+    /**
+     *
+     * @param county string representing the county name
+     * @param rowElement Element representing a restaurant entry on http://publichealthathens.com/wp/programs/restaurantinspections/
+     * @param hiddenDivs Elements representing the hidden div data that holds additional details on critical violations
+     */
     RestaurantProcessor(String county, Element rowElement, Elements hiddenDivs) {
         this.countyName = county;
         this.rowElement = rowElement;
@@ -68,7 +72,7 @@ class RestaurantProcessor {
         try {
             if (when != null && StringUtils.isNotBlank(when.text())) {
                 if (when.text().length() > DATE_CHAR_COUNT) {
-                    String[] splitTimes = when.text().split(FWD_SLASH);
+                    String[] splitTimes = when.text().split(" / ");
                     return Stream.of(splitTimes)
                             .map(entry -> LocalDate.parse(entry, InspectionReport.MMddYYYY_PATTERN))
                             .max(LocalDate::compareTo);
@@ -188,13 +192,13 @@ class RestaurantProcessor {
 
     private String extractHiddenTextForViolation(String idForViolation) {
         if (hiddenDivs != null) {
-            Element hiddenDiv = hiddenDivs.select(DIV + idForViolation).first();
+            Element hiddenDiv = hiddenDivs.select("div#" + idForViolation).first();
             return hiddenDiv != null ? hiddenDiv.text() : StringUtils.EMPTY;
         }
         return StringUtils.EMPTY;
     }
 
-    public Optional<Restaurant> generateProcessedRestaurant() {
+    Optional<Restaurant> generateProcessedRestaurant() {
         try {
             Optional<LocalDate> dateReported = getDateOfMostRecentInspection();
             Optional<InspectionType> typeOfInspection = getInspectionType();
