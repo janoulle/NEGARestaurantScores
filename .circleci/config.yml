@@ -1,4 +1,6 @@
 # Java Gradle CircleCI 2.0 configuration file
+# https://circleci.com/docs/1.0/configuration/#branches
+# https://circleci.com/docs/2.0/configuration-reference/
 # https://circleci.com/docs/2.0/sample-config/
 # https://github.com/CircleCI-Public/circleci-demo-java-spring/blob/master/.circleci/config.yml
 # https://springframework.guru/using-circleci-to-build-spring-boot-microservices/
@@ -7,12 +9,6 @@
 version: 2
 jobs:
   build:
-
-    # https://circleci.com/docs/1.0/configuration/#branches
-    # https://circleci.com/docs/2.0/configuration-reference/
-    branches:
-      ignore:
-        - /feature-.*/
 
     working_directory: ~/RestaurantScores
 
