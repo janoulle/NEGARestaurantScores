@@ -8,8 +8,6 @@ public class WebSelectorConstants {
   public static final String DATE_SELECTOR = ".date";
   public static final String SCORE_SELECTOR = "tr td:first-child";
   public static final String ALL_ROW = "table.sorted > tbody > tr";
-  public static final String ALL_VIOLATIONS = "tr td:nth-child(6)";
-  public static final String HIDDEN_DIVS = "div:hidden";
   public static final String CRITICAL = "div.crit a";
   public static final String NOT_CRITICAL = "div.ncrit a";
   public static final String HREF_PREFIX_FOR_VIOLATIONS = "crit_";

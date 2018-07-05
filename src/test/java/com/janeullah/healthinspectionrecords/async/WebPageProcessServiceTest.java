@@ -44,6 +44,18 @@ public class WebPageProcessServiceTest {
     }
 
     @Test
+    public void testSubmitMultipleFilesForProcessing() throws InterruptedException, URISyntaxException {
+        CountDownLatch latch = new CountDownLatch(10);
+        for (File file : TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages")) {
+            webPageProcessService.submitFileForProcessing(file.toPath(), latch);
+        }
+
+        latch.await();
+
+        verify(restaurantRepository, times(10)).saveAll(anyList());
+    }
+
+    @Test
     public void testWaitForAllProcessing() throws InterruptedException {
         CountDownLatch latch = mock(CountDownLatch.class);
         webPageProcessService.waitForAllProcessing(latch);

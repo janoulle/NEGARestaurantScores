@@ -6,7 +6,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import com.janeullah.healthinspectionrecords.util.FilesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,8 +41,9 @@ public class WebPageProcessService {
       String countyFile = FilenameUtils.getName(file.getFileName().toString());
       Preconditions.checkArgument(
           StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
+      FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(file);
       ListenableFuture<List<Restaurant>> future =
-          EXECUTOR_SERVICE.submit(new WebPageProcessAsync(FilesUtil.extractCounty(file), file));
+          EXECUTOR_SERVICE.submit(new WebPageProcessAsync(fileToBeProcessed.getCountyName(), file));
       registerCallbackForFuture(countyFile, countDownLatch, future);
     } catch (SecurityException e) {
       log.error("SecurityException caught during async file processing", e);

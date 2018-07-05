@@ -11,7 +11,6 @@ import com.janeullah.healthinspectionrecords.domain.entities.InspectionReport;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +24,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class FirebaseDataProcessing {
+   private static final String FORBIDDEN_SEQUENCE = "/.#$[]";
   private RestaurantRepository restaurantRepository;
   /** http://www.baeldung.com/guava-string-charmatcher */
   private Function<Restaurant, String> createUniqueKey =
       restaurant -> {
         String nameAndId =
             restaurant.getEstablishmentInfo().getName()
-                + StringUtilities.HYPHEN.getValue()
+                + "-"
                 + restaurant.getId();
         return replaceInvalidCharsInKey(nameAndId);
       };
@@ -39,7 +39,7 @@ public class FirebaseDataProcessing {
   private Function<FlattenedRestaurant, String> createUniqueKeyFromFlattenedRestaurant =
       restaurant -> {
         String nameAndId =
-            restaurant.getName() + StringUtilities.HYPHEN.getValue() + restaurant.getId();
+            restaurant.getName() + "-" + restaurant.getId();
         return replaceInvalidCharsInKey(nameAndId);
       };
 
@@ -47,7 +47,7 @@ public class FirebaseDataProcessing {
       flattenedInspectionReport -> {
         String nameAndId =
             flattenedInspectionReport.getName()
-                + StringUtilities.HYPHEN.getValue()
+                + "-"
                 + flattenedInspectionReport.getId();
         return replaceInvalidCharsInKey(nameAndId);
       };
@@ -94,7 +94,7 @@ public class FirebaseDataProcessing {
   }
 
   public static String replaceInvalidCharsInKey(String key) {
-    return CharMatcher.anyOf(StringUtilities.FORBIDDEN_SEQUENCE.getValue())
+    return CharMatcher.anyOf(FORBIDDEN_SEQUENCE)
         .replaceFrom(key, StringUtils.EMPTY);
   }
 

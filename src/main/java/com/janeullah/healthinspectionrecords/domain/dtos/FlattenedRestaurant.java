@@ -1,7 +1,6 @@
 package com.janeullah.healthinspectionrecords.domain.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.janeullah.healthinspectionrecords.util.StringUtilities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,7 +48,7 @@ public class FlattenedRestaurant {
   }
 
   public String getNameKey() {
-    String nameAndId = name + StringUtilities.HYPHEN.getValue() + id;
+    String nameAndId = name + "-" + id;
     return replaceInvalidCharsInKey(nameAndId);
   }
 }
