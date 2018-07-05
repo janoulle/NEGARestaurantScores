@@ -85,7 +85,7 @@ dependencies {
     compile('com.google.guava:guava:19.0')
     compile('joda-time:joda-time:2.9.4')
     compile('org.apache.commons:commons-lang3:3.4')
-    compile('org.jsoup:jsoup:1.9.2')
+    compile('org.jsoup:jsoup:1.11.3')
     compile('commons-io:commons-io:2.4')
 
     //https://firebase.google.com/support/release-notes/admin/java
