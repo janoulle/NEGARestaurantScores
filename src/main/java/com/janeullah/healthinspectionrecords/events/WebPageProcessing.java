@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.events;
 
-import com.janeullah.healthinspectionrecords.async.WebPageProcessService;
 import com.janeullah.healthinspectionrecords.domain.PathVariables;
+import com.janeullah.healthinspectionrecords.domain.services.WebPageProcessService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
