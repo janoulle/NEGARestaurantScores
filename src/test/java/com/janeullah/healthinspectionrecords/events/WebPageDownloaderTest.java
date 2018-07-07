@@ -1,6 +1,6 @@
 package com.janeullah.healthinspectionrecords.events;
 
-import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.constants.counties.NEGACounties;
 import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -86,7 +86,7 @@ public class WebPageDownloaderTest {
     public void testInitiateDownloadsAndProcessFilesWithBadUrl() {
         //faking the url to hit
         Map<String, String> map = new HashMap<>();
-        for (String county : WebPageConstants.COUNTY_LIST) {
+    for (String county : NEGACounties.getAllNEGACounties()) {
             map.put(county, "http://xyx.com" + county);
         }
 

@@ -3,6 +3,7 @@ package com.janeullah.healthinspectionrecords.async;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
+import com.janeullah.healthinspectionrecords.exceptions.WebPageProcessAsyncException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
@@ -34,14 +35,10 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     this.url = url;
   }
 
-  private List<Restaurant> ingestJsoupData() {
+  private List<Restaurant> ingestJsoupData() throws IOException {
     List<Restaurant> restaurantsInFile = new ArrayList<>();
-    Optional<Elements> jsoupList = processFile();
-    if (!jsoupList.isPresent()) {
-      return restaurantsInFile;
-    }
 
-    for (Element entry : jsoupList.get()) {
+    for (Element entry : processFile()) {
       RestaurantProcessor restaurantProcessor = new RestaurantProcessor(county, entry, hiddenDivs);
       Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
       restaurant.ifPresent(restaurantsInFile::add);
@@ -61,24 +58,21 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     }
   }
 
-  private Optional<Elements> processFile() {
+  private Elements processFile() throws IOException {
     try (InputStream in = Files.newInputStream(url)) {
       Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
       setHiddenDivs(doc);
-      return Optional.of(doc.select(WebSelectorConstants.ALL_ROW));
-    } catch (Selector.SelectorParseException | IOException e) {
-      log.error("Exception processing the file from url {}", url, e);
+      return doc.select(WebSelectorConstants.ALL_ROW);
     }
-    return Optional.empty();
   }
 
   @Override
-  public List<Restaurant> call() throws Exception {
+  public List<Restaurant> call() throws WebPageProcessAsyncException {
     try {
       return ingestJsoupData();
-    } catch (Exception e) {
+    } catch (Selector.SelectorParseException | IOException e) {
       log.error("Exception processing the downloaded web page for  {}", county, e);
+      throw new WebPageProcessAsyncException("Error during processing of " + county + " file", e);
     }
-    return new ArrayList<>();
   }
 }

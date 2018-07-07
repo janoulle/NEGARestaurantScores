@@ -27,6 +27,8 @@ public class WebPageProcessServiceTest {
     @Mock
     private RestaurantRepository restaurantRepository;
 
+    private static final File[] FILES = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages");
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -35,7 +37,7 @@ public class WebPageProcessServiceTest {
     @Test
     public void testSubmitFileForProcessing() throws InterruptedException, URISyntaxException {
         CountDownLatch latch = new CountDownLatch(1);
-        File file = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages")[0];
+        File file = FILES[0];
 
         webPageProcessService.submitFileForProcessing(file.toPath(), latch);
         latch.await();
@@ -46,7 +48,7 @@ public class WebPageProcessServiceTest {
     @Test
     public void testSubmitMultipleFilesForProcessing() throws InterruptedException, URISyntaxException {
         CountDownLatch latch = new CountDownLatch(10);
-        for (File file : TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages")) {
+        for (File file : FILES) {
             webPageProcessService.submitFileForProcessing(file.toPath(), latch);
         }
 

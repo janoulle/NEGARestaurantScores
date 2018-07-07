@@ -2,6 +2,7 @@ package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.async.WebPageRequestAsync;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.constants.counties.NEGACounties;
 import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -34,13 +35,13 @@ public class WebPageDownloader {
   // contains count of tasks to be completed. Unrelated to the count of threads being used to
   // perform work
   private static final CountDownLatch COUNT_DOWN_LATCH =
-      new CountDownLatch(WebPageConstants.COUNTY_LIST.size());
+      new CountDownLatch(NEGACounties.getCountOfCounties());
   private static Map<String, String> mapOfUrlsToDownloads;
 
   // Return Map of County Name to County URL
   static {
     mapOfUrlsToDownloads = new ConcurrentHashMap<>();
-    for (String county : WebPageConstants.COUNTY_LIST) {
+    for (String county : NEGACounties.getAllNEGACounties()) {
       mapOfUrlsToDownloads.put(county, String.format(WebPageConstants.URL, county));
     }
   }
