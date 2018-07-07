@@ -2,6 +2,8 @@ package com.janeullah.healthinspectionrecords.async;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import com.google.common.primitives.Ints;
 import com.janeullah.healthinspectionrecords.constants.InspectionType;
 import com.janeullah.healthinspectionrecords.constants.Severity;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -114,27 +117,29 @@ class RestaurantProcessor {
    */
   private int getInspectionScore() {
     Elements potentialScore = rowElement.select(SCORE_SELECTOR);
-    if (potentialScore != null) {
-      Iterable<String> splits =
-          Splitter.on(CharMatcher.WHITESPACE)
-              .trimResults()
-              .omitEmptyStrings()
-              .split(potentialScore.first() != null ? potentialScore.first().text() : "");
+    if (potentialScore != null && potentialScore.first() != null) {
+      Optional<Matcher> lastDigits =
+          splitParameterOnWhitespace(potentialScore.first().text())
+              .map(LEADING_DIGIT_MATCHER::matcher)
+              .filter(Matcher::lookingAt)
+              .reduce((a, b) -> b);
 
-      String lastDigitMatched = "";
-      for (String split : splits) {
-        Matcher matcher = LEADING_DIGIT_MATCHER.matcher(split);
-        if (matcher.lookingAt()) {
-          lastDigitMatched = matcher.group();
-        }
-      }
-
-      if (StringUtils.isNumeric(lastDigitMatched)) {
-        Integer scoreVal = Ints.tryParse(lastDigitMatched);
+      if (lastDigits.isPresent()) {
+        String matchedVal = StringUtils.trimToEmpty(lastDigits.get().group());
+        Integer scoreVal =
+            StringUtils.isNumeric(matchedVal) ? Ints.tryParse(matchedVal) : new Integer(0);
         return scoreVal != null ? scoreVal : 0;
       }
     }
+
     return 0;
+  }
+
+  private Stream<String> splitParameterOnWhitespace(String value) {
+    return Streams.stream(Splitter.on(CharMatcher.whitespace())
+            .trimResults()
+            .omitEmptyStrings()
+            .split(StringUtils.trimToEmpty(value)));
   }
 
   private List<Violation> getViolations() {
@@ -200,21 +205,21 @@ class RestaurantProcessor {
 
   private String extractHiddenTextForViolation(String idForViolation) {
     if (hiddenDivs != null) {
-      Element hiddenDiv = hiddenDivs.select("div#" + idForViolation).first();
-      return hiddenDiv != null ? hiddenDiv.text() : StringUtils.EMPTY;
+      Elements selection = hiddenDivs.select("div#" + idForViolation);
+      return selection != null && selection.first() != null
+              ? StringUtils.trimToEmpty(selection.first().text())
+              : "";
     }
     return StringUtils.EMPTY;
   }
 
   private InspectionReport getInspectionReport() {
-    Optional<LocalDate> dateReported = getDateOfMostRecentInspection();
-    Optional<InspectionType> typeOfInspection = getInspectionType();
 
     InspectionReport report = new InspectionReport();
     report.setScore(getInspectionScore());
     report.addViolations(getViolations());
-    dateReported.ifPresent(report::setDateReported);
-    typeOfInspection.ifPresent(report::setInspectionType);
+    getDateOfMostRecentInspection().ifPresent(report::setDateReported);
+    getInspectionType().ifPresent(report::setInspectionType);
     return report;
   }
 

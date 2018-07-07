@@ -3,6 +3,7 @@ package com.janeullah.healthinspectionrecords.async;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.constants.WebSelectorConstants;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
+import com.janeullah.healthinspectionrecords.exceptions.WebPageProcessAsyncException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
@@ -73,12 +74,12 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
   }
 
   @Override
-  public List<Restaurant> call() throws Exception {
+  public List<Restaurant> call() throws WebPageProcessAsyncException {
     try {
       return ingestJsoupData();
     } catch (Exception e) {
       log.error("Exception processing the downloaded web page for  {}", county, e);
+      throw new WebPageProcessAsyncException("Error during processing of " + county + " file", e);
     }
-    return new ArrayList<>();
   }
 }

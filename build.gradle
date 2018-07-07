@@ -82,7 +82,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile('com.google.guava:guava:19.0')
+    compile('com.google.guava:guava:25.1-jre')
     compile('joda-time:joda-time:2.9.4')
     compile('org.apache.commons:commons-lang3:3.4')
     compile('org.jsoup:jsoup:1.11.3')
