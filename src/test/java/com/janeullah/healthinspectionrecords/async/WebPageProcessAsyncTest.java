@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.async;
 
+import com.janeullah.healthinspectionrecords.domain.FileToBeProcessed;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.exceptions.WebPageProcessAsyncException;
 import com.janeullah.healthinspectionrecords.util.TestFileUtil;

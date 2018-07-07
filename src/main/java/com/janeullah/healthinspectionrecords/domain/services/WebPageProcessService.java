@@ -1,18 +1,15 @@
-package com.janeullah.healthinspectionrecords.async;
+package com.janeullah.healthinspectionrecords.domain.services;
 
-import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.janeullah.healthinspectionrecords.async.WebPageProcessAsync;
+import com.janeullah.healthinspectionrecords.domain.FileToBeProcessed;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
 import java.util.List;
@@ -24,28 +21,26 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.EXECUTOR_S
 @Service
 public class WebPageProcessService {
 
-  private RestaurantRepository restaurantRepository;
+  private RestaurantPersistenceService restaurantPersistenceService;
 
   @Autowired
-  public WebPageProcessService(RestaurantRepository restaurantRepository) {
-    this.restaurantRepository = restaurantRepository;
+  public WebPageProcessService(RestaurantPersistenceService restaurantPersistenceService) {
+    this.restaurantPersistenceService = restaurantPersistenceService;
   }
 
-  public void submitFileForProcessing(@NotNull
-      Path file, CountDownLatch countDownLatch) {
+  public void submitFileForProcessing(@NotNull Path file, CountDownLatch countDownLatch) {
     try {
-      if (file.getFileName() == null || StringUtils.isBlank(file.getFileName().toString())) {
+      if (file.getFileName() == null) {
         return;
       }
 
-      String countyFile = FilenameUtils.getName(file.getFileName().toString());
-      Preconditions.checkArgument(
-          StringUtils.isNotBlank(countyFile), "Failed to find county file=" + file.getFileName());
       FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(file);
       ListenableFuture<List<Restaurant>> future =
           EXECUTOR_SERVICE.submit(new WebPageProcessAsync(fileToBeProcessed.getCountyName(), file));
       Futures.addCallback(
-              future, new WebPageProcessRequestCallBack(countyFile, countDownLatch), EXECUTOR_SERVICE);
+          future,
+          new WebPageProcessRequestCallBack(fileToBeProcessed.getCountyName(), countDownLatch),
+          EXECUTOR_SERVICE);
     } catch (SecurityException e) {
       log.error("SecurityException caught during async file processing", e);
     }
@@ -68,7 +63,7 @@ public class WebPageProcessService {
     @Override
     public void onSuccess(List<Restaurant> result) {
       log.info("Web Page Processing completed for county: {} size: {}", countyFile, result.size());
-      persistRestaurantData(result);
+      restaurantPersistenceService.saveAll(result);
       countDownLatch.countDown();
     }
 
@@ -76,11 +71,6 @@ public class WebPageProcessService {
     public void onFailure(Throwable thrown) {
       log.error("Failure during Future callback for async file processing", thrown);
       countDownLatch.countDown();
-    }
-
-    @Transactional
-    private synchronized void persistRestaurantData(List<Restaurant> restaurants) {
-      restaurantRepository.saveAll(restaurants);
     }
   }
 }

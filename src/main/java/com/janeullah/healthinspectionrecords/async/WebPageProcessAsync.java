@@ -30,20 +30,9 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
   private Elements hiddenDivs;
   private String county;
 
-  WebPageProcessAsync(String county, Path url) {
+  public WebPageProcessAsync(String county, Path url) {
     this.county = county;
     this.url = url;
-  }
-
-  private List<Restaurant> ingestJsoupData() throws IOException {
-    List<Restaurant> restaurantsInFile = new ArrayList<>();
-
-    for (Element entry : processFile()) {
-      RestaurantProcessor restaurantProcessor = new RestaurantProcessor(county, entry, hiddenDivs);
-      Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
-      restaurant.ifPresent(restaurantsInFile::add);
-    }
-    return restaurantsInFile;
   }
 
   private void setHiddenDivs(Document doc) {
@@ -69,7 +58,14 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
   @Override
   public List<Restaurant> call() throws WebPageProcessAsyncException {
     try {
-      return ingestJsoupData();
+      List<Restaurant> restaurantsInFile = new ArrayList<>();
+
+      for (Element entry : processFile()) {
+        RestaurantProcessor restaurantProcessor = new RestaurantProcessor(county, entry, hiddenDivs);
+        Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
+        restaurant.ifPresent(restaurantsInFile::add);
+      }
+      return restaurantsInFile;
     } catch (Selector.SelectorParseException | IOException e) {
       log.error("Exception processing the downloaded web page for  {}", county, e);
       throw new WebPageProcessAsyncException("Error during processing of " + county + " file", e);

@@ -1,6 +1,7 @@
 package com.janeullah.healthinspectionrecords.async;
 
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
+import com.janeullah.healthinspectionrecords.domain.services.RestaurantPersistenceService;
+import com.janeullah.healthinspectionrecords.domain.services.WebPageProcessService;
 import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class WebPageProcessServiceTest {
     private WebPageProcessService webPageProcessService;
 
     @Mock
-    private RestaurantRepository restaurantRepository;
+    private RestaurantPersistenceService restaurantPersistenceService;
 
     private static final File[] FILES = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages");
 
@@ -42,7 +43,7 @@ public class WebPageProcessServiceTest {
         webPageProcessService.submitFileForProcessing(file.toPath(), latch);
         latch.await();
 
-        verify(restaurantRepository, times(1)).saveAll(anyList());
+        verify(restaurantPersistenceService, times(1)).saveAll(anyList());
     }
 
     @Test
@@ -54,7 +55,7 @@ public class WebPageProcessServiceTest {
 
         latch.await();
 
-        verify(restaurantRepository, times(10)).saveAll(anyList());
+        verify(restaurantPersistenceService, times(10)).saveAll(anyList());
     }
 
     @Test

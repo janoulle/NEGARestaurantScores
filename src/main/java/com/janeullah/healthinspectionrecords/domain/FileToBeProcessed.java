@@ -1,15 +1,15 @@
-package com.janeullah.healthinspectionrecords.async;
+package com.janeullah.healthinspectionrecords.domain;
 
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 
-class FileToBeProcessed {
+public class FileToBeProcessed {
     private Path file;
     private String countyName;
 
-    FileToBeProcessed(Path file) {
+    public FileToBeProcessed(Path file) {
         this.file = file;
         setCountyName();
     }
@@ -22,7 +22,7 @@ class FileToBeProcessed {
                         : "";
     }
 
-    String getCountyName() {
+    public String getCountyName() {
         return countyName;
     }
 }
