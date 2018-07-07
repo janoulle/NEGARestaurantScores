@@ -26,7 +26,7 @@ public class FlattenedRestaurant {
 
   @JsonIgnore private FlattenedInspectionReport inspectionReport;
 
-  // TODO: figure out how to cast directly via HQL in RestaurantRepository class
+  // https://github.com/janoulle/NEGARestaurantScores/issues/15
   // https://stackoverflow.com/questions/4791325/how-do-i-write-hql-query-with-cast
   public FlattenedRestaurant(
       Long id,

@@ -38,6 +38,10 @@ public enum NEGACounties {
         .collect(Collectors.toList());
   }
 
+  public static int getCountOfCounties() {
+    return values().length;
+  }
+
   public String getNormalizedName() {
     return normalizedName;
   }

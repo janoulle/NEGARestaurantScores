@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** TODO: add auth for this controller class Author: Jane Ullah Date: 3/28/2017 */
 /**
+ * https://github.com/janoulle/NEGARestaurantScores/issues/13
  * Methods in this restcontroller are invoked by whomever is running the program.
+ * Author: Jane Ullah Date: 3/28/2017
  */
 @SuppressWarnings("unused")
 @Slf4j

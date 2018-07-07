@@ -2,7 +2,7 @@ package com.janeullah.healthinspectionrecords.util;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.constants.counties.NEGACounties;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
@@ -15,9 +15,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ExecutorUtil {
+
+  public static final int NUMBER_OF_THREADS = NEGACounties.getCountOfCounties() / 2;
   public static final ListeningExecutorService EXECUTOR_SERVICE =
       MoreExecutors.listeningDecorator(
-          Executors.newFixedThreadPool(WebPageConstants.NUMBER_OF_THREADS));
+          Executors.newFixedThreadPool(NUMBER_OF_THREADS));
 
   private ExecutorUtil() {}
 
@@ -55,7 +57,4 @@ public class ExecutorUtil {
     }
   }
 
-  public static int getThreadCount() {
-    return WebPageConstants.NUMBER_OF_THREADS;
-  }
 }

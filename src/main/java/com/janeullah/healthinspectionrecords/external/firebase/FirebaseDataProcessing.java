@@ -2,7 +2,7 @@ package com.janeullah.healthinspectionrecords.external.firebase;
 
 import com.google.common.base.CharMatcher;
 import com.janeullah.healthinspectionrecords.constants.Severity;
-import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
+import com.janeullah.healthinspectionrecords.constants.counties.NEGACounties;
 import com.janeullah.healthinspectionrecords.domain.dtos.County;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedInspectionReport;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
@@ -101,7 +101,7 @@ public class FirebaseDataProcessing {
   Map<String, County> createAndRetrieveMapOfCounties(
       Map<String, List<Restaurant>> mapOfCountiesToRestaurants) {
     Map<String, County> countiesAndRestaurants = new HashMap<>();
-    for (String county : WebPageConstants.COUNTY_LIST) {
+    for (String county : NEGACounties.getAllNEGACounties()) {
       List<Restaurant> restaurantsInCounty =
           restaurantRepository.findByEstablishmentInfoCountyIgnoreCase(county);
       mapOfCountiesToRestaurants.put(county, restaurantsInCounty);
