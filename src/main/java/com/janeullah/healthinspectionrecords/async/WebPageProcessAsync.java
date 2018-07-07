@@ -37,12 +37,8 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
 
   private List<Restaurant> ingestJsoupData() throws IOException {
     List<Restaurant> restaurantsInFile = new ArrayList<>();
-    Optional<Elements> jsoupList = processFile();
-    if (!jsoupList.isPresent()) {
-      return restaurantsInFile;
-    }
 
-    for (Element entry : jsoupList.get()) {
+    for (Element entry : processFile()) {
       RestaurantProcessor restaurantProcessor = new RestaurantProcessor(county, entry, hiddenDivs);
       Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
       restaurant.ifPresent(restaurantsInFile::add);
@@ -62,11 +58,11 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     }
   }
 
-  private Optional<Elements> processFile() throws IOException {
+  private Elements processFile() throws IOException {
     try (InputStream in = Files.newInputStream(url)) {
       Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
       setHiddenDivs(doc);
-      return Optional.of(doc.select(WebSelectorConstants.ALL_ROW));
+      return doc.select(WebSelectorConstants.ALL_ROW);
     }
   }
 
