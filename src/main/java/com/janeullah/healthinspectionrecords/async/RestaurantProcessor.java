@@ -98,8 +98,7 @@ class RestaurantProcessor {
     Element type = rowElement.select(INSPECTION_TYPE_SELECTOR).first();
     String text = type != null ? StringUtils.trimToEmpty(type.text()) : "";
     // The convention appears to be that 're-inspections' have happened by appending the newer date
-    // to the
-    // preceding inspection date.
+    // to the preceding inspection date.
 
     if (text.contains("/")) {
       return Optional.of(InspectionType.RE_INSPECTION);
@@ -124,6 +123,7 @@ class RestaurantProcessor {
 
       if (lastDigits.isPresent()) {
         String matchedVal = StringUtils.trimToEmpty(lastDigits.get().group());
+        // https://stackoverflow.com/questions/3265948/nullpointerexception-with-autoboxing-in-ternary-expression
         Integer scoreVal =
             StringUtils.isNumeric(matchedVal) ? Ints.tryParse(matchedVal) : new Integer(0);
         return scoreVal != null ? scoreVal : 0;
