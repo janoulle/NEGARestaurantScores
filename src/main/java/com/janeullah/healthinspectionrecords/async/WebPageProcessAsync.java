@@ -35,7 +35,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     this.url = url;
   }
 
-  private List<Restaurant> ingestJsoupData() {
+  private List<Restaurant> ingestJsoupData() throws IOException {
     List<Restaurant> restaurantsInFile = new ArrayList<>();
     Optional<Elements> jsoupList = processFile();
     if (!jsoupList.isPresent()) {
@@ -62,22 +62,19 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
     }
   }
 
-  private Optional<Elements> processFile() {
+  private Optional<Elements> processFile() throws IOException {
     try (InputStream in = Files.newInputStream(url)) {
       Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
       setHiddenDivs(doc);
       return Optional.of(doc.select(WebSelectorConstants.ALL_ROW));
-    } catch (Selector.SelectorParseException | IOException e) {
-      log.error("Exception processing the file from url {}", url, e);
     }
-    return Optional.empty();
   }
 
   @Override
   public List<Restaurant> call() throws WebPageProcessAsyncException {
     try {
       return ingestJsoupData();
-    } catch (Exception e) {
+    } catch (Selector.SelectorParseException | IOException e) {
       log.error("Exception processing the downloaded web page for  {}", county, e);
       throw new WebPageProcessAsyncException("Error during processing of " + county + " file", e);
     }
