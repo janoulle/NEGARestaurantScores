@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.async;
 import com.janeullah.healthinspectionrecords.domain.FileToBeProcessed;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.exceptions.WebPageProcessAsyncException;
-import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -13,13 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.janeullah.healthinspectionrecords.util.TestFileUtil.FILES;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 public class WebPageProcessAsyncTest {
-
-  private static final File[] FILES =
-      TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages");
 
   @Test
   public void testWebPageProcess_Success() throws WebPageProcessAsyncException {
@@ -40,7 +37,7 @@ public class WebPageProcessAsyncTest {
       Path path = file.toPath();
       FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(path);
       WebPageProcessAsync webPageProcessAsync =
-          new WebPageProcessAsync(fileToBeProcessed.getCountyName(), path);
+          new WebPageProcessAsync(fileToBeProcessed);
       List<Restaurant> results = webPageProcessAsync.call();
       assertThat(results, hasSize(fileAndSize.get(fileToBeProcessed.getCountyName())));
     }
@@ -49,6 +46,7 @@ public class WebPageProcessAsyncTest {
   @Test(expected = WebPageProcessAsyncException.class)
   public void testWebPageProcess_ExceptionThrow() throws WebPageProcessAsyncException {
       Path nonExistentFile = new File("a").toPath();
-      new WebPageProcessAsync("", nonExistentFile).call();
+      FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(nonExistentFile);
+      new WebPageProcessAsync(fileToBeProcessed).call();
   }
 }

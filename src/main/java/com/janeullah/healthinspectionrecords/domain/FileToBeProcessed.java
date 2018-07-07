@@ -1,28 +1,33 @@
 package com.janeullah.healthinspectionrecords.domain;
 
-import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Preconditions;
 
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileToBeProcessed {
     private Path file;
     private String countyName;
+  // Barrow_county_restaurant_scores.html should match just 'Barrow'
+  private static final Pattern MATCH_TILL_FIRST_UNDERSCORE = Pattern.compile("^[^_]+(?=_)");
 
     public FileToBeProcessed(Path file) {
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(file.getFileName());
         this.file = file;
         setCountyName();
     }
 
     private void setCountyName() {
         String fileName = file.getFileName().toString();
-        countyName =
-                StringUtils.isNotBlank(fileName) && fileName.length() > WebPageConstants.PAGE_URL.length()
-                        ? fileName.substring(0, fileName.indexOf(WebPageConstants.PAGE_URL))
-                        : "";
+        Matcher matcher = MATCH_TILL_FIRST_UNDERSCORE.matcher(fileName);
+        countyName = matcher.lookingAt() ? matcher.group() : "";
     }
 
     public String getCountyName() {
         return countyName;
     }
+
+    public Path getFile() { return file; }
 }

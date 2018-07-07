@@ -29,21 +29,20 @@ public class WebPageProcessService {
   }
 
   public void submitFileForProcessing(@NotNull Path file, CountDownLatch countDownLatch) {
-    try {
-      if (file.getFileName() == null) {
-        return;
-      }
 
-      FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(file);
-      ListenableFuture<List<Restaurant>> future =
-          EXECUTOR_SERVICE.submit(new WebPageProcessAsync(fileToBeProcessed.getCountyName(), file));
-      Futures.addCallback(
-          future,
-          new WebPageProcessRequestCallBack(fileToBeProcessed.getCountyName(), countDownLatch),
-          EXECUTOR_SERVICE);
-    } catch (SecurityException e) {
-      log.error("SecurityException caught during async file processing", e);
+    if (file.getFileName() == null) {
+      log.error("Invalid file path passed in");
+      countDownLatch.countDown();
+      return;
     }
+
+    FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(file);
+    ListenableFuture<List<Restaurant>> future =
+        EXECUTOR_SERVICE.submit(new WebPageProcessAsync(fileToBeProcessed));
+    Futures.addCallback(
+        future,
+        new WebPageProcessRequestCallBack(fileToBeProcessed.getCountyName(), countDownLatch),
+        EXECUTOR_SERVICE);
   }
 
   public void waitForAllProcessing(CountDownLatch countDownLatch) throws InterruptedException {

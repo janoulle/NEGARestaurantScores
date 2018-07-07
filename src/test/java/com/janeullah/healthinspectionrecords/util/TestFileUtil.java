@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 public class TestFileUtil {
 
+    public static final File[] FILES = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages");
+
     public static File[] getFilesInDirectory(String path) {
         try {
             File dir = Paths.get(path).toFile();
