@@ -50,3 +50,5 @@
 # In case of problems running the app
 
 1. Please create a github issue with detailed logs and steps to reproduce.
+
+[![CircleCI](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master.svg?style=svg)](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master)
