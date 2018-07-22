@@ -63,7 +63,7 @@ public class WebPageProcessAsync implements Callable<List<Restaurant>> {
       for (Element entry : processFile()) {
         RestaurantProcessor restaurantProcessor =
             new RestaurantProcessor(county, entry, hiddenDivs);
-        Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
+        Optional<Restaurant> restaurant = restaurantProcessor.createRestaurant();
         restaurant.ifPresent(restaurantsInFile::add);
       }
       return restaurantsInFile;

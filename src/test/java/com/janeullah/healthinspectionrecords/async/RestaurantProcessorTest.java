@@ -30,7 +30,7 @@ public class RestaurantProcessorTest {
         // return empty results on any query
         when(mockElement.select(anyString())).thenReturn(new Elements());
         RestaurantProcessor restaurantProcessor = new RestaurantProcessor("Clarke", mockElement, mockedHiddenDivs);
-        Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
+        Optional<Restaurant> restaurant = restaurantProcessor.createRestaurant();
         assertFalse(restaurant.isPresent());
     }
 
@@ -40,7 +40,7 @@ public class RestaurantProcessorTest {
         Elements mockedHiddenDivs = mock(Elements.class);
         when(mockElement.select(anyString())).thenThrow(new Selector.SelectorParseException("Bad selector"));
         RestaurantProcessor restaurantProcessor = new RestaurantProcessor("Clarke", mockElement, mockedHiddenDivs);
-        Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
+        Optional<Restaurant> restaurant = restaurantProcessor.createRestaurant();
         assertFalse(restaurant.isPresent());
     }
 
@@ -78,7 +78,7 @@ public class RestaurantProcessorTest {
         when(mockElement.select(DATE_SELECTOR)).thenReturn(dateInformation);
 
         RestaurantProcessor restaurantProcessor = new RestaurantProcessor("Clarke", mockElement, mockedHiddenDivs);
-        Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
+        Optional<Restaurant> restaurant = restaurantProcessor.createRestaurant();
         assertTrue(restaurant.isPresent());
         assertNotNull(restaurant.get().getEstablishmentInfo());
     }
@@ -92,7 +92,7 @@ public class RestaurantProcessorTest {
         Elements mockedHiddenDivs = mock(Elements.class);
 
         RestaurantProcessor restaurantProcessor = new RestaurantProcessor("Clarke", rowElement, mockedHiddenDivs);
-        Optional<Restaurant> restaurant = restaurantProcessor.generateProcessedRestaurant();
+        Optional<Restaurant> restaurant = restaurantProcessor.createRestaurant();
         assertTrue(restaurant.isPresent());
         assertNotNull(restaurant.get().getEstablishmentInfo());
         assertThat(restaurant.get().getInspectionReports(), hasSize(1));

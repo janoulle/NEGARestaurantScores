@@ -54,7 +54,7 @@ class RestaurantProcessor {
     this.hiddenDivs = hiddenDivs;
   }
 
-  private Optional<EstablishmentInfo> getEstablishmentInfo() {
+  private Optional<EstablishmentInfo> createEstablishmentInfo() {
     Element address = rowElement.select(RESTAURANT_ADDRESS_SELECTOR).first();
     Element name = rowElement.select(RESTAURANT_NAME_SELECTOR).first();
     EstablishmentInfo info = new EstablishmentInfo();
@@ -72,7 +72,7 @@ class RestaurantProcessor {
    *
    * @return JodaTime DateTime object representing the date the inspection was conducted
    */
-  private Optional<LocalDate> getDateOfMostRecentInspection() {
+  private Optional<LocalDate> createDateOfMostRecentInspection() {
     Element when = rowElement.select(DATE_SELECTOR).first();
     try {
       if (when != null && StringUtils.isNotBlank(when.text())) {
@@ -94,7 +94,7 @@ class RestaurantProcessor {
     return Optional.empty();
   }
 
-  private Optional<InspectionType> getInspectionType() {
+  private Optional<InspectionType> createInspectionType() {
     Element type = rowElement.select(INSPECTION_TYPE_SELECTOR).first();
     String text = type != null ? StringUtils.trimToEmpty(type.text()) : "";
     // The convention appears to be that 're-inspections' have happened by appending the newer date
@@ -112,7 +112,7 @@ class RestaurantProcessor {
    *
    * @return score as int
    */
-  private int getInspectionScore() {
+  private int createInspectionScore() {
     Elements potentialScore = rowElement.select(SCORE_SELECTOR);
     if (potentialScore != null && potentialScore.first() != null) {
       Optional<Matcher> lastDigits =
@@ -140,7 +140,7 @@ class RestaurantProcessor {
             .split(StringUtils.trimToEmpty(value)));
   }
 
-  private List<Violation> getViolations() {
+  private List<Violation> createViolations() {
     List<Violation> violations = new ArrayList<>();
     violations.addAll(extractViolations(CRITICAL, Severity.CRITICAL));
     violations.addAll(extractViolations(NOT_CRITICAL, Severity.NONCRITICAL));
@@ -211,25 +211,25 @@ class RestaurantProcessor {
     return StringUtils.EMPTY;
   }
 
-  private InspectionReport getInspectionReport() {
+  private InspectionReport createInspectionReport() {
 
     InspectionReport report = new InspectionReport();
-    report.setScore(getInspectionScore());
-    report.addViolations(getViolations());
-    getDateOfMostRecentInspection().ifPresent(report::setDateReported);
-    getInspectionType().ifPresent(report::setInspectionType);
+    report.setScore(createInspectionScore());
+    report.addViolations(createViolations());
+    createDateOfMostRecentInspection().ifPresent(report::setDateReported);
+    createInspectionType().ifPresent(report::setInspectionType);
     return report;
   }
 
-  Optional<Restaurant> generateProcessedRestaurant() {
+  Optional<Restaurant> createRestaurant() {
     try {
-      Optional<EstablishmentInfo> info = getEstablishmentInfo();
+      Optional<EstablishmentInfo> info = createEstablishmentInfo();
       info.ifPresent(entry -> entry.setCounty(countyName));
       if (info.isPresent()) {
 
         Restaurant restaurant = new Restaurant();
         restaurant.setEstablishmentInfo(info.get());
-        restaurant.addInspectionReport(getInspectionReport());
+        restaurant.addInspectionReport(createInspectionReport());
 
         return Optional.of(restaurant);
       }
