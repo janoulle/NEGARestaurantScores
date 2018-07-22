@@ -67,11 +67,6 @@ jobs:
             ./gradlew sonarqube -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=$SONAR_HOST -Dsonar.login=$SONAR_LOGIN_TOKEN
           when: on_success
 
-      - store_test_results:
-          path: ~/tmp/test-reports
-      - store_artifacts:
-          path: ~/tmp/test-reports
-
       # https://circleci.com/docs/2.0/artifacts/#artifacts-overview
       # https://circleci.com/docs/2.0/configuration-reference/#the-when-attribute
       - run:
