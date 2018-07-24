@@ -1,31 +1,13 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.3.RELEASE'
         projectVersion = "$projectVersionId-$projectVersionType"
-    }
-    repositories {
-        mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
-    dependencies {
-        //https://plugins.gradle.org/plugin/org.springframework.boot
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        //classpath 'se.transmode.gradle:gradle-docker:1.2'
-
-        //https://plugins.gradle.org/plugin/com.palantir.docker
-        classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.19.2"
-
-        //https://plugins.gradle.org/plugin/org.sonarqube
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
     }
 }
 
 // https://docs.gradle.org/current/userguide/plugins.html
 plugins {
-    id "java"
     id "war"
     id "eclipse"
-    id "jacoco"
     id "org.springframework.boot" version "2.0.3.RELEASE"
     id "io.spring.dependency-management" version "1.0.5.RELEASE"
     id "org.sonarqube" version "2.6.2"
@@ -45,12 +27,12 @@ group = projectGroup
 version = projectVersion
 sourceCompatibility = projectSourceCompatibility
 
-repositories {
-    mavenCentral()
-}
-
 configurations {
     providedRuntime
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencyManagement {
@@ -107,28 +89,6 @@ dependencies {
     testCompile('com.h2database:h2')
 }
 
-//https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
-//https://stackoverflow.com/questions/41532108/run-clean-task-before-every-build-automatically-in-gradle
-build.dependsOn clean
-
-//https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
-//bootRepackage.withJarTask = jar
-
-//https://docs.gradle.org/4.6/userguide/userguide_single.html#sec:java_test
-//https://docs.gradle.org/4.6/dsl/org.gradle.api.tasks.testing.logging.TestLoggingContainer.html
-//http://mrhaki.blogspot.com/2013/05/gradle-goodness-show-more-information.html
-test {
-    debug false
-
-    testLogging {
-        exceptionFormat "full"
-    }
-}
-
-//intellij generates this out directory when running tests with coverage and need to clean this out
-clean {
-    delete "$projectDir/out"
-}
 
 //https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-wars
 //https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-jars
@@ -137,12 +97,5 @@ clean {
         attributes(
                 'Implementation-Title':   "$projectName",
                 'Implementation-Version': "$projectVersionId-$projectVersionType")
-    }
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled true
     }
 }

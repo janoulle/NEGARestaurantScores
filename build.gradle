@@ -1,0 +1,67 @@
+plugins {
+    id "java"
+    id "eclipse"
+    id "jacoco"
+}
+
+allprojects {
+
+    repositories {
+        mavenCentral()
+    }
+
+    buildscript {
+        ext {
+            springBootVersion = '2.0.3.RELEASE'
+        }
+        repositories {
+            mavenCentral()
+            maven { url "https://plugins.gradle.org/m2/" }
+        }
+        dependencies {
+            //https://plugins.gradle.org/plugin/org.springframework.boot
+            classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
+            //https://plugins.gradle.org/plugin/com.palantir.docker
+            classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.19.2"
+
+            //https://plugins.gradle.org/plugin/org.sonarqube
+            classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
+
+        }
+    }
+
+    //https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
+    //bootRepackage.withJarTask = jar
+
+    //https://docs.gradle.org/4.6/userguide/userguide_single.html#sec:java_test
+    //https://docs.gradle.org/4.6/dsl/org.gradle.api.tasks.testing.logging.TestLoggingContainer.html
+    //http://mrhaki.blogspot.com/2013/05/gradle-goodness-show-more-information.html
+    test {
+        debug false
+
+        testLogging {
+            exceptionFormat "full"
+        }
+    }
+
+    //https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
+    //https://stackoverflow.com/questions/41532108/run-clean-task-before-every-build-automatically-in-gradle
+    build.dependsOn clean
+
+
+    //intellij generates this out directory when running tests with coverage and need to clean this out
+    clean {
+        delete "$projectDir/out"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled true
+        }
+    }
+}
+
+
+
