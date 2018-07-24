@@ -1,0 +1,122 @@
+# Java Gradle CircleCI 2.0 configuration file
+# https://circleci.com/docs/1.0/configuration/#branches
+# https://circleci.com/docs/2.0/configuration-reference/
+# https://circleci.com/docs/2.0/sample-config/
+# https://github.com/CircleCI-Public/circleci-demo-java-spring/blob/master/.circleci/config.yml
+# https://springframework.guru/using-circleci-to-build-spring-boot-microservices/
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
+version: 2
+jobs:
+  build:
+
+    working_directory: ~/RestaurantScores
+
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    environment:
+      # Customize the JVM maximum heap limit
+      TEST_REPORTS: ~/tmp/test-reports
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      - run:
+          name: Change gradle wrapper permissions
+          command: |
+            chmod +x ./gradlew
+          when: always
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - RestaurantScores-{{ checksum "build.gradle" }}
+          - RestaurantScores-
+
+      - run: ./gradlew dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: RestaurantScores-{{ checksum "build.gradle" }}
+
+      - run: ./gradlew --console=plain --stacktrace clean test
+
+      # https://circleci.com/docs/2.0/configuration-reference/#store_test_results
+      # https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
+      # Upload test results
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/tmp/test-reports/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/tmp/test-reports/ \;
+          when: always
+
+      - store_test_results:
+          path: ~/tmp/test-reports
+      - store_artifacts:
+          path: ~/tmp/test-reports
+
+      # sonarqube tracking
+      - run:
+          name: Run SonarQube analysis
+          command: |
+            ./gradlew sonarqube -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=$SONAR_HOST -Dsonar.login=$SONAR_LOGIN_TOKEN
+          when: on_success
+
+      # https://circleci.com/docs/2.0/artifacts/#artifacts-overview
+      # https://circleci.com/docs/2.0/configuration-reference/#the-when-attribute
+      - run:
+          name: Creating Artifacts folder
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              mkdir -p ~/tmp/artifacts/
+              ./gradlew -i bootJar -x test
+              ls -ltr build/
+              cp build/libs/*.jar ~/tmp/artifacts/
+            fi
+          when: on_success
+
+      - store_artifacts:
+          path: ~/tmp/artifacts
+
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      # use a primary image that already has Docker (recommended)
+      # or install it during a build like we do here
+      - run:
+          name: Install Docker client
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              set -x
+              VER="17.09.0-ce"
+              curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+              tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+              sudo mv -f /tmp/docker/* /usr/bin
+            fi
+
+      # build, tag, and push Docker image
+      # todo: update to use stdin for password
+      - run:
+          name: Build, Tag, and Push Docker Image
+          command: |
+            echo $CIRCLE_BRANCH
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ls -ltr docker/
+              docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:latest -f docker/restaurantscores-server/Dockerfile .
+              docker tag restaurantscores-server:latest $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker push $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
+
+              wget -qO- https://cli-assets.heroku.com/install.sh | sh
+              docker login -u $HEROKU_EMAIL -p $HEROKU_API_KEY registry.heroku.com
+              docker tag restaurantscores-server:latest $HEROKU_REGISTRY_RESTAURANTSCORES_REPO
+              docker push $HEROKU_REGISTRY_RESTAURANTSCORES_REPO
+              heroku container:release web --app $HEROKU_APP_NAME
+            fi
+          when: on_success
+

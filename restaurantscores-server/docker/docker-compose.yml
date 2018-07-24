@@ -1,0 +1,48 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+networks:
+  restaurantscores-network:
+
+services:
+
+  # https://hub.docker.com/_/postgres/
+  # https://docs.docker.com/compose/compose-file/#variable-substitution
+  # https://docs.docker.com/compose/environment-variables/#substitute-environment-variables-in-compose-files
+  restaurantscores-db:
+    image: postgres:latest
+    container_name: restaurantscores-db
+    env_file:
+    - ../../Docker/restaurantscores/environmentvariables-db.env
+    ports:
+    - "5433:5432"
+    expose:
+    - "5432" # signifies intent to expose the port for inter-docker container comms
+    networks:
+    - restaurantscores-network
+
+  restaurantscores-server:
+    image: restaurantscores-server:latest
+    container_name: restaurantscores-server
+    ports:
+    - "8080:8080"
+    - "8000:8000"
+    depends_on:
+    - restaurantscores-db
+    links:
+    - restaurantscores-db
+    expose:
+    - "8080"
+    - "8000"
+    volumes:
+    - ../../Docker/restaurantscores/logs/:/usr/local/tomcat/logs
+    - ../../Docker/restaurantscores/downloads/webpages:/usr/local/tomcat/downloads/webpages
+    env_file:
+    - ../../Docker/restaurantscores/environmentvariables-server.env
+    environment:
+    - APP_DATA_FOLDER=/usr/local/tomcat
+    - SPRING_PROFILES_ACTIVE=postgresql
+    - SERVER_PORT=8080
+    #- SERVER_SERVLET_CONTEXT_PATH=/restaurantscores
+    networks:
+    - restaurantscores-network

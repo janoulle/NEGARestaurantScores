@@ -1,0 +1,35 @@
+//https://github.com/palantir/gradle-docker
+//https://spring.io/guides/gs/spring-boot-docker/
+//https://github.com/palantir/gradle-docker/issues/83
+
+docker {
+    //note: the jar task doesn't package up the app in a way that is runnable a spring application
+    //spring <2.x.x, bootRepackage is the task that repackages the jar so it'll be runnable as a spring application
+
+    //alternately, run the docker task with like this gradlew clean build docker --console=plain --stacktrace -PdockerImageVersion=beta if you don't want to include the dependsOn
+    dependsOn bootJar
+
+    name "$dockerImageName:$dockerImageVersion"
+    tags "$dockerImageVersion"
+
+    //located in the build context which is a folder in build/docker
+    dockerfile file("docker/Dockerfile")
+
+    //https://spring.io/blog/2017/04/05/spring-boot-s-new-gradle-plugin
+    //https://docs.spring.io/spring-boot/docs/1.5.12.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
+    //tasks.jar.outputs is not appropriate for a Spring application
+    //tasks.bootRepackage.outputs is not appropriate either.
+    //copies the jar from the build/libs folder and Dockerfile artifacts to build/docker
+    def artifact = "$projectName-${projectVersion}.jar"
+
+    files "$libsDir/$artifact", "$projectDir/docker/$dockerImageName/Dockerfile", "$projectDir/docker/$dockerImageName/heroku-exec.sh"
+
+    //passing in the jar file location via --build-arg key=value
+    buildArgs(['JAR_FILE'        : artifact,
+               'PORT'            : '8080',
+               'HEROKU_EXEC_FILE': 'heroku-exec.sh'
+    ])
+
+    pull false
+    noCache true
+}
