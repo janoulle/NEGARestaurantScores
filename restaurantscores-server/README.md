@@ -52,3 +52,4 @@
 1. Please create a github issue with detailed logs and steps to reproduce.
 
 [![CircleCI](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master.svg?style=svg)](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master)
+![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=restaurantscores-project%3Arestaurantscores-server&metric=alert_status)
