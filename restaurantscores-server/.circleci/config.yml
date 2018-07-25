@@ -52,7 +52,7 @@ jobs:
           name: Save test results
           command: |
             mkdir -p ~/tmp/test-reports/
-            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/tmp/test-reports/ \;
+            find . -type f -regex ".*/restaurantscores-server/build/test-results/.*xml" -exec cp {} ~/tmp/test-reports/ \;
           when: always
 
       - store_test_results:
@@ -76,7 +76,7 @@ jobs:
               mkdir -p ~/tmp/artifacts/
               ./restaurantscores-server/gradlew -i bootJar -x test
               ls -ltr build/
-              cp build/libs/*.jar ~/tmp/artifacts/
+              cp ./restaurantscores-server/build/libs/*.jar ~/tmp/artifacts/
             fi
           when: on_success
 
