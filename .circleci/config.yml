@@ -76,7 +76,7 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               mkdir -p ~/tmp/artifacts/
               ./restaurantscores-server/gradlew -i bootJar -x test
-              ls -ltr build/
+              ls -ltr ./restaurantscores-server/build
               cp ./restaurantscores-server/build/libs/*.jar ~/tmp/artifacts/
             fi
           when: on_success
@@ -107,7 +107,7 @@ jobs:
           command: |
             echo $CIRCLE_BRANCH
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ls -ltr docker/
+              ls -ltr ./restaurantscores-server/docker/
               docker build --build-arg JAR_FILE=build/libs/RestaurantScores-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_EXEC_FILE=heroku-exec.sh -t restaurantscores-server:latest -f docker/restaurantscores-server/Dockerfile .
               docker tag restaurantscores-server:latest $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
               docker login -u $DOCKER_USER -p $DOCKER_PASS
