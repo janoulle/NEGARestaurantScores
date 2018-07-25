@@ -1,7 +1,6 @@
 plugins {
     id "java"
     id "eclipse"
-    id "jacoco"
 }
 
 allprojects {
@@ -30,7 +29,6 @@ allprojects {
     repositories {
         mavenCentral()
     }
-
 }
 
 // https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:subproject_configuration
@@ -55,17 +53,31 @@ subprojects {
             exceptionFormat "full"
         }
 
-        finalizedBy jacocoTestReport
     }
 
     //https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
     //https://stackoverflow.com/questions/41532108/run-clean-task-before-every-build-automatically-in-gradle
     build.dependsOn clean
 
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-            html.enabled true
-        }
-    }
+    // https://discuss.gradle.org/t/jacoco-no-subproject-coverage/21451
+    // https://gist.github.com/aalmiray/e6f54aa4b3803be0bcac
+//    jacocoTestReport {
+//        sourceDirectories = project.files(subprojects.sourceSets.main.allSource.srcDirs)
+//        classDirectories = project.files(subprojects.sourceSets.main.output)
+//        executionData = fileTree(dir: "${buildDir}/jacoco", include: '**/*.exec')
+//        reports {
+//            xml {
+//                enabled true
+//                destination "${buildDir}/reports/jacoco/xml/jacoco.xml"
+//            }
+//            html {
+//                enabled true
+//                destination "${buildDir}/reports/jacoco/html"
+//            }
+//            csv.enabled false
+//        }
+//        onlyIf = {
+//            true
+//        }
+//    }
 }

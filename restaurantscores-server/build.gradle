@@ -6,6 +6,7 @@ buildscript {
 
 // https://docs.gradle.org/current/userguide/plugins.html
 plugins {
+    id "jacoco"
     id "war"
     id "eclipse"
     id "org.springframework.boot" version "2.0.3.RELEASE"
@@ -97,5 +98,20 @@ dependencies {
         attributes(
                 'Implementation-Title':   "$projectName",
                 'Implementation-Version': "$projectVersionId-$projectVersionType")
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml{
+            enabled true
+            destination "${buildDir}/reports/jacoco/xml/jacoco.xml"
+        }
+        csv.enabled false
+        html{
+            enabled true
+            destination "${buildDir}/reports/jacoco/html"
+        }
     }
 }
