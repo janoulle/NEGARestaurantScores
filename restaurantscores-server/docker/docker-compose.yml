@@ -13,7 +13,7 @@ services:
     image: postgres:latest
     container_name: restaurantscores-db
     env_file:
-    - ../../Docker/restaurantscores/environmentvariables-db.env
+    - ../../../Docker/restaurantscores/environmentvariables-db.env
     ports:
     - "5433:5432"
     expose:
@@ -35,14 +35,13 @@ services:
     - "8080"
     - "8000"
     volumes:
-    - ../../Docker/restaurantscores/logs/:/usr/local/tomcat/logs
-    - ../../Docker/restaurantscores/downloads/webpages:/usr/local/tomcat/downloads/webpages
+    - ../../../Docker/restaurantscores/logs/:/usr/local/tomcat/logs
+    - ../../../Docker/restaurantscores/downloads/webpages:/usr/local/tomcat/downloads/webpages
     env_file:
     - ../../Docker/restaurantscores/environmentvariables-server.env
     environment:
     - APP_DATA_FOLDER=/usr/local/tomcat
     - SPRING_PROFILES_ACTIVE=postgresql
     - SERVER_PORT=8080
-    #- SERVER_SERVLET_CONTEXT_PATH=/restaurantscores
     networks:
     - restaurantscores-network

@@ -11,13 +11,11 @@ RUN apk add --update --no-cache openssh
 RUN apk add --no-cache bash
 RUN apk add --update --no-cache python
 
-# Must pass the jar file location to docker at run time via --build-arg JAR_FILE=path/to/jarfile.jar
+# Must pass the jar file location to docker at run time via --build-arg JAR_FILE=relativePath/to/jarfile.jar
 ARG JAR_FILE
 
 # Must pass in the port
 ARG PORT
-
-ARG HEROKU_EXEC_FILE
 
 # https://stackoverflow.com/questions/17466699/not-able-to-build-a-specific-dockerfile
 # https://www.ctl.io/developers/blog/post/dockerfile-add-vs-copy/
