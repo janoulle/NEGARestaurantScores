@@ -81,3 +81,4 @@ fabric.properties
 build.info
 logs.txt
 run-build-locally.sh
+gradle.properties
