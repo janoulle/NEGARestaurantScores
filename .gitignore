@@ -80,3 +80,4 @@ fabric.properties
 *runConfigurations.zip
 build.info
 logs.txt
+run-build-locally.sh
