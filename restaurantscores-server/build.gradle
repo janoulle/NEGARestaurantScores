@@ -1,0 +1,117 @@
+buildscript {
+    ext {
+        projectVersion = "$projectVersionId-$projectVersionType"
+    }
+}
+
+// https://docs.gradle.org/current/userguide/plugins.html
+plugins {
+    id "jacoco"
+    id "war"
+    id "eclipse"
+    id "org.springframework.boot" version "2.0.3.RELEASE"
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
+    id "org.sonarqube" version "2.6.2"
+    id "com.palantir.docker" version "0.19.2"
+}
+
+apply from: 'palantirdockertasks.gradle'
+apply from: 'releasemanagement.gradle'
+
+
+//Transmode docker tasks
+//apply plugin: 'docker'
+//apply from: 'transmodedockertasks.gradle'
+
+//https://stackoverflow.com/questions/17262856/gradle-how-to-set-the-project-name-group-version-plus-source-targetcompatibi
+group = projectGroup
+version = projectVersion
+sourceCompatibility = projectSourceCompatibility
+
+configurations {
+    providedRuntime
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        //https://github.com/awsdocs/aws-doc-sdk-examples
+        mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.228'
+    }
+}
+
+dependencies {
+
+    //2. bridge logging from JCL to SLF4j
+    compile 'org.slf4j:jcl-over-slf4j:1.7.12'
+
+    //3. Logback
+    compile 'ch.qos.logback:logback-classic:1.2.3'
+    //for processing conditionals in logback - https://logback.qos.ch/setup.html#janino
+    compile 'org.codehaus.janino:janino:3.0.6'
+
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+
+    //todo: find actual version and reference.
+    runtime('org.postgresql:postgresql')
+    compile('javax.inject:javax.inject:1')
+    compileOnly "org.projectlombok:lombok:1.16.16"
+    compile("org.springframework.boot:spring-boot-starter-cache")
+//    compile("javax.cache:cache-api")
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('com.google.guava:guava:25.1-jre')
+    compile('joda-time:joda-time:2.9.4')
+    compile('org.apache.commons:commons-lang3:3.4')
+    compile('org.jsoup:jsoup:1.11.3')
+    compile('commons-io:commons-io:2.4')
+
+    //https://firebase.google.com/support/release-notes/admin/java
+    compile 'com.google.firebase:firebase-admin:4.1.6'
+    compile 'com.amazonaws:aws-java-sdk-s3'
+    compile 'com.amazonaws:aws-java-sdk-ec2'
+    compile 'com.amazonaws:aws-java-sdk-dynamodb'
+    compile 'org.elasticsearch.client:elasticsearch-rest-client-sniffer:5.6.1'
+
+    compile("org.springframework.boot:spring-boot-devtools")
+    //compile("org.liquibase:liquibase-core:3.4.1")
+    // https://mvnrepository.com/artifact/org.yaml/snakeyaml
+    //compile group: 'org.yaml', name: 'snakeyaml', version: '1.18'
+
+    //https://intellij-support.jetbrains.com/hc/en-us/community/posts/206670989-Spring-Boot-app-shuts-down-automatically
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    //http://www.baeldung.com/spring-boot-testing needed for @datajpatest annotation
+    testCompile('com.h2database:h2')
+}
+
+
+//https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-wars
+//https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-jars
+[bootJar, bootWar].each {
+    manifest {
+        attributes(
+                'Implementation-Title':   "$projectName",
+                'Implementation-Version': "$projectVersionId-$projectVersionType")
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml{
+            enabled true
+            destination "${buildDir}/reports/jacoco/xml/jacoco.xml"
+        }
+        csv.enabled false
+        html{
+            enabled true
+            destination "${buildDir}/reports/jacoco/html"
+        }
+    }
+}

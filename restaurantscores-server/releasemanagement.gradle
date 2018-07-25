@@ -1,4 +1,4 @@
-
+import groovy.json.JsonSlurper
 
 /*http://mrhaki.blogspot.com/2009/10/groovy-goodness-executing-string-or.html
   http://mrhaki.blogspot.com/2010/10/gradle-goodness-parse-output-from-exec.html */
@@ -104,7 +104,7 @@ task buildAndTagImage(dependsOn: ['clean','docker']) {
         //file("../Docker/restaurantscores/repos.json")
 
         def remoteRegistries = file("$pathToRepos")
-        def parsedJson = new groovy.json.JsonSlurper().parseText(remoteRegistries?.text)
+        def parsedJson = new JsonSlurper().parseText(remoteRegistries?.text)
 
         parsedJson?.each { key, value ->
             println "value:$value"
