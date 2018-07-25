@@ -27,7 +27,7 @@ jobs:
       - run:
           name: Change gradle wrapper permissions
           command: |
-            chmod +x ./gradlew
+            chmod +x ./restaurantscores-server/gradlew
           when: always
 
       # Download and cache dependencies
@@ -36,14 +36,14 @@ jobs:
           - RestaurantScores-{{ checksum "build.gradle" }}
           - RestaurantScores-
 
-      - run: ./gradlew dependencies
+      - run: ./restaurantscores-server/gradlew dependencies
 
       - save_cache:
           paths:
             - ~/.gradle
           key: RestaurantScores-{{ checksum "build.gradle" }}
 
-      - run: ./gradlew --console=plain --stacktrace clean test
+      - run: ./restaurantscores-server/gradlew --console=plain --stacktrace clean test
 
       # https://circleci.com/docs/2.0/configuration-reference/#store_test_results
       # https://circleci.com/docs/2.0/collect-test-data/#gradle-junit-results
@@ -64,7 +64,7 @@ jobs:
       - run:
           name: Run SonarQube analysis
           command: |
-            ./gradlew sonarqube -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=$SONAR_HOST -Dsonar.login=$SONAR_LOGIN_TOKEN
+            ./restaurantscores-server/gradlew sonarqube -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=$SONAR_HOST -Dsonar.login=$SONAR_LOGIN_TOKEN
           when: on_success
 
       # https://circleci.com/docs/2.0/artifacts/#artifacts-overview
@@ -74,7 +74,7 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               mkdir -p ~/tmp/artifacts/
-              ./gradlew -i bootJar -x test
+              ./restaurantscores-server/gradlew -i bootJar -x test
               ls -ltr build/
               cp build/libs/*.jar ~/tmp/artifacts/
             fi

@@ -55,6 +55,9 @@ public class WebPageDownloader {
   @Value("${DATA_EXPIRATION_IN_DAYS}")
   private String dataExpirationInDays;
 
+  @Value("${USER_AGENT}")
+  private String userAgent;
+
   @Autowired
   public WebPageDownloader(WebPageProcessing webPageProcessing, PathVariables pathVariables) {
     this.webPageProcessing = webPageProcessing;
@@ -131,7 +134,7 @@ public class WebPageDownloader {
     mapOfUrlsToDownloads.forEach(
         (key, value) -> {
           WebPageRequestAsync request =
-              new WebPageRequestAsync(value, key, COUNT_DOWN_LATCH, pathVariables);
+              new WebPageRequestAsync(value, key, userAgent, COUNT_DOWN_LATCH, pathVariables);
           webPageDownloadCompletionService.submit(request);
           log.info("Download request submitted for {}", request.getName());
         });

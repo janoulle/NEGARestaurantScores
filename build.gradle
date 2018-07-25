@@ -6,10 +6,6 @@ plugins {
 
 allprojects {
 
-    repositories {
-        mavenCentral()
-    }
-
     buildscript {
         ext {
             springBootVersion = '2.0.3.RELEASE'
@@ -31,6 +27,21 @@ allprojects {
         }
     }
 
+    repositories {
+        mavenCentral()
+    }
+
+}
+
+// https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:subproject_configuration
+subprojects {
+
+    //intellij generates this out directory when running tests with coverage and need to clean this out
+    clean {
+        println "$projectDir"
+        delete "$projectDir/out"
+    }
+
     //https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
     //bootRepackage.withJarTask = jar
 
@@ -43,17 +54,13 @@ allprojects {
         testLogging {
             exceptionFormat "full"
         }
+
+        finalizedBy jacocoTestReport
     }
 
     //https://devcenter.heroku.com/articles/deploying-gradle-apps-on-heroku
     //https://stackoverflow.com/questions/41532108/run-clean-task-before-every-build-automatically-in-gradle
     build.dependsOn clean
-
-
-    //intellij generates this out directory when running tests with coverage and need to clean this out
-    clean {
-        delete "$projectDir/out"
-    }
 
     jacocoTestReport {
         reports {
@@ -62,6 +69,3 @@ allprojects {
         }
     }
 }
-
-
-

@@ -20,12 +20,14 @@ public class WebPageRequestAsync implements Callable<String> {
   private final CountDownLatch doneSignal;
   private String url;
   private String name;
+  private String userAgent;
   private PathVariables pathVariables;
 
   public WebPageRequestAsync(
-      String url, String name, CountDownLatch doneSignal, PathVariables pathVariables) {
+      String url, String name, String userAgent, CountDownLatch doneSignal, PathVariables pathVariables) {
     this.url = url;
     this.name = name;
+    this.userAgent = userAgent;
     this.doneSignal = doneSignal;
     this.pathVariables = pathVariables;
   }
@@ -52,7 +54,7 @@ public class WebPageRequestAsync implements Callable<String> {
     try {
       URL urlObj = new URL(url);
       URLConnection conn = urlObj.openConnection();
-      conn.setRequestProperty("User-Agent", System.getenv("USER_AGENT"));
+      conn.setRequestProperty("User-Agent", userAgent);
       conn.connect();
       if (writeFileToDisk(conn.getInputStream())) {
         log.info("event=\"Successfully wrote {} to disk\"", name);
