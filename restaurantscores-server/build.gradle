@@ -1,6 +1,34 @@
 buildscript {
     ext {
         projectVersion = "$projectVersionId-$projectVersionType"
+        libraries = [
+                jcl_over_slf4j         : 'org.slf4j:jcl-over-slf4j:1.7.12',
+                logback                : 'ch.qos.logback:logback-classic:1.2.3',
+                janino                 : 'org.codehaus.janino:janino:3.0.6',
+                lombok                 : 'org.projectlombok:lombok:1.18.0',
+                postgresql             : 'org.postgresql:postgresql',
+                tomcat                 : 'org.springframework.boot:spring-boot-starter-tomcat',
+                spring_actuator        : 'org.springframework.boot:spring-boot-starter-actuator',
+                spring_jpa             : 'org.springframework.boot:spring-boot-starter-data-jpa',
+                spring_cache           : 'org.springframework.boot:spring-boot-starter-cache',
+                spring_web             : 'org.springframework.boot:spring-boot-starter-web',
+                spring_test            : 'org.springframework.boot:spring-boot-starter-test',
+                spring_rest            : 'org.springframework.boot:spring-boot-starter-data-rest',
+                guava                  : 'com.google.guava:guava:25.1-jre',
+                junit                  : 'junit:junit:4.12',
+                javax_inject           : 'javax.inject:javax.inject:1',
+                joda_time              : 'joda-time:joda-time:2.9.4',
+                commons_lang           : 'org.apache.commons:commons-lang3:3.4',
+                jsoup                  : 'org.jsoup:jsoup:1.11.3',
+                commons_io             : 'commons-io:commons-io:2.4',
+                firebase_admin         : 'com.google.firebase:firebase-admin:4.1.6',
+                amazon_aws_sdk_s3      : 'com.amazonaws:aws-java-sdk-s3',
+                amazon_aws_sdk_ec2     : 'com.amazonaws:aws-java-sdk-ec2',
+                amazon_aws_sdk_dynamodb: 'com.amazonaws:aws-java-sdk-dynamodb',
+                elasticsearch_rest     : 'org.elasticsearch.client:elasticsearch-rest-client-sniffer:5.6.1',
+                spring_devtools        : 'org.springframework.boot:spring-boot-devtools',
+                h2                     : 'com.h2database:h2'
+        ]
     }
 }
 
@@ -17,7 +45,6 @@ plugins {
 
 apply from: 'palantirdockertasks.gradle'
 apply from: 'releasemanagement.gradle'
-
 
 //Transmode docker tasks
 //apply plugin: 'docker'
@@ -42,61 +69,43 @@ dependencyManagement {
     }
 }
 
+
 dependencies {
+    compile libraries.jcl_over_slf4j
+    compile libraries.logback
+    compile libraries.janino
 
-    //2. bridge logging from JCL to SLF4j
-    compile 'org.slf4j:jcl-over-slf4j:1.7.12'
+    compileOnly libraries.lombok
 
-    //3. Logback
-    compile 'ch.qos.logback:logback-classic:1.2.3'
-    //for processing conditionals in logback - https://logback.qos.ch/setup.html#janino
-    compile 'org.codehaus.janino:janino:3.0.6'
-
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
-
-    //todo: find actual version and reference.
-    runtime('org.postgresql:postgresql')
-    compile('javax.inject:javax.inject:1')
-    compileOnly "org.projectlombok:lombok:1.18.0"
-    compile("org.springframework.boot:spring-boot-starter-cache")
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.boot:spring-boot-starter-data-rest')
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('com.google.guava:guava:25.1-jre')
-    compile('joda-time:joda-time:2.9.4')
-    compile('org.apache.commons:commons-lang3:3.4')
-    compile('org.jsoup:jsoup:1.11.3')
-    compile('commons-io:commons-io:2.4')
+    compile libraries.javax_inject
+    compile libraries.spring_jpa
+    compile libraries.spring_cache
+    compile libraries.spring_actuator
+    compile libraries.spring_web
+    compile libraries.spring_rest
+    compile libraries.guava
+    compile libraries.joda_time
+    compile libraries.commons_lang
+    compile libraries.jsoup
+    compile libraries.commons_io
 
     //https://firebase.google.com/support/release-notes/admin/java
-    compile 'com.google.firebase:firebase-admin:4.1.6'
-    compile 'com.amazonaws:aws-java-sdk-s3'
-    compile 'com.amazonaws:aws-java-sdk-ec2'
-    compile 'com.amazonaws:aws-java-sdk-dynamodb'
-    compile 'org.elasticsearch.client:elasticsearch-rest-client-sniffer:5.6.1'
+    compile libraries.firebase_admin
+    compile libraries.amazon_aws_sdk_s3
+    compile libraries.amazon_aws_sdk_ec2
+    compile libraries.amazon_aws_sdk_dynamodb
+    compile libraries.elasticsearch_rest
 
-    compile("org.springframework.boot:spring-boot-devtools")
-    //compile("org.liquibase:liquibase-core:3.4.1")
-    // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-    //compile group: 'org.yaml', name: 'snakeyaml', version: '1.18'
+    compile libraries.spring_devtools
 
-    //https://intellij-support.jetbrains.com/hc/en-us/community/posts/206670989-Spring-Boot-app-shuts-down-automatically
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testCompile libraries.spring_test
 
-    testCompile('org.springframework.boot:spring-boot-starter-test')
     //http://www.baeldung.com/spring-boot-testing needed for @datajpatest annotation
-    testCompile('com.h2database:h2')
-}
+    testCompile libraries.h2
+    runtime libraries.postgresql
+    providedRuntime libraries.tomcat
 
 
-//https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-wars
-//https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-jars
-[bootJar, bootWar].each {
-    manifest {
-        attributes(
-                'Implementation-Title':   "$projectName",
-                'Implementation-Version': "$projectVersionId-$projectVersionType")
-    }
 }
 
 jacocoTestReport {

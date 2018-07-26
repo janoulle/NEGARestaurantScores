@@ -1,49 +1,55 @@
 buildscript {
     ext {
         projectVersion = "$projectVersionId-$projectVersionType"
+        libraries = [
+                jcl_over_slf4j: 'org.slf4j:jcl-over-slf4j:1.7.12',
+                logback       : 'ch.qos.logback:logback-classic:1.2.3',
+                janino        : 'org.codehaus.janino:janino:3.0.6',
+                lombok        : 'org.projectlombok:lombok:1.18.0',
+                tomcat        : 'org.springframework.boot:spring-boot-starter-tomcat',
+                actuator      : 'org.springframework.boot:spring-boot-starter-actuator',
+                spring_cache  : 'org.springframework.boot:spring-boot-starter-cache',
+                spring_web    : 'org.springframework.boot:spring-boot-starter-web',
+                spring_test   : 'org.springframework.boot:spring-boot-starter-test',
+                junit         : 'junit:junit:4.12'
+        ]
     }
 }
 
+
 plugins {
-    id "jacoco"
-    id "war"
-    id "eclipse"
+    id 'java'
+    id 'jacoco'
     id "org.springframework.boot" version "2.0.3.RELEASE"
     id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
-group "$projectGroup"
-version "$projectVersion"
+group = projectGroup
+version = projectVersion
 
+
+repositories {
+    jcenter()
+}
 
 configurations {
     providedRuntime
 }
 
-repositories {
-    mavenCentral()
-}
 
 dependencies {
-    compile 'org.slf4j:jcl-over-slf4j:1.7.12'
+    compile libraries.jcl_over_slf4j
 
-    compile 'ch.qos.logback:logback-classic:1.2.3'
-    compile 'org.codehaus.janino:janino:3.0.6'
-    compileOnly "org.projectlombok:lombok:1.18.0"
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-    compile("org.springframework.boot:spring-boot-starter-cache")
-    compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.boot:spring-boot-starter-web')
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
+    compile libraries.logback
+    compile libraries.janino
+    compileOnly libraries.lombok
+    providedRuntime libraries.tomcat
+    compile libraries.spring_cache
+    compile libraries.actuator
+    compile libraries.spring_web
+    testCompile libraries.spring_test
+    testCompile libraries.junit
 
-[bootJar, bootWar].each {
-    manifest {
-        attributes(
-                'Implementation-Title':   "$projectName",
-                'Implementation-Version': "$projectVersionId-$projectVersionType")
-    }
 }
 
 jacocoTestReport {
