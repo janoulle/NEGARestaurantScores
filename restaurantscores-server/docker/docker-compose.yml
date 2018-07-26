@@ -22,7 +22,7 @@ services:
     - restaurantscores-network
 
   restaurantscores-server:
-    image: restaurantscores-server:latest
+    image: restaurantscores-server:beta
     container_name: restaurantscores-server
     ports:
     - "8080:8080"
@@ -38,7 +38,7 @@ services:
     - ../../../Docker/restaurantscores/logs/:/usr/local/tomcat/logs
     - ../../../Docker/restaurantscores/downloads/webpages:/usr/local/tomcat/downloads/webpages
     env_file:
-    - ../../Docker/restaurantscores/environmentvariables-server.env
+    - ../../../Docker/restaurantscores/environmentvariables-server.env
     environment:
     - APP_DATA_FOLDER=/usr/local/tomcat
     - SPRING_PROFILES_ACTIVE=postgresql

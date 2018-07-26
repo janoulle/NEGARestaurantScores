@@ -26,7 +26,6 @@ apply from: 'releasemanagement.gradle'
 //https://stackoverflow.com/questions/17262856/gradle-how-to-set-the-project-name-group-version-plus-source-targetcompatibi
 group = projectGroup
 version = projectVersion
-sourceCompatibility = projectSourceCompatibility
 
 configurations {
     providedRuntime
@@ -58,9 +57,8 @@ dependencies {
     //todo: find actual version and reference.
     runtime('org.postgresql:postgresql')
     compile('javax.inject:javax.inject:1')
-    compileOnly "org.projectlombok:lombok:1.16.16"
+    compileOnly "org.projectlombok:lombok:1.18.0"
     compile("org.springframework.boot:spring-boot-starter-cache")
-//    compile("javax.cache:cache-api")
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
     compile('org.springframework.boot:spring-boot-starter-web')

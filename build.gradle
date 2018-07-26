@@ -1,12 +1,13 @@
-plugins {
-    id "java"
-    id "eclipse"
-}
 
-allprojects {
+
+// https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:subproject_configuration
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
 
     buildscript {
         ext {
+            sourceCompatibility = 1.8
             springBootVersion = '2.0.3.RELEASE'
         }
         repositories {
@@ -29,10 +30,6 @@ allprojects {
     repositories {
         mavenCentral()
     }
-}
-
-// https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:subproject_configuration
-subprojects {
 
     //intellij generates this out directory when running tests with coverage and need to clean this out
     clean {
