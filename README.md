@@ -1,14 +1,18 @@
+[![CircleCI](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master.svg?style=svg)](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master)
+[![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=restaurantscores-project%3Arestaurantscores-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=restaurantscores-project%3Arestaurantscores-server)
+
+
 # Prerequisites
 
 1. Docker
 2. Postman (for easy api querying)
 
 # Docker build instructions
-0. Type ```cd restaurantscores-server``` at the root of this project.
-1. To build, tag, and push the restaurantscores-server docker image, run ```gradlew buildAndTagImage --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION -PpathToRepos=/path/to/empty.json```. The `pathToRepos` property should be .json file containing a map of key:value pairs where the value is the remote repository name. You can create an empty json file containing an empty map i.e. `{}` to skip the remote tagging/pushing steps
-2. To just build the restaurantscores-server image, run ```gradlew docker --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION```
-3. Note: the --console and --stacktrace flags are for troubleshooting purposes
-4. To manually build this image i.e. with the docker commands, this application takes in three build args. Here's a sample working command: ```gradlew clean build && docker build --build-arg JAR_FILE=build\libs\restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 -t restaurantscores-server:YOUR_VERSION -f docker\restaurantscores-server\Dockerfile .```
+1. Type ```cd restaurantscores-server``` at the root of this project.
+2. To build, tag, and push the restaurantscores-server docker image, run ```gradlew buildAndTagImage --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION -PpathToRepos=/path/to/empty.json```. The `pathToRepos` property should be .json file containing a map of key:value pairs where the value is the remote repository name. You can create an empty json file containing an empty map i.e. `{}` to skip the remote tagging/pushing steps
+3. To just build the restaurantscores-server image, run ```gradlew docker --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION```
+4. Note: the --console and --stacktrace flags are for troubleshooting purposes
+5. To manually build this image i.e. with the docker commands, this application takes in three build args. Here's a sample working command: ```gradlew clean build && docker build --build-arg JAR_FILE=build\libs\restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 -t restaurantscores-server:YOUR_VERSION -f docker\restaurantscores-server\Dockerfile .```
 
 
 # Docker run instructions
@@ -51,6 +55,3 @@
 # In case of problems running the app
 
 1. Please create a github issue with detailed logs and steps to reproduce.
-
-[![CircleCI](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master.svg?style=svg)](https://circleci.com/gh/janoulle/NEGARestaurantScores/tree/master)
-![SonarQube Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=restaurantscores-project%3Arestaurantscores-server&metric=alert_status)
