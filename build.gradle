@@ -1,9 +1,10 @@
-
-
 // https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:subproject_configuration
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'war'
     apply plugin: 'eclipse'
+    apply plugin: 'jacoco'
+
 
     buildscript {
         ext {
@@ -11,7 +12,7 @@ subprojects {
             springBootVersion = '2.0.3.RELEASE'
         }
         repositories {
-            mavenCentral()
+            jcenter()
             maven { url "https://plugins.gradle.org/m2/" }
         }
         dependencies {
@@ -33,8 +34,22 @@ subprojects {
 
     //intellij generates this out directory when running tests with coverage and need to clean this out
     clean {
-        println "$projectDir"
         delete "$projectDir/out"
+    }
+
+    //https://docs.gradle.org/current/userguide/build_lifecycle.html
+    afterEvaluate {
+
+        //https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-wars
+        //https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/#packaging-executable-jars
+        [bootJar, bootWar].each {
+            manifest {
+                attributes(
+                        'Implementation-Title':   "$projectName",
+                        'Implementation-Version': "$projectVersionId-$projectVersionType")
+            }
+        }
+
     }
 
     //https://docs.spring.io/spring-boot/docs/1.0.0.RELEASE/reference/html/build-tool-plugins-gradle-plugin.html
@@ -58,23 +73,13 @@ subprojects {
 
     // https://discuss.gradle.org/t/jacoco-no-subproject-coverage/21451
     // https://gist.github.com/aalmiray/e6f54aa4b3803be0bcac
-//    jacocoTestReport {
-//        sourceDirectories = project.files(subprojects.sourceSets.main.allSource.srcDirs)
-//        classDirectories = project.files(subprojects.sourceSets.main.output)
-//        executionData = fileTree(dir: "${buildDir}/jacoco", include: '**/*.exec')
-//        reports {
-//            xml {
-//                enabled true
-//                destination "${buildDir}/reports/jacoco/xml/jacoco.xml"
-//            }
-//            html {
-//                enabled true
-//                destination "${buildDir}/reports/jacoco/html"
-//            }
-//            csv.enabled false
-//        }
-//        onlyIf = {
-//            true
-//        }
-//    }
+
+}
+
+gradle.afterProject {project, projectState ->
+    if (projectState.failure) {
+        println "Evaluation of $project FAILED"
+    } else {
+        println "Evaluation of $project succeeded"
+    }
 }
