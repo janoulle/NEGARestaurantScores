@@ -1,0 +1,30 @@
+ext {
+    libraries = [
+            jcl_over_slf4j         : 'org.slf4j:jcl-over-slf4j:1.7.12',
+            logback                : 'ch.qos.logback:logback-classic:1.2.3',
+            janino                 : 'org.codehaus.janino:janino:3.0.6',
+            lombok                 : 'org.projectlombok:lombok:1.18.0',
+            postgresql             : 'org.postgresql:postgresql',
+            tomcat                 : 'org.springframework.boot:spring-boot-starter-tomcat',
+            spring_actuator        : 'org.springframework.boot:spring-boot-starter-actuator',
+            spring_jpa             : 'org.springframework.boot:spring-boot-starter-data-jpa',
+            spring_cache           : 'org.springframework.boot:spring-boot-starter-cache',
+            spring_web             : 'org.springframework.boot:spring-boot-starter-web',
+            spring_test            : 'org.springframework.boot:spring-boot-starter-test',
+            spring_rest            : 'org.springframework.boot:spring-boot-starter-data-rest',
+            guava                  : 'com.google.guava:guava:25.1-jre',
+            junit                  : 'junit:junit:4.12',
+            javax_inject           : 'javax.inject:javax.inject:1',
+            joda_time              : 'joda-time:joda-time:2.9.4',
+            commons_lang           : 'org.apache.commons:commons-lang3:3.4',
+            jsoup                  : 'org.jsoup:jsoup:1.11.3',
+            commons_io             : 'commons-io:commons-io:2.4',
+            firebase_admin         : 'com.google.firebase:firebase-admin:4.1.6',
+            amazon_aws_sdk_s3      : 'com.amazonaws:aws-java-sdk-s3',
+            amazon_aws_sdk_ec2     : 'com.amazonaws:aws-java-sdk-ec2',
+            amazon_aws_sdk_dynamodb: 'com.amazonaws:aws-java-sdk-dynamodb',
+            elasticsearch_rest     : 'org.elasticsearch.client:elasticsearch-rest-client-sniffer:5.6.1',
+            spring_devtools        : 'org.springframework.boot:spring-boot-devtools',
+            h2                     : 'com.h2database:h2'
+    ]
+}

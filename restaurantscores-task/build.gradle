@@ -1,21 +1,8 @@
 buildscript {
     ext {
         projectVersion = "$projectVersionId-$projectVersionType"
-        libraries = [
-                jcl_over_slf4j: 'org.slf4j:jcl-over-slf4j:1.7.12',
-                logback       : 'ch.qos.logback:logback-classic:1.2.3',
-                janino        : 'org.codehaus.janino:janino:3.0.6',
-                lombok        : 'org.projectlombok:lombok:1.18.0',
-                tomcat        : 'org.springframework.boot:spring-boot-starter-tomcat',
-                actuator      : 'org.springframework.boot:spring-boot-starter-actuator',
-                spring_cache  : 'org.springframework.boot:spring-boot-starter-cache',
-                spring_web    : 'org.springframework.boot:spring-boot-starter-web',
-                spring_test   : 'org.springframework.boot:spring-boot-starter-test',
-                junit         : 'junit:junit:4.12'
-        ]
     }
 }
-
 
 plugins {
     id 'java'
@@ -23,6 +10,8 @@ plugins {
     id "org.springframework.boot" version "2.0.3.RELEASE"
     id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
+
+apply from: '../gradle/dependencies.gradle'
 
 group = projectGroup
 version = projectVersion
@@ -45,7 +34,7 @@ dependencies {
     compileOnly libraries.lombok
     providedRuntime libraries.tomcat
     compile libraries.spring_cache
-    compile libraries.actuator
+    compile libraries.spring_actuator
     compile libraries.spring_web
     testCompile libraries.spring_test
     testCompile libraries.junit
