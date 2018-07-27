@@ -4,10 +4,11 @@
 2. Postman (for easy api querying)
 
 # Docker build instructions
-1. To build, tag, and push, run ```gradlew buildAndTagImage --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION -PpathToRepos=/path/to/empty.json```. The `pathToRepos` property should be .json file containing a map of key:value pairs where the value is the remote repository name. You can create an empty json file containing an empty map i.e. `{}` to skip the remote tagging/pushing steps
-2. To just build the image, run ```gradlew docker --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION```
+0. Type ```cd restaurantscores-server``` at the root of this project.
+1. To build, tag, and push the restaurantscores-server docker image, run ```gradlew buildAndTagImage --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION -PpathToRepos=/path/to/empty.json```. The `pathToRepos` property should be .json file containing a map of key:value pairs where the value is the remote repository name. You can create an empty json file containing an empty map i.e. `{}` to skip the remote tagging/pushing steps
+2. To just build the restaurantscores-server image, run ```gradlew docker --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION```
 3. Note: the --console and --stacktrace flags are for troubleshooting purposes
-4. To manually build this image i.e. with the docker commands, this application takes in three build args. Here's a sample working command: ```gradlew clean build && docker build --build-arg JAR_FILE=build/libs/restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 -t restaurantscores-server:YOUR_VERSION -f docker\restaurantscores-server\Dockerfile .```
+4. To manually build this image i.e. with the docker commands, this application takes in three build args. Here's a sample working command: ```gradlew clean build && docker build --build-arg JAR_FILE=build\libs\restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 -t restaurantscores-server:YOUR_VERSION -f docker\restaurantscores-server\Dockerfile .```
 
 
 # Docker run instructions
@@ -24,7 +25,7 @@
     3. RELATIVE_PATH_TO_PAGE_STORAGE needs to be a relative path that ends in a slash
     4. APP_DATA_FOLDER needs to be a fully qualified path that does not end in a slash. The two are concatenated in [firebase data](restaurantscores-server/src/main/java/com/janeullah/healthinspectionrecords/domain/PathVariables.java)
 5. In the docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
-6. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers.
+6. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers. To gracefully shut down, type ```docker-compose down```
 
 # Health Checks
 
@@ -43,7 +44,7 @@
 
 # Additional Notes
 
-1. The postgresql database is accessible at port 5433. If using pgAdmin to connect to the database, you'll get a series of alarming alerts because the admin pack extension is not installed. You can still browse the database once you get past the alerts.
+1. The postgresql database is accessible at port 5433 (configured in the docker-compose yaml file). If using pgAdmin to connect to the database, you'll get a series of alarming alerts because the admin pack extension is not installed. You can still browse the database once you get past the alerts.
 2. This application runs on post 8080 (see [docker-compose.yml](restaurantscores-server/docker/docker-compose.yml) to change this setting.
 3. The context of this application is `/restaurantscores` and the active spring profile is `postgresql`
 
