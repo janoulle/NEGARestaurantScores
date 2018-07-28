@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.controller;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import com.janeullah.healthinspectionrecords.services.impl.AwsElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.impl.LocalhostElasticSearchDocumentService;
 import org.junit.Test;
@@ -40,8 +39,6 @@ public class MainControllerTest {
     @MockBean
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     @MockBean
-    private AwsElasticSearchDocumentService awsElasticSearchDocumentService;
-    @MockBean
     private RestaurantRepository restaurantRepository;
 
     @Test
@@ -70,15 +67,6 @@ public class MainControllerTest {
         when(localhostElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         mvc.perform(post("/admin/seedElasticSearchDBLocal"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testSeedElasticSearchDBAWS() throws Exception {
-        when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
-        when(awsElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
-
-        mvc.perform(post("/admin/seedElasticSearchDBAWS"))
                 .andExpect(status().isOk());
     }
 

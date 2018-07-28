@@ -4,7 +4,6 @@ import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
-import com.janeullah.healthinspectionrecords.services.impl.AwsElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.impl.LocalhostElasticSearchDocumentService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ public class MainController {
     private FirebaseInitialization firebaseInitialization;
     private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
-    private AwsElasticSearchDocumentService awsElasticSearchDocumentService;
     private RestaurantRepository restaurantRepository;
 
     @Autowired
@@ -37,13 +35,11 @@ public class MainController {
             WebEventOrchestrator webEventOrchestrator,
             FirebaseInitialization firebaseInitialization,
             RestaurantRepository restaurantRepository,
-            AwsElasticSearchDocumentService awsElasticSearchDocumentService,
             LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService,
             HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService) {
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
         this.restaurantRepository = restaurantRepository;
-        this.awsElasticSearchDocumentService = awsElasticSearchDocumentService;
         this.localhostElasticSearchDocumentService = localhostElasticSearchDocumentService;
         this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
     }
@@ -69,14 +65,6 @@ public class MainController {
         ResponseEntity<String> result =
                 localhostElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
         return new ResponseEntity<>(result.getStatusCode());
-    }
-
-    @PostMapping(value = "/seedElasticSearchDBAWS")
-    public ResponseEntity<HttpStatus> seedElasticSearchDBAWS() {
-        List<FlattenedRestaurant> flattenedRestaurants =
-                restaurantRepository.findAllFlattenedRestaurants();
-
-        return awsElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
     }
 
     @PostMapping(value = "/seedElasticSearchDBHeroku")
