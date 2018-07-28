@@ -28,7 +28,7 @@
     2. JDBC_DATABASE_USERNAME and JDBC_DATABASE_PASSWORD should be db username and password. Note: POSTGRES_PASSWORD needs to match JDBC_DATABASE_PASSWORD.
     3. RELATIVE_PATH_TO_PAGE_STORAGE needs to be a relative path that ends in a slash
     4. APP_DATA_FOLDER needs to be a fully qualified path that does not end in a slash. The two are concatenated in [firebase data](restaurantscores-server/src/main/java/com/janeullah/healthinspectionrecords/domain/PathVariables.java)
-5. In the docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
+5. In the restaurantscores-server/docker/docker-compose.yml file, update the restaurantscores-server.image setting to point to your local or remote image e.g. `restaurantscores-server:YOUR_VERSION`.
 6. At the root of the project, open a Terminal tab and type `cd docker`. Then, type `docker-compose up` to start the containers. To gracefully shut down, type ```docker-compose down```
 
 # Health Checks
