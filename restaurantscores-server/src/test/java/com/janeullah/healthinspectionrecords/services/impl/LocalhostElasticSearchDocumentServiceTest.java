@@ -23,27 +23,29 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocalhostElasticSearchDocumentServiceTest {
-  @InjectMocks private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
-  @Mock private RemoteRestClient restClient;
+    @InjectMocks
+    private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
+    @Mock
+    private RemoteRestClient restClient;
 
-  @Before
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
 
-    ReflectionTestUtils.setField(
-        localhostElasticSearchDocumentService,
-        "localhostUrl",
-        "https://localhost:9200");
-    when(restClient
-            .getRestTemplate()).thenReturn(mock(RestTemplate.class));
-  }
+        ReflectionTestUtils.setField(
+                localhostElasticSearchDocumentService,
+                "localhostUrl",
+                "https://localhost:9200");
+        when(restClient
+                .getRestTemplate()).thenReturn(mock(RestTemplate.class));
+    }
 
-  @Test
+    @Test
     public void testAddRestaurant() {
         when(restClient
                 .getRestTemplate()
                 .postForEntity(anyString(), any(FlattenedRestaurant.class), eq(String.class), anyMap())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
-      ResponseEntity<String> response = localhostElasticSearchDocumentService.addRestaurantDocument(1L, TestUtil.getSingleFlattenedRestaurant());
-      assertEquals(HttpStatus.OK, response.getStatusCode());
-  }
+        ResponseEntity<String> response = localhostElasticSearchDocumentService.addRestaurantDocument(1L, TestUtil.getSingleFlattenedRestaurant());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 }

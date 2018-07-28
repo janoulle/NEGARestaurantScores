@@ -18,40 +18,40 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 // https://github.com/spring-projects/spring-framework/blob/2dd587596437a4bbe9f62ba0dc9f7b13382fb533/spring-test/src/test/java/org/springframework/test/web/servlet/samples/standalone/ExceptionHandlerTests.java
 public class BaseExceptionHandlerTest {
 
-  private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-  @Before
-  public void setup() {
-    mockMvc =
-        standaloneSetup(new FakeController())
-            .setControllerAdvice(new BaseExceptionHandler())
-            .build();
-  }
-
-  @Test
-  public void testGlobalExceptionHandlerMethod() throws Exception {
-
-    mockMvc
-        .perform(get("/fakeController/testError"))
-        .andDo(print())
-        .andExpect(status().isInternalServerError())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-        .andExpect(jsonPath("$.code", is("INTERNAL_SERVER_ERROR")))
-        .andExpect(jsonPath("$.message", is("simulated exception")))
-        .andExpect(jsonPath("$.throwable.stackTrace[0].fileName", is("BaseExceptionHandlerTest.java")))
-        .andExpect(
-            jsonPath(
-                "$.throwable.stackTrace[0].className",
-                is(
-                    "com.janeullah.healthinspectionrecords.exceptions.BaseExceptionHandlerTest$FakeController")));
-  }
-
-  @Controller
-  private static class FakeController {
-
-    @RequestMapping(value = "/fakeController/testError", method = RequestMethod.GET)
-    public String simulateException() {
-      throw new IllegalStateException("simulated exception");
+    @Before
+    public void setup() {
+        mockMvc =
+                standaloneSetup(new FakeController())
+                        .setControllerAdvice(new BaseExceptionHandler())
+                        .build();
     }
-  }
+
+    @Test
+    public void testGlobalExceptionHandlerMethod() throws Exception {
+
+        mockMvc
+                .perform(get("/fakeController/testError"))
+                .andDo(print())
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.code", is("INTERNAL_SERVER_ERROR")))
+                .andExpect(jsonPath("$.message", is("simulated exception")))
+                .andExpect(jsonPath("$.throwable.stackTrace[0].fileName", is("BaseExceptionHandlerTest.java")))
+                .andExpect(
+                        jsonPath(
+                                "$.throwable.stackTrace[0].className",
+                                is(
+                                        "com.janeullah.healthinspectionrecords.exceptions.BaseExceptionHandlerTest$FakeController")));
+    }
+
+    @Controller
+    private static class FakeController {
+
+        @RequestMapping(value = "/fakeController/testError", method = RequestMethod.GET)
+        public String simulateException() {
+            throw new IllegalStateException("simulated exception");
+        }
+    }
 }

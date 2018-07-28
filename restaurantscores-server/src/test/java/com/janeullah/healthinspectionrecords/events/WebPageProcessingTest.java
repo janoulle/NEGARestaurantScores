@@ -41,7 +41,7 @@ public class WebPageProcessingTest {
 
         webPageProcessing.startProcessingOfDownloadedFiles();
 
-        verify(webPageProcessService, times(10)).submitFileForProcessing(any(Path.class),any(CountDownLatch.class));
+        verify(webPageProcessService, times(10)).submitFileForProcessing(any(Path.class), any(CountDownLatch.class));
         verify(webPageProcessService, times(1)).waitForAllProcessing(any(CountDownLatch.class));
 
     }

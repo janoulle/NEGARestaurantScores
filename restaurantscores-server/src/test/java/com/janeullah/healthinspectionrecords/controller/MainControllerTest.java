@@ -65,7 +65,7 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testSeedElasticSearchDBLocal() throws  Exception {
+    public void testSeedElasticSearchDBLocal() throws Exception {
         when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
         when(localhostElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
@@ -74,7 +74,7 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testSeedElasticSearchDBAWS() throws  Exception {
+    public void testSeedElasticSearchDBAWS() throws Exception {
         when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
         when(awsElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
@@ -83,7 +83,7 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testSeedElasticSearchDBHeroku() throws  Exception {
+    public void testSeedElasticSearchDBHeroku() throws Exception {
         when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
         when(herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
 

@@ -26,53 +26,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(RestaurantController.class)
 public class RestaurantControllerTest {
 
-  @Autowired private MockMvc mvc;
+    @Autowired
+    private MockMvc mvc;
 
-  @MockBean private RestaurantRepository restaurantRepository;
+    @MockBean
+    private RestaurantRepository restaurantRepository;
 
-  @Test
-  public void testGetAllFlattenedRestaurants() throws Exception {
-    FlattenedRestaurant restaurant = TestUtil.getSingleFlattenedRestaurant();
+    @Test
+    public void testGetAllFlattenedRestaurants() throws Exception {
+        FlattenedRestaurant restaurant = TestUtil.getSingleFlattenedRestaurant();
 
-    when(restaurantRepository.findAllFlattenedRestaurants())
-        .thenReturn(Collections.singletonList(restaurant));
+        when(restaurantRepository.findAllFlattenedRestaurants())
+                .thenReturn(Collections.singletonList(restaurant));
 
-    mvc.perform(get("/restaurants/allFlattened"))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-        .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].county", is("WALTON")))
-        .andExpect(jsonPath("$[0].name", is("ZAXBY'S-MONROE")))
-        .andExpect(jsonPath("$[0].address", is("195 MLK JR. BLVD. MONROE GA, 30655")))
-        .andExpect(jsonPath("$[0].criticalViolations", is(2)))
-        .andExpect(jsonPath("$[0].nonCriticalViolations", is(5)))
-        .andExpect(jsonPath("$[0].score", is(84)))
-        .andExpect(jsonPath("$[0].dateReported", is("2018-01-29")));
-  }
+        mvc.perform(get("/restaurants/allFlattened"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].county", is("WALTON")))
+                .andExpect(jsonPath("$[0].name", is("ZAXBY'S-MONROE")))
+                .andExpect(jsonPath("$[0].address", is("195 MLK JR. BLVD. MONROE GA, 30655")))
+                .andExpect(jsonPath("$[0].criticalViolations", is(2)))
+                .andExpect(jsonPath("$[0].nonCriticalViolations", is(5)))
+                .andExpect(jsonPath("$[0].score", is(84)))
+                .andExpect(jsonPath("$[0].dateReported", is("2018-01-29")));
+    }
 
 
-  @Test
-  public void testGetAllRestaurants() throws Exception {
-    Restaurant restaurant = TestUtil.getSingleRestaurant();
-    restaurant.setId(1L);
-    restaurant.getEstablishmentInfo().setId(4L);
+    @Test
+    public void testGetAllRestaurants() throws Exception {
+        Restaurant restaurant = TestUtil.getSingleRestaurant();
+        restaurant.setId(1L);
+        restaurant.getEstablishmentInfo().setId(4L);
 
-    when(restaurantRepository.findAll()).thenReturn(Collections.singletonList(restaurant));
+        when(restaurantRepository.findAll()).thenReturn(Collections.singletonList(restaurant));
 
-    mvc.perform(get("/restaurants/all"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].inspectionReports", hasSize(1)))
-            .andExpect(jsonPath("$[0].inspectionReports[0].violations", hasSize(1)))
-            .andExpect(jsonPath("$[0].inspectionReports[0].dateReported", is("2018-05-05")))
-            .andExpect(jsonPath("$[0].inspectionReports[0].inspectionType", is("ROUTINE")))
-            .andExpect(jsonPath("$[0].establishmentInfo.name", is("ZAXBY'S-MONROE")))
-            .andExpect(jsonPath("$[0].establishmentInfo.address", is("195 MLK JR. BLVD. MONROE GA, 30655")))
-            .andExpect(jsonPath("$[0].establishmentInfo.county", is("Walton")))
-            .andExpect(jsonPath("$[0].id", is(1)))
-            .andExpect(jsonPath("$[0].establishmentInfo.id", is(4)));
-  }
+        mvc.perform(get("/restaurants/all"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].inspectionReports", hasSize(1)))
+                .andExpect(jsonPath("$[0].inspectionReports[0].violations", hasSize(1)))
+                .andExpect(jsonPath("$[0].inspectionReports[0].dateReported", is("2018-05-05")))
+                .andExpect(jsonPath("$[0].inspectionReports[0].inspectionType", is("ROUTINE")))
+                .andExpect(jsonPath("$[0].establishmentInfo.name", is("ZAXBY'S-MONROE")))
+                .andExpect(jsonPath("$[0].establishmentInfo.address", is("195 MLK JR. BLVD. MONROE GA, 30655")))
+                .andExpect(jsonPath("$[0].establishmentInfo.county", is("Walton")))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].establishmentInfo.id", is(4)));
+    }
 }

@@ -15,19 +15,19 @@ import static org.junit.Assert.assertEquals;
 
 public class FileToBeProcessedTest {
 
-  @Test
-  public void testCountyNameParsing_Successful() {
-    List<String> actualResults =
-        Stream.of(FILES)
-            .map(file -> new FileToBeProcessed(file.toPath()).getCountyName())
-            .filter(StringUtils::isNotBlank)
-            .collect(Collectors.toList());
-    assertEquals(NEGACounties.getCountOfCounties(), actualResults.size());
+    @Test
+    public void testCountyNameParsing_Successful() {
+        List<String> actualResults =
+                Stream.of(FILES)
+                        .map(file -> new FileToBeProcessed(file.toPath()).getCountyName())
+                        .filter(StringUtils::isNotBlank)
+                        .collect(Collectors.toList());
+        assertEquals(NEGACounties.getCountOfCounties(), actualResults.size());
     }
 
     @Test
     public void testCountyNameParsing_Fail() {
-      Path path = new File("a").toPath();
+        Path path = new File("a").toPath();
         FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(path);
         assertEquals("", fileToBeProcessed.getCountyName());
     }

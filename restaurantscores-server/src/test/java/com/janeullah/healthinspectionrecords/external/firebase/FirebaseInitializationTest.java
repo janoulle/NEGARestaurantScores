@@ -21,35 +21,38 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseInitializationTest {
 
-  @InjectMocks private FirebaseInitialization firebaseInitialization;
+    @InjectMocks
+    private FirebaseInitialization firebaseInitialization;
 
-  @Mock private FirebaseDataProcessing firebaseDataProcessing;
+    @Mock
+    private FirebaseDataProcessing firebaseDataProcessing;
 
-  @Mock private AmazonS3ClientForFirebaseOperations amazonS3ClientForFirebaseOperations;
+    @Mock
+    private AmazonS3ClientForFirebaseOperations amazonS3ClientForFirebaseOperations;
 
-  private DatabaseReference dbRef = mock(DatabaseReference.class);
+    private DatabaseReference dbRef = mock(DatabaseReference.class);
 
-  @Before
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
-    ReflectionTestUtils.setField(firebaseInitialization, "negaFirebaseDbUrl", "https://dbxyi.io");
-    ReflectionTestUtils.setField(firebaseInitialization, "database", dbRef);
-    when(dbRef.child("counties")).thenReturn(mock(DatabaseReference.class));
-    when(dbRef.child("restaurants")).thenReturn(mock(DatabaseReference.class));
-    when(dbRef.child("violations")).thenReturn(mock(DatabaseReference.class));
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        ReflectionTestUtils.setField(firebaseInitialization, "negaFirebaseDbUrl", "https://dbxyi.io");
+        ReflectionTestUtils.setField(firebaseInitialization, "database", dbRef);
+        when(dbRef.child("counties")).thenReturn(mock(DatabaseReference.class));
+        when(dbRef.child("restaurants")).thenReturn(mock(DatabaseReference.class));
+        when(dbRef.child("violations")).thenReturn(mock(DatabaseReference.class));
 
-    // InputStream is =
-    // FirebaseInitializationTest.class.getResourceAsStream("mock-config-file.json");
-    // when(amazonS3ClientForFirebaseOperations.getFirebaseCredentials()).thenReturn(is);
-  }
+        // InputStream is =
+        // FirebaseInitializationTest.class.getResourceAsStream("mock-config-file.json");
+        // when(amazonS3ClientForFirebaseOperations.getFirebaseCredentials()).thenReturn(is);
+    }
 
-  @Test
-  public void testReadRecordsFromLocalAndWriteToRemote() {
-    when(firebaseDataProcessing.createAndRetrieveMapOfCounties(anyMap()))
-        .thenReturn(new HashMap<>());
-    when(firebaseDataProcessing.createAndRetrieveViolations(anyMap())).thenReturn(new HashMap<>());
-    when(firebaseDataProcessing.flattenMapOfRestaurants(anyMap())).thenReturn(new HashMap<>());
+    @Test
+    public void testReadRecordsFromLocalAndWriteToRemote() {
+        when(firebaseDataProcessing.createAndRetrieveMapOfCounties(anyMap()))
+                .thenReturn(new HashMap<>());
+        when(firebaseDataProcessing.createAndRetrieveViolations(anyMap())).thenReturn(new HashMap<>());
+        when(firebaseDataProcessing.flattenMapOfRestaurants(anyMap())).thenReturn(new HashMap<>());
 
-    assertTrue(firebaseInitialization.readRecordsFromLocalAndWriteToRemote());
-  }
+        assertTrue(firebaseInitialization.readRecordsFromLocalAndWriteToRemote());
+    }
 }

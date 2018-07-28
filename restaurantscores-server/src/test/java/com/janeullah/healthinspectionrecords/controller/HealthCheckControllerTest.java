@@ -23,22 +23,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(HealthCheckController.class)
 public class HealthCheckControllerTest {
 
-  @Autowired private MockMvc mvc;
+    @Autowired
+    private MockMvc mvc;
 
-  @MockBean private FirebaseInitialization firebaseInitialization;
+    @MockBean
+    private FirebaseInitialization firebaseInitialization;
 
-  @Test
-  public void testCheckIsAlive() throws Exception {
-    mvc.perform(get("/healthcheck/isAlive"))
-        .andExpect(status().isOk())
-        .andExpect(content().string(containsString("OK")));
-  }
+    @Test
+    public void testCheckIsAlive() throws Exception {
+        mvc.perform(get("/healthcheck/isAlive"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("OK")));
+    }
 
-  @Test
-  public void testIsFirebaseInitialized_True() throws Exception {
-    when(firebaseInitialization.isDatabaseInitialized()).thenReturn(true);
-    mvc.perform(get("/healthcheck/testFirebaseConnectivity"))
-            .andDo(print())
-            .andExpect(status().isOk());
-  }
+    @Test
+    public void testIsFirebaseInitialized_True() throws Exception {
+        when(firebaseInitialization.isDatabaseInitialized()).thenReturn(true);
+        mvc.perform(get("/healthcheck/testFirebaseConnectivity"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

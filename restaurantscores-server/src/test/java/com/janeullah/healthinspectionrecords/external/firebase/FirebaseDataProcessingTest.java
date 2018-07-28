@@ -26,54 +26,56 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseDataProcessingTest {
 
-  @InjectMocks private FirebaseDataProcessing firebaseDataProcessing;
+    @InjectMocks
+    private FirebaseDataProcessing firebaseDataProcessing;
 
-  @Mock private RestaurantRepository restaurantRepository;
+    @Mock
+    private RestaurantRepository restaurantRepository;
 
-  @Before
-  public void setup() {
-    MockitoAnnotations.initMocks(this);
-  }
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-  @Test
-  public void testCreateAndRetrieveMapOfCounties() {
+    @Test
+    public void testCreateAndRetrieveMapOfCounties() {
 
-    when(restaurantRepository.findByEstablishmentInfoCountyIgnoreCase("Walton"))
-        .thenReturn(TestUtil.getRestaurants());
+        when(restaurantRepository.findByEstablishmentInfoCountyIgnoreCase("Walton"))
+                .thenReturn(TestUtil.getRestaurants());
 
-    Map<String, County> results = firebaseDataProcessing.createAndRetrieveMapOfCounties(anyMap());
-    assertEquals(10, results.size());
-    assertEquals(2, results.get("Walton").getRestaurants().size());
-    assertEquals(0, results.get("Clarke").getRestaurants().size());
-    assertEquals(0, results.get("Oconee").getRestaurants().size());
-    assertEquals(0, results.get("Oglethorpe").getRestaurants().size());
-    assertEquals(0, results.get("Morgan").getRestaurants().size());
-    assertEquals(0, results.get("Greene").getRestaurants().size());
-    assertEquals(0, results.get("Madison").getRestaurants().size());
-    assertEquals(0, results.get("Jackson").getRestaurants().size());
-  }
+        Map<String, County> results = firebaseDataProcessing.createAndRetrieveMapOfCounties(anyMap());
+        assertEquals(10, results.size());
+        assertEquals(2, results.get("Walton").getRestaurants().size());
+        assertEquals(0, results.get("Clarke").getRestaurants().size());
+        assertEquals(0, results.get("Oconee").getRestaurants().size());
+        assertEquals(0, results.get("Oglethorpe").getRestaurants().size());
+        assertEquals(0, results.get("Morgan").getRestaurants().size());
+        assertEquals(0, results.get("Greene").getRestaurants().size());
+        assertEquals(0, results.get("Madison").getRestaurants().size());
+        assertEquals(0, results.get("Jackson").getRestaurants().size());
+    }
 
-  @Test
-  public void testFlattenMapOfRestaurants() {
-    Restaurant restaurant = TestUtil.getSingleRestaurant();
-    restaurant.setId(1L);
-    Map<String, List<Restaurant>> data = ImmutableMap.of("" +
-            "Walton", Collections.singletonList(restaurant));
-    Map<String, FlattenedRestaurant> results = firebaseDataProcessing.flattenMapOfRestaurants(data);
-    assertEquals(1, results.size());
-    FlattenedRestaurant firstEntry = results.values().iterator().next();
-    assertEquals(restaurant.getEstablishmentInfo().getName() + "-" + restaurant.getId(), firstEntry.getNameKey());
-  }
+    @Test
+    public void testFlattenMapOfRestaurants() {
+        Restaurant restaurant = TestUtil.getSingleRestaurant();
+        restaurant.setId(1L);
+        Map<String, List<Restaurant>> data = ImmutableMap.of("" +
+                "Walton", Collections.singletonList(restaurant));
+        Map<String, FlattenedRestaurant> results = firebaseDataProcessing.flattenMapOfRestaurants(data);
+        assertEquals(1, results.size());
+        FlattenedRestaurant firstEntry = results.values().iterator().next();
+        assertEquals(restaurant.getEstablishmentInfo().getName() + "-" + restaurant.getId(), firstEntry.getNameKey());
+    }
 
-  @Test
-  public void testCreateAndRetrieveViolations() {
-    Restaurant restaurant = TestUtil.getSingleRestaurant();
-    restaurant.setId(1L);
-    Map<String, List<Restaurant>> data = ImmutableMap.of("" +
-            "Walton", Collections.singletonList(restaurant));
-    Map<String, FlattenedRestaurant> results = firebaseDataProcessing.flattenMapOfRestaurants(data);
-    Map<String, FlattenedInspectionReport> violations = firebaseDataProcessing.createAndRetrieveViolations(results);
+    @Test
+    public void testCreateAndRetrieveViolations() {
+        Restaurant restaurant = TestUtil.getSingleRestaurant();
+        restaurant.setId(1L);
+        Map<String, List<Restaurant>> data = ImmutableMap.of("" +
+                "Walton", Collections.singletonList(restaurant));
+        Map<String, FlattenedRestaurant> results = firebaseDataProcessing.flattenMapOfRestaurants(data);
+        Map<String, FlattenedInspectionReport> violations = firebaseDataProcessing.createAndRetrieveViolations(results);
 
-    assertEquals(1, violations.size());
-  }
+        assertEquals(1, violations.size());
+    }
 }

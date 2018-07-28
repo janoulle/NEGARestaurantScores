@@ -86,7 +86,7 @@ public class WebPageDownloaderTest {
     public void testInitiateDownloadsAndProcessFilesWithBadUrl() {
         //faking the url to hit
         Map<String, String> map = new HashMap<>();
-    for (String county : NEGACounties.getAllNEGACounties()) {
+        for (String county : NEGACounties.getAllNEGACounties()) {
             map.put(county, "http://xyx.com" + county);
         }
 
