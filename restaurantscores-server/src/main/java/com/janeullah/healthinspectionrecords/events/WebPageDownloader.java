@@ -67,13 +67,13 @@ public class WebPageDownloader {
     }
 
     /**
-     * TODO: Hook this up to logic for checking age of either: i) first - files on disk ii) second -
-     * data in datastore
+     * Downloads the webpages if the env variable 'DOWNLOAD_OVERRIDE' is set to true OR in the event that
+     * there are no files to process or files present are older than the limit set 'DATA_EXPIRATION_IN_DAYS'
      *
      * @return boolean
      */
     public boolean isDownloadOverrideOrDataExpired() {
-        return isDownloadOverrideEnabled || isFolderEmpty() || areFilesOlderThanLimit();
+        return isDownloadOverrideEnabled || (isFolderEmpty() || areFilesOlderThanLimit());
     }
 
     private boolean isFolderEmpty() {
