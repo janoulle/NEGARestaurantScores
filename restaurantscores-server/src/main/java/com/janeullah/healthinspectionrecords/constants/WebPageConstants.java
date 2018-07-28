@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.constants;
 /**
  * Author: Jane Ullah Date: 9/17/2016
  */
-@SuppressWarnings("all")
 public class WebPageConstants {
     public static final String BASE_URL = "http://publichealthathens.com/healthscores/";
     public static final String PAGE_URL = "_county_restaurant_scores.html";

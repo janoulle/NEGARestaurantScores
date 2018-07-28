@@ -3,7 +3,6 @@ package com.janeullah.healthinspectionrecords.constants;
 /**
  * Author: Jane Ullah Date: 9/18/2016
  */
-@SuppressWarnings("all")
 public class WebSelectorConstants {
     public static final String RESTAURANT_NAME_SELECTOR = ".estab_name";
     public static final String RESTAURANT_ADDRESS_SELECTOR = ".estab_addr";
