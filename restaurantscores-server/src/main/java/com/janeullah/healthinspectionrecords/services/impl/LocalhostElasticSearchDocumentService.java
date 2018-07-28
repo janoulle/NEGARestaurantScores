@@ -17,27 +17,27 @@ import java.util.Map;
 @Service
 public class LocalhostElasticSearchDocumentService implements ElasticSearchable<String> {
 
-  @Value("${LOCAL_ES_URL}")
-  private String localhostUrl;
+    @Value("${LOCAL_ES_URL}")
+    private String localhostUrl;
 
-  private RemoteRestClient restClient;
+    private RemoteRestClient restClient;
 
-  @Autowired
-  public LocalhostElasticSearchDocumentService(RemoteRestClient restClient) {
-    this.restClient = restClient;
-  }
+    @Autowired
+    public LocalhostElasticSearchDocumentService(RemoteRestClient restClient) {
+        this.restClient = restClient;
+    }
 
-  @PostConstruct
-  private String getLocalhostUrl() {
-    return localhostUrl.concat("/restaurants/restaurant/{id}");
-  }
+    @PostConstruct
+    private String getLocalhostUrl() {
+        return localhostUrl.concat("/restaurants/restaurant/{id}");
+    }
 
-  @Override
-  public ResponseEntity<String> addRestaurantDocument(
-      Long id, FlattenedRestaurant flattenedRestaurant) {
-    Map<String, Long> vars = ImmutableMap.of("id", id);
-    return restClient
-        .getRestTemplate()
-        .postForEntity(getLocalhostUrl(), flattenedRestaurant, String.class, vars);
-  }
+    @Override
+    public ResponseEntity<String> addRestaurantDocument(
+            Long id, FlattenedRestaurant flattenedRestaurant) {
+        Map<String, Long> vars = ImmutableMap.of("id", id);
+        return restClient
+                .getRestTemplate()
+                .postForEntity(getLocalhostUrl(), flattenedRestaurant, String.class, vars);
+    }
 }

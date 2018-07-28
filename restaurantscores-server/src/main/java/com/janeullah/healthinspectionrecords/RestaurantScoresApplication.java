@@ -13,10 +13,10 @@ import java.util.Arrays;
 @SpringBootApplication(scanBasePackages = {"com.janeullah.healthinspectionrecords"})
 public class RestaurantScoresApplication {
 
-  public static void main(String[] args) {
-    ApplicationContext ctx = SpringApplication.run(RestaurantScoresApplication.class, args);
-    log.debug("Beans provided by the Restaurant Scores application");
+    public static void main(String[] args) {
+        ApplicationContext ctx = SpringApplication.run(RestaurantScoresApplication.class, args);
+        log.debug("Beans provided by the Restaurant Scores application");
 
-    Arrays.stream(ctx.getBeanDefinitionNames()).sorted().forEach(log::debug);
-  }
+        Arrays.stream(ctx.getBeanDefinitionNames()).sorted().forEach(log::debug);
+    }
 }

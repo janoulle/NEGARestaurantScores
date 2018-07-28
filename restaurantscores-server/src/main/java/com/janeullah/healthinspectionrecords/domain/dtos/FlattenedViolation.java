@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class FlattenedViolation {
-  private Long violationId;
-  private String severity;
-  private String category;
-  private String section;
-  private String inspectionType;
-  private String summary;
-  private String notes;
+    private Long violationId;
+    private String severity;
+    private String category;
+    private String section;
+    private String inspectionType;
+    private String summary;
+    private String notes;
 }

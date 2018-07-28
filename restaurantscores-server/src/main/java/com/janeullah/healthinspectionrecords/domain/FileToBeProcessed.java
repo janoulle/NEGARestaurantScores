@@ -7,10 +7,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileToBeProcessed {
+    // Barrow_county_restaurant_scores.html should match just 'Barrow'
+    private static final Pattern MATCH_TILL_FIRST_UNDERSCORE = Pattern.compile("^[^_]+(?=_)");
     private Path file;
     private String countyName;
-  // Barrow_county_restaurant_scores.html should match just 'Barrow'
-  private static final Pattern MATCH_TILL_FIRST_UNDERSCORE = Pattern.compile("^[^_]+(?=_)");
 
     public FileToBeProcessed(Path file) {
         Preconditions.checkNotNull(file);
@@ -29,5 +29,7 @@ public class FileToBeProcessed {
         return countyName;
     }
 
-    public Path getFile() { return file; }
+    public Path getFile() {
+        return file;
+    }
 }

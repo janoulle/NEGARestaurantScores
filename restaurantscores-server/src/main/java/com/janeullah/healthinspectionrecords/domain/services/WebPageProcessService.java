@@ -21,57 +21,57 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.EXECUTOR_S
 @Service
 public class WebPageProcessService {
 
-  private RestaurantPersistenceService restaurantPersistenceService;
+    private RestaurantPersistenceService restaurantPersistenceService;
 
-  @Autowired
-  public WebPageProcessService(RestaurantPersistenceService restaurantPersistenceService) {
-    this.restaurantPersistenceService = restaurantPersistenceService;
-  }
-
-  public void submitFileForProcessing(@NotNull Path file, CountDownLatch countDownLatch) {
-
-    if (file.getFileName() == null) {
-      log.error("Invalid file path passed in");
-      countDownLatch.countDown();
-      return;
+    @Autowired
+    public WebPageProcessService(RestaurantPersistenceService restaurantPersistenceService) {
+        this.restaurantPersistenceService = restaurantPersistenceService;
     }
 
-    FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(file);
-    ListenableFuture<List<Restaurant>> future =
-        EXECUTOR_SERVICE.submit(new WebPageProcessAsync(fileToBeProcessed));
-    Futures.addCallback(
-        future,
-        new WebPageProcessRequestCallBack(fileToBeProcessed.getCountyName(), countDownLatch),
-        EXECUTOR_SERVICE);
-  }
+    public void submitFileForProcessing(@NotNull Path file, CountDownLatch countDownLatch) {
 
-  public void waitForAllProcessing(CountDownLatch countDownLatch) throws InterruptedException {
-    // wait for processing to complete
-    countDownLatch.await();
-  }
+        if (file.getFileName() == null) {
+            log.error("Invalid file path passed in");
+            countDownLatch.countDown();
+            return;
+        }
 
-  private class WebPageProcessRequestCallBack implements FutureCallback<List<Restaurant>> {
-    private String countyFile;
-    private CountDownLatch countDownLatch;
-
-    WebPageProcessRequestCallBack(String county, CountDownLatch countDownLatch) {
-      this.countyFile = county;
-      this.countDownLatch = countDownLatch;
+        FileToBeProcessed fileToBeProcessed = new FileToBeProcessed(file);
+        ListenableFuture<List<Restaurant>> future =
+                EXECUTOR_SERVICE.submit(new WebPageProcessAsync(fileToBeProcessed));
+        Futures.addCallback(
+                future,
+                new WebPageProcessRequestCallBack(fileToBeProcessed.getCountyName(), countDownLatch),
+                EXECUTOR_SERVICE);
     }
 
-    @Override
-    public void onSuccess(List<Restaurant> result) {
-      log.info("Web Page Processing completed for county: {} size: {}", countyFile, result.size());
-      restaurantPersistenceService.saveAll(result);
-      countDownLatch.countDown();
+    public void waitForAllProcessing(CountDownLatch countDownLatch) throws InterruptedException {
+        // wait for processing to complete
+        countDownLatch.await();
     }
 
-    @Override
-    public void onFailure(Throwable thrown) {
-      log.error("Failure during Future callback for async file processing", thrown);
-      countDownLatch.countDown();
+    private class WebPageProcessRequestCallBack implements FutureCallback<List<Restaurant>> {
+        private String countyFile;
+        private CountDownLatch countDownLatch;
+
+        WebPageProcessRequestCallBack(String county, CountDownLatch countDownLatch) {
+            this.countyFile = county;
+            this.countDownLatch = countDownLatch;
+        }
+
+        @Override
+        public void onSuccess(List<Restaurant> result) {
+            log.info("Web Page Processing completed for county: {} size: {}", countyFile, result.size());
+            restaurantPersistenceService.saveAll(result);
+            countDownLatch.countDown();
+        }
+
+        @Override
+        public void onFailure(Throwable thrown) {
+            log.error("Failure during Future callback for async file processing", thrown);
+            countDownLatch.countDown();
+        }
     }
-  }
 }
 
 

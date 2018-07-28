@@ -23,53 +23,55 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-/** Author: Jane Ullah Date: 9/18/2016 */
+/**
+ * Author: Jane Ullah Date: 9/18/2016
+ */
 @Slf4j
 public class WebPageProcessAsync implements Callable<List<Restaurant>> {
 
-  private Elements hiddenDivs;
-  private FileToBeProcessed fileToBeProcessed;
+    private Elements hiddenDivs;
+    private FileToBeProcessed fileToBeProcessed;
 
-  public WebPageProcessAsync(FileToBeProcessed fileToBeProcessed) {
-    this.fileToBeProcessed = fileToBeProcessed;
-  }
-
-  private void setHiddenDivs(Document doc) {
-    try {
-      hiddenDivs =
-          doc.select("div:not([class])")
-              .stream()
-              .filter(entry -> StringUtils.isNumeric(entry.id()))
-              .collect(Collectors.toCollection(Elements::new));
-    } catch (Selector.SelectorParseException e) {
-      log.error("Error setting hidden divs which contain violation explanations", e);
+    public WebPageProcessAsync(FileToBeProcessed fileToBeProcessed) {
+        this.fileToBeProcessed = fileToBeProcessed;
     }
-  }
 
-  private Elements processFile() throws IOException {
-    try (InputStream in = Files.newInputStream(fileToBeProcessed.getFile())) {
-      Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
-      setHiddenDivs(doc);
-      return doc.select(WebSelectorConstants.ALL_ROW);
+    private void setHiddenDivs(Document doc) {
+        try {
+            hiddenDivs =
+                    doc.select("div:not([class])")
+                            .stream()
+                            .filter(entry -> StringUtils.isNumeric(entry.id()))
+                            .collect(Collectors.toCollection(Elements::new));
+        } catch (Selector.SelectorParseException e) {
+            log.error("Error setting hidden divs which contain violation explanations", e);
+        }
     }
-  }
 
-  @Override
-  public List<Restaurant> call() throws WebPageProcessAsyncException {
-    String county = fileToBeProcessed.getCountyName();
-    try {
-      List<Restaurant> restaurantsInFile = new ArrayList<>();
-
-      for (Element entry : processFile()) {
-        RestaurantProcessor restaurantProcessor =
-            new RestaurantProcessor(county, entry, hiddenDivs);
-        Optional<Restaurant> restaurant = restaurantProcessor.createRestaurant();
-        restaurant.ifPresent(restaurantsInFile::add);
-      }
-      return restaurantsInFile;
-    } catch (Selector.SelectorParseException | IOException e) {
-      log.error("Exception processing the downloaded web page for  {}", county, e);
-      throw new WebPageProcessAsyncException("Error during processing of " + county + " file", e);
+    private Elements processFile() throws IOException {
+        try (InputStream in = Files.newInputStream(fileToBeProcessed.getFile())) {
+            Document doc = Jsoup.parse(in, CharEncoding.UTF_8, WebPageConstants.BASE_URL);
+            setHiddenDivs(doc);
+            return doc.select(WebSelectorConstants.ALL_ROW);
+        }
     }
-  }
+
+    @Override
+    public List<Restaurant> call() throws WebPageProcessAsyncException {
+        String county = fileToBeProcessed.getCountyName();
+        try {
+            List<Restaurant> restaurantsInFile = new ArrayList<>();
+
+            for (Element entry : processFile()) {
+                RestaurantProcessor restaurantProcessor =
+                        new RestaurantProcessor(county, entry, hiddenDivs);
+                Optional<Restaurant> restaurant = restaurantProcessor.createRestaurant();
+                restaurant.ifPresent(restaurantsInFile::add);
+            }
+            return restaurantsInFile;
+        } catch (Selector.SelectorParseException | IOException e) {
+            log.error("Exception processing the downloaded web page for  {}", county, e);
+            throw new WebPageProcessAsyncException("Error during processing of " + county + " file", e);
+        }
+    }
 }

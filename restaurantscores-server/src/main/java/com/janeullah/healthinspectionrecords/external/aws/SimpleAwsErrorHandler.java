@@ -18,6 +18,7 @@ package com.janeullah.healthinspectionrecords.external.aws;
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.http.HttpResponse;
 import com.amazonaws.http.HttpResponseHandler;
@@ -33,27 +34,29 @@ import com.amazonaws.http.HttpResponseHandler;
  */
 public class SimpleAwsErrorHandler implements HttpResponseHandler<AmazonServiceException> {
 
-  /** See {@link HttpResponseHandler}, method needsConnectionLeftOpen() */
-  private boolean needsConnectionLeftOpen;
+    /**
+     * See {@link HttpResponseHandler}, method needsConnectionLeftOpen()
+     */
+    private boolean needsConnectionLeftOpen;
 
-  /**
-   * Ctor.
-   *
-   * @param connectionLeftOpen Should the connection be closed immediately or not?
-   */
-  public SimpleAwsErrorHandler(boolean connectionLeftOpen) {
-    this.needsConnectionLeftOpen = connectionLeftOpen;
-  }
+    /**
+     * Ctor.
+     *
+     * @param connectionLeftOpen Should the connection be closed immediately or not?
+     */
+    public SimpleAwsErrorHandler(boolean connectionLeftOpen) {
+        this.needsConnectionLeftOpen = connectionLeftOpen;
+    }
 
-  @Override
-  public AmazonServiceException handle(HttpResponse response) {
-    AmazonServiceException ase = new AmazonServiceException(response.getStatusText());
-    ase.setStatusCode(response.getStatusCode());
-    return ase;
-  }
+    @Override
+    public AmazonServiceException handle(HttpResponse response) {
+        AmazonServiceException ase = new AmazonServiceException(response.getStatusText());
+        ase.setStatusCode(response.getStatusCode());
+        return ase;
+    }
 
-  @Override
-  public boolean needsConnectionLeftOpen() {
-    return this.needsConnectionLeftOpen;
-  }
+    @Override
+    public boolean needsConnectionLeftOpen() {
+        return this.needsConnectionLeftOpen;
+    }
 }

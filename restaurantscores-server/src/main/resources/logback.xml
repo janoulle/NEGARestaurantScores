@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- https://stackoverflow.com/questions/6358836/log4j-how-to-configure-simplest-possible-file-logging -->
 <configuration scan="true">
-    <property name="APPLICATION_ID" value="restaurant-scores" />
+    <property name="APPLICATION_ID" value="restaurant-scores"/>
 
     <!-- workaround for {VAR}_HOME_IS_UNDEFINED folder creation during local build-->
     <if condition='isDefined("APP_DATA_FOLDER")'>
-        <then><property name="LOG_FOLDER" value="${APP_DATA_FOLDER}${file.separator}logs"/></then>
-        <else><property name="LOG_FOLDER" value="F:${file.separator}Repositories${file.separator}Docker${file.separator}restaurantscores${file.separator}logs" /></else>
+        <then>
+            <property name="LOG_FOLDER" value="${APP_DATA_FOLDER}${file.separator}logs"/>
+        </then>
+        <else>
+            <property name="LOG_FOLDER"
+                      value="F:${file.separator}Repositories${file.separator}Docker${file.separator}restaurantscores${file.separator}logs"/>
+        </else>
     </if>
 
     <!-- http://www.mkyong.com/logging/logback-xml-example/,

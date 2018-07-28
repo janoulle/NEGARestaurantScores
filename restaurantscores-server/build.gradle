@@ -19,10 +19,6 @@ apply from: '../gradle/dependencies.gradle'
 apply from: 'palantirdockertasks.gradle'
 apply from: 'releasemanagement.gradle'
 
-//Transmode docker tasks
-//apply plugin: 'docker'
-//apply from: 'transmodedockertasks.gradle'
-
 //https://stackoverflow.com/questions/17262856/gradle-how-to-set-the-project-name-group-version-plus-source-targetcompatibi
 group = projectGroup
 version = projectVersion

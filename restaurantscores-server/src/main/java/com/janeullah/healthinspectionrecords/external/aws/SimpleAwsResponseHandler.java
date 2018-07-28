@@ -18,6 +18,7 @@ package com.janeullah.healthinspectionrecords.external.aws;
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.http.HttpResponse;
 import com.amazonaws.http.HttpResponseHandler;
@@ -38,36 +39,38 @@ import java.io.StringWriter;
  */
 public class SimpleAwsResponseHandler implements HttpResponseHandler<HttpResponse> {
 
-  /** See {@link HttpResponseHandler}, method needsConnectionLeftOpen() */
-  private boolean needsConnectionLeftOpen;
+    /**
+     * See {@link HttpResponseHandler}, method needsConnectionLeftOpen()
+     */
+    private boolean needsConnectionLeftOpen;
 
-  public SimpleAwsResponseHandler(boolean connectionLeftOpen) {
-    this.needsConnectionLeftOpen = connectionLeftOpen;
-  }
-
-  @Override
-  public HttpResponse handle(HttpResponse response) {
-
-    int status = response.getStatusCode();
-    if (status < 200 || status >= 300) {
-      String content;
-      try {
-        final StringWriter writer = new StringWriter();
-        IOUtils.copy(response.getContent(), writer, "UTF-8");
-        content = writer.toString();
-      } catch (final IOException e) {
-        content = "Couldn't get response content!";
-      }
-      AmazonServiceException ase = new AmazonServiceException(content);
-      ase.setStatusCode(status);
-      throw ase;
+    public SimpleAwsResponseHandler(boolean connectionLeftOpen) {
+        this.needsConnectionLeftOpen = connectionLeftOpen;
     }
 
-    return response;
-  }
+    @Override
+    public HttpResponse handle(HttpResponse response) {
 
-  @Override
-  public boolean needsConnectionLeftOpen() {
-    return this.needsConnectionLeftOpen;
-  }
+        int status = response.getStatusCode();
+        if (status < 200 || status >= 300) {
+            String content;
+            try {
+                final StringWriter writer = new StringWriter();
+                IOUtils.copy(response.getContent(), writer, "UTF-8");
+                content = writer.toString();
+            } catch (final IOException e) {
+                content = "Couldn't get response content!";
+            }
+            AmazonServiceException ase = new AmazonServiceException(content);
+            ase.setStatusCode(status);
+            throw ase;
+        }
+
+        return response;
+    }
+
+    @Override
+    public boolean needsConnectionLeftOpen() {
+        return this.needsConnectionLeftOpen;
+    }
 }

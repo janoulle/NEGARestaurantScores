@@ -18,36 +18,36 @@ import java.util.List;
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-  List<Restaurant> findByEstablishmentInfoNameIgnoreCase(String name);
+    List<Restaurant> findByEstablishmentInfoNameIgnoreCase(String name);
 
-  List<Restaurant> findByEstablishmentInfoCountyIgnoreCase(String county);
+    List<Restaurant> findByEstablishmentInfoCountyIgnoreCase(String county);
 
-  List<Restaurant> findByEstablishmentInfoNameIgnoreCaseAndEstablishmentInfoCountyIgnoreCase(
-      String name, String county);
+    List<Restaurant> findByEstablishmentInfoNameIgnoreCaseAndEstablishmentInfoCountyIgnoreCase(
+            String name, String county);
 
-  List<Restaurant> findByEstablishmentInfoNameContaining(String name);
+    List<Restaurant> findByEstablishmentInfoNameContaining(String name);
 
-  @Query("select r from InspectionReport ir inner join ir.restaurant r where ir.score >= :limit")
-  List<Restaurant> findRestaurantsWithScoresGreaterThanOrEqual(@Param("limit") int limit);
+    @Query("select r from InspectionReport ir inner join ir.restaurant r where ir.score >= :limit")
+    List<Restaurant> findRestaurantsWithScoresGreaterThanOrEqual(@Param("limit") int limit);
 
-  @Query("select r from InspectionReport ir inner join ir.restaurant r where ir.score <= :limit")
-  List<Restaurant> findRestaurantsWithScoresLessThanOrEqual(@Param("limit") int limit);
+    @Query("select r from InspectionReport ir inner join ir.restaurant r where ir.score <= :limit")
+    List<Restaurant> findRestaurantsWithScoresLessThanOrEqual(@Param("limit") int limit);
 
-  @Query(
-      "select r from InspectionReport ir inner join ir.restaurant r where ir.score between :lower and :upper")
-  List<Restaurant> findRestaurantsWithScoresBetween(
-      @Param("lower") int lower, @Param("upper") int upper);
+    @Query(
+            "select r from InspectionReport ir inner join ir.restaurant r where ir.score between :lower and :upper")
+    List<Restaurant> findRestaurantsWithScoresBetween(
+            @Param("lower") int lower, @Param("upper") int upper);
 
-  @Query(
-      "select r from Violation v inner join v.inspectionReport ir inner join ir.restaurant r where v.severity = 3")
-  List<Restaurant> findRestaurantsWithCriticalViolations();
+    @Query(
+            "select r from Violation v inner join v.inspectionReport ir inner join ir.restaurant r where v.severity = 3")
+    List<Restaurant> findRestaurantsWithCriticalViolations();
 
-  @Cacheable("allFlattenedRestaurantsFromRepository")
-  @Query(
-    value =
-        "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant"
-            + "(r.id,ir.score,r.criticalCount,r.nonCriticalCount,r.establishmentInfo.name,ir.dateReported,r.establishmentInfo.address,r.establishmentInfo.county) "
-            + "from InspectionReport ir inner join ir.restaurant r ORDER BY r.establishmentInfo.name ASC"
-  )
-  List<FlattenedRestaurant> findAllFlattenedRestaurants();
+    @Cacheable("allFlattenedRestaurantsFromRepository")
+    @Query(
+            value =
+                    "select new com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant"
+                            + "(r.id,ir.score,r.criticalCount,r.nonCriticalCount,r.establishmentInfo.name,ir.dateReported,r.establishmentInfo.address,r.establishmentInfo.county) "
+                            + "from InspectionReport ir inner join ir.restaurant r ORDER BY r.establishmentInfo.name ASC"
+    )
+    List<FlattenedRestaurant> findAllFlattenedRestaurants();
 }

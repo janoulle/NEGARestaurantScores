@@ -21,39 +21,40 @@ import java.nio.file.Paths;
 @Component
 public class PathVariables {
 
-  @Value("${RELATIVE_PATH_TO_PAGE_STORAGE}")
-  private String relativePathToPageStorage;
+    @Value("${RELATIVE_PATH_TO_PAGE_STORAGE}")
+    private String relativePathToPageStorage;
 
-  @Value("${APP_DATA_FOLDER}")
-  private String appDataFolder;
+    @Value("${APP_DATA_FOLDER}")
+    private String appDataFolder;
 
-  /**
-   * Get list of files in the configured directory.
-   * @return Array of File objects.
-   */
-  public File[] getFilesInDefaultDirectory() {
-    try {
+    /**
+     * Get list of files in the configured directory.
+     *
+     * @return Array of File objects.
+     */
+    public File[] getFilesInDefaultDirectory() {
+        try {
 
-      File original = Paths.get(getPath()).toFile();
-      File[] filesInDirectory = original.listFiles();
-      if (filesInDirectory != null) {
-        return filesInDirectory;
-      }
+            File original = Paths.get(getPath()).toFile();
+            File[] filesInDirectory = original.listFiles();
+            if (filesInDirectory != null) {
+                return filesInDirectory;
+            }
 
-      log.error("Failed to fetch files in directory");
-    } catch (InvalidPathException | SecurityException e) {
-      log.error("Failed to load directory with {] ", getPath(), e);
+            log.error("Failed to fetch files in directory");
+        } catch (InvalidPathException | SecurityException e) {
+            log.error("Failed to load directory with {] ", getPath(), e);
+        }
+        return new File[0];
     }
-    return new File[0];
-  }
 
-  public File getDefaultFilePath(String fileName) {
-    return new File(getPath() + File.separator + fileName);
-  }
+    public File getDefaultFilePath(String fileName) {
+        return new File(getPath() + File.separator + fileName);
+    }
 
-  private String getPath() {
-    return StringUtils.isNotBlank(appDataFolder)
-        ? appDataFolder + File.separator + relativePathToPageStorage
-        : relativePathToPageStorage;
-  }
+    private String getPath() {
+        return StringUtils.isNotBlank(appDataFolder)
+                ? appDataFolder + File.separator + relativePathToPageStorage
+                : relativePathToPageStorage;
+    }
 }

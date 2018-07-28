@@ -10,13 +10,13 @@ import javax.servlet.annotation.WebListener;
 @Slf4j
 @WebListener
 public class ThreadCleanup implements ServletContextListener {
-  @Override
-  public void contextDestroyed(ServletContextEvent evt) {
-    ExecutorUtil.shutdown();
-  }
+    @Override
+    public void contextDestroyed(ServletContextEvent evt) {
+        ExecutorUtil.shutdown();
+    }
 
-  @Override
-  public void contextInitialized(ServletContextEvent evt) {
-    log.info("context getting initialized");
-  }
+    @Override
+    public void contextInitialized(ServletContextEvent evt) {
+        log.info("context getting initialized");
+    }
 }

@@ -25,66 +25,66 @@ import java.util.List;
 @RequestMapping("/admin")
 @RestController
 public class MainController {
-  private WebEventOrchestrator webEventOrchestrator;
-  private FirebaseInitialization firebaseInitialization;
-  private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
-  private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
-  private AwsElasticSearchDocumentService awsElasticSearchDocumentService;
-  private RestaurantRepository restaurantRepository;
+    private WebEventOrchestrator webEventOrchestrator;
+    private FirebaseInitialization firebaseInitialization;
+    private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
+    private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
+    private AwsElasticSearchDocumentService awsElasticSearchDocumentService;
+    private RestaurantRepository restaurantRepository;
 
-  @Autowired
-  public MainController(
-      WebEventOrchestrator webEventOrchestrator,
-      FirebaseInitialization firebaseInitialization,
-      RestaurantRepository restaurantRepository,
-      AwsElasticSearchDocumentService awsElasticSearchDocumentService,
-      LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService,
-      HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService) {
-    this.webEventOrchestrator = webEventOrchestrator;
-    this.firebaseInitialization = firebaseInitialization;
-    this.restaurantRepository = restaurantRepository;
-    this.awsElasticSearchDocumentService = awsElasticSearchDocumentService;
-    this.localhostElasticSearchDocumentService = localhostElasticSearchDocumentService;
-    this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
-  }
+    @Autowired
+    public MainController(
+            WebEventOrchestrator webEventOrchestrator,
+            FirebaseInitialization firebaseInitialization,
+            RestaurantRepository restaurantRepository,
+            AwsElasticSearchDocumentService awsElasticSearchDocumentService,
+            LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService,
+            HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService) {
+        this.webEventOrchestrator = webEventOrchestrator;
+        this.firebaseInitialization = firebaseInitialization;
+        this.restaurantRepository = restaurantRepository;
+        this.awsElasticSearchDocumentService = awsElasticSearchDocumentService;
+        this.localhostElasticSearchDocumentService = localhostElasticSearchDocumentService;
+        this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
+    }
 
-  @PutMapping(value = "/initializeLocalDB")
-  @ResponseStatus(HttpStatus.OK)
-  public void writeRecordsToDB() {
-    webEventOrchestrator.processAndSaveAllRestaurants();
-    log.info("Processing initiated");
-  }
+    @PutMapping(value = "/initializeLocalDB")
+    @ResponseStatus(HttpStatus.OK)
+    public void writeRecordsToDB() {
+        webEventOrchestrator.processAndSaveAllRestaurants();
+        log.info("Processing initiated");
+    }
 
-  @PutMapping(value = "/initializeFirebaseDB")
-  public ResponseEntity<HttpStatus> writeRecordsToFirebase() {
-    return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
-        ? new ResponseEntity<>(HttpStatus.OK)
-        : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
-  }
+    @PutMapping(value = "/initializeFirebaseDB")
+    public ResponseEntity<HttpStatus> writeRecordsToFirebase() {
+        return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
+                ? new ResponseEntity<>(HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+    }
 
-  @PostMapping(value = "/seedElasticSearchDBLocal")
-  public ResponseEntity<HttpStatus> seedElasticSearchDBLocal() {
-    List<FlattenedRestaurant> flattenedRestaurants =
-        restaurantRepository.findAllFlattenedRestaurants();
-    ResponseEntity<String> result =
-        localhostElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
-    return new ResponseEntity<>(result.getStatusCode());
-  }
+    @PostMapping(value = "/seedElasticSearchDBLocal")
+    public ResponseEntity<HttpStatus> seedElasticSearchDBLocal() {
+        List<FlattenedRestaurant> flattenedRestaurants =
+                restaurantRepository.findAllFlattenedRestaurants();
+        ResponseEntity<String> result =
+                localhostElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
+        return new ResponseEntity<>(result.getStatusCode());
+    }
 
-  @PostMapping(value = "/seedElasticSearchDBAWS")
-  public ResponseEntity<HttpStatus> seedElasticSearchDBAWS() {
-    List<FlattenedRestaurant> flattenedRestaurants =
-        restaurantRepository.findAllFlattenedRestaurants();
+    @PostMapping(value = "/seedElasticSearchDBAWS")
+    public ResponseEntity<HttpStatus> seedElasticSearchDBAWS() {
+        List<FlattenedRestaurant> flattenedRestaurants =
+                restaurantRepository.findAllFlattenedRestaurants();
 
-    return awsElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
-  }
+        return awsElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
+    }
 
-  @PostMapping(value = "/seedElasticSearchDBHeroku")
-  public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
-    List<FlattenedRestaurant> flattenedRestaurants =
-        restaurantRepository.findAllFlattenedRestaurants();
-    ResponseEntity<String> result =
-        herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
-    return new ResponseEntity<>(result.getStatusCode());
-  }
+    @PostMapping(value = "/seedElasticSearchDBHeroku")
+    public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
+        List<FlattenedRestaurant> flattenedRestaurants =
+                restaurantRepository.findAllFlattenedRestaurants();
+        ResponseEntity<String> result =
+                herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
+        return new ResponseEntity<>(result.getStatusCode());
+    }
 }

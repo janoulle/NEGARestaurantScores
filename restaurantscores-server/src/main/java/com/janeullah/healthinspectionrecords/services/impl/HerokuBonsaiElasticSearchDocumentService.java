@@ -20,47 +20,47 @@ import java.util.Map;
 @Service
 public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchable<String> {
 
-  @Value("${BONSAI_URL}")
-  private String herokuBonsaiUrl;
+    @Value("${BONSAI_URL}")
+    private String herokuBonsaiUrl;
 
-  @Value("${BONSAI_USERNAME}")
-  private String herokuBonsaiUserName;
+    @Value("${BONSAI_USERNAME}")
+    private String herokuBonsaiUserName;
 
-  @Value("${BONSAI_PASSWORD}")
-  private String herokuBonsaiPassword;
+    @Value("${BONSAI_PASSWORD}")
+    private String herokuBonsaiPassword;
 
-  private RemoteRestClient restClient;
+    private RemoteRestClient restClient;
 
-  @Autowired
-  public HerokuBonsaiElasticSearchDocumentService(RemoteRestClient restClient) {
-    this.restClient = restClient;
-  }
-
-  @Override
-  public ResponseEntity<String> addRestaurantDocument(
-      Long id, FlattenedRestaurant flattenedRestaurant) {
-    HttpEntity<FlattenedRestaurant> requestWithHeaders =
-        restClient.getHttpRequestEntityForExchange(flattenedRestaurant, getAuthHeaders());
-    return restClient
-        .getHttpsRestTemplate()
-        .exchange(
-            herokuBonsaiUrl.concat("/restaurants/restaurant/").concat(Long.toString(id)),
-            HttpMethod.POST,
-            requestWithHeaders,
-            String.class);
-  }
-
-  private Map<String, String> getAuthHeaders() {
-    try {
-      Base64.Encoder encoder = Base64.getEncoder();
-      String base64EncodedValue =
-          new String(
-              encoder.encode(
-                  (herokuBonsaiUserName + ":" + herokuBonsaiPassword).getBytes("UTF-8")));
-      return ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
-    } catch (Exception e) {
-      log.error("Error generating auth header", e);
+    @Autowired
+    public HerokuBonsaiElasticSearchDocumentService(RemoteRestClient restClient) {
+        this.restClient = restClient;
     }
-    return new HashMap<>();
-  }
+
+    @Override
+    public ResponseEntity<String> addRestaurantDocument(
+            Long id, FlattenedRestaurant flattenedRestaurant) {
+        HttpEntity<FlattenedRestaurant> requestWithHeaders =
+                restClient.getHttpRequestEntityForExchange(flattenedRestaurant, getAuthHeaders());
+        return restClient
+                .getHttpsRestTemplate()
+                .exchange(
+                        herokuBonsaiUrl.concat("/restaurants/restaurant/").concat(Long.toString(id)),
+                        HttpMethod.POST,
+                        requestWithHeaders,
+                        String.class);
+    }
+
+    private Map<String, String> getAuthHeaders() {
+        try {
+            Base64.Encoder encoder = Base64.getEncoder();
+            String base64EncodedValue =
+                    new String(
+                            encoder.encode(
+                                    (herokuBonsaiUserName + ":" + herokuBonsaiPassword).getBytes("UTF-8")));
+            return ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
+        } catch (Exception e) {
+            log.error("Error generating auth header", e);
+        }
+        return new HashMap<>();
+    }
 }

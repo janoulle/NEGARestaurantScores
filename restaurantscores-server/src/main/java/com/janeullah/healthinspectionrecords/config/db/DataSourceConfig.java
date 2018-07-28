@@ -27,17 +27,17 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(basePackages = {"com.janeullah.healthinspectionrecords.repository"})
 public class DataSourceConfig {
 
-  @Bean
-  @Primary
-  @ConfigurationProperties("spring.datasource")
-  public DataSourceProperties dataSourceProperties() {
-    return new DataSourceProperties();
-  }
+    @Bean
+    @Primary
+    @ConfigurationProperties("spring.datasource")
+    public DataSourceProperties dataSourceProperties() {
+        return new DataSourceProperties();
+    }
 
-  @Bean(name = "dataSource")
-  @Primary
-  @ConfigurationProperties("spring.datasource")
-  public DataSource dataSource() {
-    return dataSourceProperties().initializeDataSourceBuilder().build();
-  }
+    @Bean(name = "dataSource")
+    @Primary
+    @ConfigurationProperties("spring.datasource")
+    public DataSource dataSource() {
+        return dataSourceProperties().initializeDataSourceBuilder().build();
+    }
 }

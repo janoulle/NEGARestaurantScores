@@ -12,6 +12,6 @@ import java.util.Map;
 @Builder
 @Data
 public class County {
-  private String name;
-  private Map<String, FlattenedRestaurant> restaurants;
+    private String name;
+    private Map<String, FlattenedRestaurant> restaurants;
 }

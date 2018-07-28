@@ -18,26 +18,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/healthcheck")
 public class HealthCheckController {
-  private FirebaseInitialization firebaseInitialization;
+    private FirebaseInitialization firebaseInitialization;
 
-  @Autowired
-  public HealthCheckController(FirebaseInitialization firebaseInitialization) {
-    this.firebaseInitialization = firebaseInitialization;
-  }
-
-  @GetMapping(value = "/isAlive")
-  @ResponseStatus(HttpStatus.OK)
-  public String checkIsAlive() {
-    return "OK";
-  }
-
-  @GetMapping(value = "/testFirebaseConnectivity")
-  public ResponseEntity<HttpStatus> testFirebaseConnectivity() {
-    if (firebaseInitialization.isDatabaseInitialized()) {
-      firebaseInitialization.printCounties();
-      return new ResponseEntity<>(HttpStatus.OK);
+    @Autowired
+    public HealthCheckController(FirebaseInitialization firebaseInitialization) {
+        this.firebaseInitialization = firebaseInitialization;
     }
 
-    return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
-  }
+    @GetMapping(value = "/isAlive")
+    @ResponseStatus(HttpStatus.OK)
+    public String checkIsAlive() {
+        return "OK";
+    }
+
+    @GetMapping(value = "/testFirebaseConnectivity")
+    public ResponseEntity<HttpStatus> testFirebaseConnectivity() {
+        if (firebaseInitialization.isDatabaseInitialized()) {
+            firebaseInitialization.printCounties();
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+    }
 }

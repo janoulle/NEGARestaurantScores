@@ -17,39 +17,39 @@ import java.net.URI;
  */
 @Slf4j
 public class AwsV4RequestSigner {
-  private final String regionName;
-  private final String serviceName;
-  private final AWSCredentials awsCredentials;
-  private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final String regionName;
+    private final String serviceName;
+    private final AWSCredentials awsCredentials;
 
-  public AwsV4RequestSigner(AWSCredentials awsCredentials, String regionName, String serviceName) {
-    this.regionName = regionName;
-    this.serviceName = serviceName;
-    this.awsCredentials = awsCredentials;
-  }
-
-  public Request<Void> signRequest(Request<Void> signableRequest) {
-    AWS4Signer signer = new AWS4Signer(false);
-    signer.setRegionName(regionName);
-    signer.setServiceName(serviceName);
-    signer.sign(signableRequest, awsCredentials);
-    return signableRequest;
-  }
-
-  public <T> Request<Void> makeSignableRequest(T awsSearchRequest, String url) {
-    Request<Void> request = new DefaultRequest<>("es"); // Request to ElasticSearch
-    request.setHttpMethod(HttpMethodName.POST);
-    request.setEndpoint(URI.create(url));
-    request.setContent(IOUtils.toInputStream(writeValueAsString(awsSearchRequest)));
-    return request;
-  }
-
-  private String writeValueAsString(Object object) {
-    try {
-      return mapper.writeValueAsString(object);
-    } catch (Exception e) {
-      log.error("Unable to write class={} to string", object.getClass());
+    public AwsV4RequestSigner(AWSCredentials awsCredentials, String regionName, String serviceName) {
+        this.regionName = regionName;
+        this.serviceName = serviceName;
+        this.awsCredentials = awsCredentials;
     }
-    return StringUtils.EMPTY;
-  }
+
+    public Request<Void> signRequest(Request<Void> signableRequest) {
+        AWS4Signer signer = new AWS4Signer(false);
+        signer.setRegionName(regionName);
+        signer.setServiceName(serviceName);
+        signer.sign(signableRequest, awsCredentials);
+        return signableRequest;
+    }
+
+    public <T> Request<Void> makeSignableRequest(T awsSearchRequest, String url) {
+        Request<Void> request = new DefaultRequest<>("es"); // Request to ElasticSearch
+        request.setHttpMethod(HttpMethodName.POST);
+        request.setEndpoint(URI.create(url));
+        request.setContent(IOUtils.toInputStream(writeValueAsString(awsSearchRequest)));
+        return request;
+    }
+
+    private String writeValueAsString(Object object) {
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (Exception e) {
+            log.error("Unable to write class={} to string", object.getClass());
+        }
+        return StringUtils.EMPTY;
+    }
 }

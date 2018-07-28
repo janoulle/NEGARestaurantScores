@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class BaseExceptionHandler {
 
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  @ExceptionHandler(Throwable.class)
-  @ResponseBody
-  public ErrorResponse handleThrowable(final Throwable ex) {
-    log.error("Unhandled exception encountered", ex);
-    return new ErrorResponse("INTERNAL_SERVER_ERROR", ex.getMessage(), ex);
-  }
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Throwable.class)
+    @ResponseBody
+    public ErrorResponse handleThrowable(final Throwable ex) {
+        log.error("Unhandled exception encountered", ex);
+        return new ErrorResponse("INTERNAL_SERVER_ERROR", ex.getMessage(), ex);
+    }
 
 }
