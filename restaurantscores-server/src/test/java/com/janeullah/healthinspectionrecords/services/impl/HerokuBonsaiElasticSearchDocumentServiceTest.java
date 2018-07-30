@@ -1,7 +1,11 @@
 package com.janeullah.healthinspectionrecords.services.impl;
 
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
-import com.janeullah.healthinspectionrecords.rest.RemoteRestClient;
+import com.janeullah.healthinspectionrecords.domain.dtos.heroku.Acknowledgement;
+import com.janeullah.healthinspectionrecords.domain.dtos.heroku.HerokuIndexResponse;
+import com.janeullah.healthinspectionrecords.domain.dtos.heroku.Restaurants;
+import com.janeullah.healthinspectionrecords.exceptions.HerokuClientException;
+import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.util.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,19 +14,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,7 +30,9 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
     @InjectMocks
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     @Mock
-    private RemoteRestClient restClient;
+    private HerokuBonsaiServices herokuBonsaiServices;
+    @Mock
+    private RestaurantRepository restaurantRepository;
 
     @Before
     public void setup() {
@@ -45,47 +47,55 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
     @Test
     public void testAddRestaurantDocuments_Success() {
 
-        ResponseEntity<String> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(new ArrayList<>());
+        ResponseEntity<HttpStatus> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(new ArrayList<>());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void testAddRestaurantDocuments_EmptyList() {
 
-        ResponseEntity<String> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(new ArrayList<>());
+        ResponseEntity<HttpStatus> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(new ArrayList<>());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    public void testAddRestaurantDocuments_Error() {
-        RestTemplate mockRestTemplate = mock(RestTemplate.class);
-        HttpEntity<FlattenedRestaurant> httpEntity = mock(HttpEntity.class);
+    public void testAddRestaurantDocuments_Error() throws HerokuClientException {
+        HerokuIndexResponse response = HerokuIndexResponse.builder()
+                .restaurants(Restaurants.builder().build())
+                .build();
+        when(herokuBonsaiServices.getRestaurantIndex(anyMap())).thenReturn(response);
 
-        when(restClient.getHttpRequestEntityForExchange(any(FlattenedRestaurant.class), anyMap())).thenReturn(httpEntity);
-        when(restClient.getHttpsRestTemplate()).thenReturn(mockRestTemplate);
-        when(mockRestTemplate.exchange(anyString(),
-                eq(HttpMethod.POST),
-                any(HttpEntity.class),
-                eq(String.class))).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        HerokuClientException error = new HerokuClientException(404, "unspecified error", null);
+        when(herokuBonsaiServices.addRestaurantToIndex(anyString(), anyMap(), any(FlattenedRestaurant.class)))
+                .thenThrow(error);
 
-        ResponseEntity<String> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(Collections.singletonList(TestUtil.getSingleFlattenedRestaurant()));
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        ResponseEntity<HttpStatus> result = herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(Collections.singletonList(TestUtil.getSingleFlattenedRestaurant()));
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
     }
 
 
     @Test
-    public void testAddRestaurantDocument_Success() {
-        RestTemplate mockRestTemplate = mock(RestTemplate.class);
-        HttpEntity<FlattenedRestaurant> httpEntity = mock(HttpEntity.class);
+    public void testAddRestaurantDocument_Success() throws HerokuClientException {
+        when(herokuBonsaiServices.addRestaurantToIndex(anyString(), anyMap(), any(FlattenedRestaurant.class))).thenReturn(Acknowledgement.builder().build());
 
-        when(restClient.getHttpRequestEntityForExchange(any(FlattenedRestaurant.class), anyMap())).thenReturn(httpEntity);
-        when(restClient.getHttpsRestTemplate()).thenReturn(mockRestTemplate);
-        when(mockRestTemplate.exchange(anyString(),
-                eq(HttpMethod.POST),
-                any(HttpEntity.class),
-                eq(String.class))).thenReturn(new ResponseEntity<>(HttpStatus.OK));
-
-        ResponseEntity<String> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(1L, TestUtil.getSingleFlattenedRestaurant());
+        ResponseEntity<HttpStatus> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(1L, TestUtil.getSingleFlattenedRestaurant());
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testIsIndexPresent_Success() throws HerokuClientException {
+        HerokuIndexResponse response = HerokuIndexResponse.builder()
+                .restaurants(Restaurants.builder().build())
+                .build();
+        when(herokuBonsaiServices.getRestaurantIndex(anyMap())).thenReturn(response);
+        assertTrue(herokuBonsaiElasticSearchDocumentService.isIndexPresent());
+    }
+
+    @Test
+    public void testIsIndexPresent_IndexNotFound_Error() throws HerokuClientException {
+        HerokuClientException error = new HerokuClientException(404, "index_not_found_exception", null);
+        ReflectionTestUtils.setField(error, "errorType", "index_not_found_exception");
+        when(herokuBonsaiServices.getRestaurantIndex(anyMap())).thenThrow(error);
+        assertFalse(herokuBonsaiElasticSearchDocumentService.isIndexPresent());
     }
 }

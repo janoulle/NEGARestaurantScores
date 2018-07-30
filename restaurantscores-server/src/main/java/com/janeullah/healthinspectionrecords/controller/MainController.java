@@ -1,6 +1,7 @@
 package com.janeullah.healthinspectionrecords.controller;
 
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
+import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
@@ -29,6 +30,7 @@ public class MainController {
     private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     private RestaurantRepository restaurantRepository;
+    private ScheduledWebEvents scheduledWebEvents;
 
     @Autowired
     public MainController(
@@ -36,12 +38,14 @@ public class MainController {
             FirebaseInitialization firebaseInitialization,
             RestaurantRepository restaurantRepository,
             LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService,
-            HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService) {
+            HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService,
+            ScheduledWebEvents scheduledWebEvents) {
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
         this.restaurantRepository = restaurantRepository;
         this.localhostElasticSearchDocumentService = localhostElasticSearchDocumentService;
         this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
+        this.scheduledWebEvents = scheduledWebEvents;
     }
 
     @PutMapping(value = "/initializeLocalDB")
@@ -69,10 +73,17 @@ public class MainController {
 
     @PostMapping(value = "/seedElasticSearchDBHeroku")
     public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
-        List<FlattenedRestaurant> flattenedRestaurants =
-                restaurantRepository.findAllFlattenedRestaurants();
-        ResponseEntity<String> result =
-                herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
-        return new ResponseEntity<>(result.getStatusCode());
+        return herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()
+                ? new ResponseEntity<>(HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @PutMapping(value = "/runAll")
+    public ResponseEntity<HttpStatus> runAll() {
+        return scheduledWebEvents.runScheduledUpdates()
+                ? new ResponseEntity<>(HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }
+
 }

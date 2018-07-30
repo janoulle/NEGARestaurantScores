@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.controller;
 
+import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
@@ -40,6 +41,8 @@ public class MainControllerTest {
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     @MockBean
     private RestaurantRepository restaurantRepository;
+    @MockBean
+    private ScheduledWebEvents scheduledWebEvents;
 
     @Test
     public void testInitializeLocalDB() throws Exception {

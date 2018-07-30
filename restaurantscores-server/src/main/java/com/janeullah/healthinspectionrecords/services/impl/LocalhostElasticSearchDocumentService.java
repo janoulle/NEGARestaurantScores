@@ -7,10 +7,12 @@ import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -30,6 +32,23 @@ public class LocalhostElasticSearchDocumentService implements ElasticSearchable<
     @PostConstruct
     private String getLocalhostUrl() {
         return localhostUrl.concat("/restaurants/restaurant/{id}");
+    }
+
+    @Override
+    public ResponseEntity<String> addRestaurantDocuments(List<FlattenedRestaurant> flattenedRestaurants) {
+        for (FlattenedRestaurant flattenedRestaurant : flattenedRestaurants) {
+            ResponseEntity<String> status =
+                    addRestaurantDocument(flattenedRestaurant.getId(), flattenedRestaurant);
+            if (!status.getStatusCode().is2xxSuccessful()) {
+                log.error(
+                        "Failed to write data about restaurant={} to the db with response={} and statusCode={}",
+                        flattenedRestaurant,
+                        status.getBody(),
+                        status.getStatusCode());
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

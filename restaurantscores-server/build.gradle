@@ -29,6 +29,9 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://repo.spring.io/libs-snapshot'
+    }
 }
 
 dependencyManagement {
@@ -36,8 +39,10 @@ dependencyManagement {
         //https://github.com/awsdocs/aws-doc-sdk-examples
         mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.228'
     }
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-openfeign:2.0.1.BUILD-SNAPSHOT'
+    }
 }
-
 
 dependencies {
     compile libraries.jcl_over_slf4j
@@ -52,6 +57,7 @@ dependencies {
     compile libraries.spring_actuator
     compile libraries.spring_web
     compile libraries.spring_rest
+    compile libraries.spring_openfeign
     compile libraries.guava
     compile libraries.joda_time
     compile libraries.commons_lang
@@ -71,10 +77,10 @@ dependencies {
 
     //http://www.baeldung.com/spring-boot-testing needed for @datajpatest annotation
     testCompile libraries.h2
+    testCompile libraries.awaitility
+
     runtime libraries.postgresql
     providedRuntime libraries.tomcat
-
-
 }
 
 jacocoTestReport {
