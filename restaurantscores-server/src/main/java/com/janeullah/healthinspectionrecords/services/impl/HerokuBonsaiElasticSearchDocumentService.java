@@ -15,9 +15,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Service
@@ -82,17 +83,12 @@ public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchab
 
     @PostConstruct
     public Map<String, String> getAuthHeaders() {
-        try {
-            Base64.Encoder encoder = Base64.getEncoder();
-            String base64EncodedValue =
-                    new String(
-                            encoder.encode(
-                                    (herokuBonsaiUserName + ":" + herokuBonsaiPassword).getBytes("UTF-8")));
-            this.httpHeaders = ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
-        } catch (Exception e) {
-            log.error("Error generating auth header", e);
-            this.httpHeaders = new HashMap<>();
-        }
+        Base64.Encoder encoder = Base64.getEncoder();
+        String base64EncodedValue =
+                new String(
+                        encoder.encode(
+                                (herokuBonsaiUserName + ":" + herokuBonsaiPassword).getBytes(UTF_8)));
+        this.httpHeaders = ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
         return this.httpHeaders;
     }
 

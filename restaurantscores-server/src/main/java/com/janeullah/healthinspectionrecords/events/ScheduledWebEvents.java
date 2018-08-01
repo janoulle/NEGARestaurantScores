@@ -5,7 +5,6 @@ import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -15,7 +14,7 @@ import java.util.Date;
 @Slf4j
 @Service
 public class ScheduledWebEvents {
-    private static final String EVERY_SATURDAY = "0 0 8 1/14 * sat";
+    // private static final String EVERY_SATURDAY = "0 0 8 1/14 * sat";
     private FirebaseInitialization firebaseInitialization;
     private WebEventOrchestrator webEventOrchestrator;
     private RestaurantRepository restaurantRepository;
@@ -33,8 +32,8 @@ public class ScheduledWebEvents {
     }
 
     // https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/support/CronSequenceGenerator.html
-    @Scheduled(cron = EVERY_SATURDAY)
-    public boolean runScheduledUpdates() {
+    // @Scheduled(cron = EVERY_SATURDAY)
+    public boolean runAllUpdates() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         log.info("Starting scheduled task. The time is now {}", dateFormat.format(new Date()));
 

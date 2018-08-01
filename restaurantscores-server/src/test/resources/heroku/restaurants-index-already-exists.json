@@ -1,0 +1,17 @@
+{
+  "error": {
+    "root_cause": [
+      {
+        "type": "index_already_exists_exception",
+        "reason": "index [restaurants/y-529269fb1459] already exists",
+        "index_uuid": "y-529269fb1459",
+        "index": "restaurants"
+      }
+    ],
+    "type": "index_already_exists_exception",
+    "reason": "index [restaurants/y-529269fb1459] already exists",
+    "index_uuid": "y-529269fb1459",
+    "index": "restaurants"
+  },
+  "status": 400
+}

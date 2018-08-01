@@ -80,7 +80,7 @@ public class MainController {
 
     @PutMapping(value = "/runAll")
     public ResponseEntity<HttpStatus> runAll() {
-        return scheduledWebEvents.runScheduledUpdates()
+        return scheduledWebEvents.runAllUpdates()
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 

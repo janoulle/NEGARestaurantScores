@@ -74,11 +74,35 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testSeedElasticSearchDBHeroku() throws Exception {
-        when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
-        when(herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    public void testSeedElasticSearchDBHeroku_Success() throws Exception {
+        when(herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()).thenReturn(true);
 
         mvc.perform(post("/admin/seedElasticSearchDBHeroku"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testSeedElasticSearchDBHeroku_Failure() throws Exception {
+        when(herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()).thenReturn(false);
+
+        mvc.perform(post("/admin/seedElasticSearchDBHeroku"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testRunAll_Success() throws Exception {
+        when(scheduledWebEvents.runAllUpdates()).thenReturn(true);
+
+        mvc.perform(put("/admin/runAll"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testRunAll_Failure() throws Exception {
+        when(scheduledWebEvents.runAllUpdates()).thenReturn(false);
+
+        mvc.perform(put("/admin/runAll"))
+                .andExpect(status().isBadRequest());
     }
 }
