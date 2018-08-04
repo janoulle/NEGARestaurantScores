@@ -26,24 +26,54 @@ public class LoggingAspect {
 
     // Kinded designator
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.services..*.*(..))")
-    private void serviceCalls() {}
+    private void serviceCalls() {
+        /*
+         * no implementation needed
+         */
+
+    }
 
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.external..*.*(..))")
-    private void externalServicesCalls() {}
+    private void externalServicesCalls() {
+        /*
+         * no implementation needed
+         */
+
+    }
 
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.controller..*.*(..))")
-    private void restControllerCalls() {}
+    private void restControllerCalls() {
+        /*
+         * no implementation needed
+         */
+
+    }
 
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.events..*.*(..))")
-    private void internalEvents() {}
+    private void internalEvents() {
+        /*
+         * no implementation needed
+         */
+
+    }
 
     // Scoping designator
     @Pointcut("within(com.janeullah.healthinspectionrecords..*)")
-    private void inHealthInspectionRecordsPackage() {}
+    private void inHealthInspectionRecordsPackage() {
+        /*
+         * no implementation needed
+         */
+
+    }
 
     // Contextual designator
     @Pointcut("@annotation(com.janeullah.healthinspectionrecords.annotation.LogMethodExecutionTime)")
-    private void withLogMethodExecutionTimeAnnotation() {}
+    private void withLogMethodExecutionTimeAnnotation() {
+        /*
+         * no implementation needed
+         */
+
+    }
 
     /**
      * Uses reflection to access the injected 'log' field on the target. This means the target object must have the

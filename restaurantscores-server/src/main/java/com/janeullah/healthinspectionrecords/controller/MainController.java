@@ -4,7 +4,6 @@ import com.janeullah.healthinspectionrecords.annotation.LogMethodExecutionTime;
 import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +25,16 @@ public class MainController {
     private WebEventOrchestrator webEventOrchestrator;
     private FirebaseInitialization firebaseInitialization;
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
-    private RestaurantRepository restaurantRepository;
     private ScheduledWebEvents scheduledWebEvents;
 
     @Autowired
     public MainController(
             WebEventOrchestrator webEventOrchestrator,
             FirebaseInitialization firebaseInitialization,
-            RestaurantRepository restaurantRepository,
             HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService,
             ScheduledWebEvents scheduledWebEvents) {
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
-        this.restaurantRepository = restaurantRepository;
         this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
         this.scheduledWebEvents = scheduledWebEvents;
     }
