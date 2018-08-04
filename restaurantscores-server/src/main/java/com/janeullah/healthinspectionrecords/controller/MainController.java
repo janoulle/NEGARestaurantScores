@@ -1,20 +1,17 @@
 package com.janeullah.healthinspectionrecords.controller;
 
 import com.janeullah.healthinspectionrecords.annotation.LogMethodExecutionTime;
-import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
-import com.janeullah.healthinspectionrecords.services.impl.LocalhostElasticSearchDocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 /**
  * https://github.com/janoulle/NEGARestaurantScores/issues/13
@@ -28,7 +25,6 @@ import java.util.List;
 public class MainController {
     private WebEventOrchestrator webEventOrchestrator;
     private FirebaseInitialization firebaseInitialization;
-    private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     private RestaurantRepository restaurantRepository;
     private ScheduledWebEvents scheduledWebEvents;
@@ -38,13 +34,11 @@ public class MainController {
             WebEventOrchestrator webEventOrchestrator,
             FirebaseInitialization firebaseInitialization,
             RestaurantRepository restaurantRepository,
-            LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService,
             HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService,
             ScheduledWebEvents scheduledWebEvents) {
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
         this.restaurantRepository = restaurantRepository;
-        this.localhostElasticSearchDocumentService = localhostElasticSearchDocumentService;
         this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
         this.scheduledWebEvents = scheduledWebEvents;
     }
@@ -63,15 +57,6 @@ public class MainController {
         return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
-    }
-
-    @PostMapping(value = "/seedElasticSearchDBLocal")
-    public ResponseEntity<HttpStatus> seedElasticSearchDBLocal() {
-        List<FlattenedRestaurant> flattenedRestaurants =
-                restaurantRepository.findAllFlattenedRestaurants();
-        ResponseEntity<String> result =
-                localhostElasticSearchDocumentService.addRestaurantDocuments(flattenedRestaurants);
-        return new ResponseEntity<>(result.getStatusCode());
     }
 
     @LogMethodExecutionTime

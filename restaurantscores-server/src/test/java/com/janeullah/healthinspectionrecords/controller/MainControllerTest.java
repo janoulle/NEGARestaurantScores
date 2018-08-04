@@ -5,20 +5,14 @@ import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
-import com.janeullah.healthinspectionrecords.services.impl.LocalhostElasticSearchDocumentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,8 +29,6 @@ public class MainControllerTest {
     private WebEventOrchestrator webEventOrchestrator;
     @MockBean
     private FirebaseInitialization firebaseInitialization;
-    @MockBean
-    private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
     @MockBean
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     @MockBean
@@ -62,15 +54,6 @@ public class MainControllerTest {
         when(firebaseInitialization.readRecordsFromLocalAndWriteToRemote()).thenReturn(false);
         mvc.perform(put("/admin/initializeFirebaseDB"))
                 .andExpect(status().isFailedDependency());
-    }
-
-    @Test
-    public void testSeedElasticSearchDBLocal() throws Exception {
-        when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
-        when(localhostElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
-
-        mvc.perform(post("/admin/seedElasticSearchDBLocal"))
-                .andExpect(status().isOk());
     }
 
     @Test
