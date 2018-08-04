@@ -52,7 +52,7 @@ public class WebPageRequestAsync implements Callable<String> {
     }
 
     @Override
-    public String call() throws Exception {
+    public String call() {
         try {
             URL urlObj = new URL(url);
             URLConnection conn = urlObj.openConnection();

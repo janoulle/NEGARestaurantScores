@@ -65,7 +65,9 @@ jobs:
       - run:
           name: Run SonarQube analysis
           command: |
-            ./restaurantscores-server/gradlew sonarqube -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=$SONAR_HOST -Dsonar.login=$SONAR_LOGIN_TOKEN
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ./restaurantscores-server/gradlew sonarqube -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=$SONAR_HOST -Dsonar.login=$SONAR_LOGIN_TOKEN
+            fi
           when: on_success
 
       # https://circleci.com/docs/2.0/artifacts/#artifacts-overview
@@ -103,7 +105,7 @@ jobs:
       # build, tag, and push Docker image
       # todo: update to use stdin for password
       - run:
-          name: Build, Tag, and Push Docker Image
+          name: Build, Tag, and Push Docker Im age
           command: |
             echo $CIRCLE_BRANCH
             if [ "${CIRCLE_BRANCH}" == "master" ]; then

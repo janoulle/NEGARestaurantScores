@@ -1,23 +1,18 @@
 package com.janeullah.healthinspectionrecords.controller;
 
+import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
 import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
-import com.janeullah.healthinspectionrecords.services.impl.LocalhostElasticSearchDocumentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,11 +30,11 @@ public class MainControllerTest {
     @MockBean
     private FirebaseInitialization firebaseInitialization;
     @MockBean
-    private LocalhostElasticSearchDocumentService localhostElasticSearchDocumentService;
-    @MockBean
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     @MockBean
     private RestaurantRepository restaurantRepository;
+    @MockBean
+    private ScheduledWebEvents scheduledWebEvents;
 
     @Test
     public void testInitializeLocalDB() throws Exception {
@@ -62,20 +57,35 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testSeedElasticSearchDBLocal() throws Exception {
-        when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
-        when(localhostElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    public void testSeedElasticSearchDBHeroku_Success() throws Exception {
+        when(herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()).thenReturn(true);
 
-        mvc.perform(post("/admin/seedElasticSearchDBLocal"))
+        mvc.perform(post("/admin/seedElasticSearchDBHeroku"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void testSeedElasticSearchDBHeroku() throws Exception {
-        when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
-        when(herokuBonsaiElasticSearchDocumentService.addRestaurantDocuments(anyList())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+    public void testSeedElasticSearchDBHeroku_Failure() throws Exception {
+        when(herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()).thenReturn(false);
 
         mvc.perform(post("/admin/seedElasticSearchDBHeroku"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testRunAll_Success() throws Exception {
+        when(scheduledWebEvents.runAllUpdates()).thenReturn(true);
+
+        mvc.perform(put("/admin/runAll"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testRunAll_Failure() throws Exception {
+        when(scheduledWebEvents.runAllUpdates()).thenReturn(false);
+
+        mvc.perform(put("/admin/runAll"))
+                .andExpect(status().isBadRequest());
     }
 }

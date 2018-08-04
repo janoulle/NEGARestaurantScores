@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -76,5 +77,16 @@ public class RestaurantControllerTest {
                 .andExpect(jsonPath("$[0].establishmentInfo.county", is("Walton")))
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].establishmentInfo.id", is(4)));
+    }
+
+    @Test
+    public void testGetRestaurantByCounty() throws Exception {
+        when(restaurantRepository.findByEstablishmentInfoCountyIgnoreCase("Clarke")).thenReturn(new ArrayList<>());
+        mvc.perform(get("/restaurants/county/Clarke"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(0)));
+
     }
 }

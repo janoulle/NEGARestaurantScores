@@ -60,16 +60,6 @@ public class RestaurantController {
         return restaurantRepository.findByEstablishmentInfoCountyIgnoreCase(county);
     }
 
-    @Cacheable("restaurantsByName")
-    @GetMapping(
-            value = "/name/{name}",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public List<Restaurant> getRestaurantByName(@PathVariable("name") @NotNull String name) {
-        log.info("finding restaurant by name {}", name);
-        return restaurantRepository.findByEstablishmentInfoNameIgnoreCase(name);
-    }
-
     @Cacheable("restaurantsContainingName")
     @GetMapping(
             value = "/contains/{name}",

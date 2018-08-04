@@ -10,5 +10,6 @@ public class WebPageConstants {
     public static final String VIOLATION_CODE_PREFIX = "Violation of :";
     public static final String VIOLATION_CODE_SUFFIX = ".";
 
-    private WebPageConstants() { }
+    private WebPageConstants() {
+    }
 }

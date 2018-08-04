@@ -1,0 +1,74 @@
+{
+  "restaurants": {
+    "aliases": {},
+    "mappings": {
+      "restaurant": {
+        "properties": {
+          "address": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "county": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "criticalViolations": {
+            "type": "long"
+          },
+          "dateReported": {
+            "type": "date"
+          },
+          "id": {
+            "type": "long"
+          },
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "nameKey": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "nonCriticalViolations": {
+            "type": "long"
+          },
+          "score": {
+            "type": "long"
+          }
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "creation_date": "1532914686579",
+        "number_of_shards": "1",
+        "number_of_replicas": "1",
+        "uuid": "529269fb1459",
+        "version": {
+          "created": "5040399"
+        },
+        "provided_name": "restaurants"
+      }
+    }
+  }
+}

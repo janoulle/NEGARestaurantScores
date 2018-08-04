@@ -4,13 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Arrays;
 
 @Slf4j
+@EnableFeignClients
 @EnableCaching
-@SpringBootApplication(scanBasePackages = {"com.janeullah.healthinspectionrecords"})
+@SpringBootApplication
 public class RestaurantScoresApplication {
 
     public static void main(String[] args) {

@@ -1,5 +1,6 @@
 // https://docs.gradle.org/current/userguide/multi_project_builds.html#sec:subproject_configuration
 subprojects {
+    apply plugin: 'idea'
     apply plugin: 'java'
     apply plugin: 'war'
     apply plugin: 'eclipse'
@@ -8,6 +9,7 @@ subprojects {
 
     buildscript {
         ext {
+            targetCompatibility = 1.8
             sourceCompatibility = 1.8
             springBootVersion = '2.0.3.RELEASE'
         }
@@ -26,10 +28,6 @@ subprojects {
             classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
 
         }
-    }
-
-    repositories {
-        mavenCentral()
     }
 
     //intellij generates this out directory when running tests with coverage and need to clean this out

@@ -12,6 +12,7 @@ ext {
             spring_web             : 'org.springframework.boot:spring-boot-starter-web',
             spring_test            : 'org.springframework.boot:spring-boot-starter-test',
             spring_rest            : 'org.springframework.boot:spring-boot-starter-data-rest',
+            spring_openfeign       : 'org.springframework.cloud:spring-cloud-starter-openfeign',
             guava                  : 'com.google.guava:guava:25.1-jre',
             junit                  : 'junit:junit:4.12',
             javax_inject           : 'javax.inject:javax.inject:1',
@@ -25,6 +26,8 @@ ext {
             amazon_aws_sdk_dynamodb: 'com.amazonaws:aws-java-sdk-dynamodb',
             elasticsearch_rest     : 'org.elasticsearch.client:elasticsearch-rest-client-sniffer:5.6.1',
             spring_devtools        : 'org.springframework.boot:spring-boot-devtools',
-            h2                     : 'com.h2database:h2'
+            h2                     : 'com.h2database:h2',
+            awaitility             : 'org.awaitility:awaitility:3.1.2',
+            jsonpath               : 'com.jayway.jsonpath:json-path:2.3.0'
     ]
 }
