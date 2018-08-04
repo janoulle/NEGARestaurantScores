@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.controller;
 
+import com.janeullah.healthinspectionrecords.annotation.LogMethodExecutionTime;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
@@ -48,6 +49,7 @@ public class MainController {
         this.scheduledWebEvents = scheduledWebEvents;
     }
 
+    @LogMethodExecutionTime
     @PutMapping(value = "/initializeLocalDB")
     @ResponseStatus(HttpStatus.OK)
     public void writeRecordsToDB() {
@@ -55,6 +57,7 @@ public class MainController {
         log.info("Processing initiated");
     }
 
+    @LogMethodExecutionTime
     @PutMapping(value = "/initializeFirebaseDB")
     public ResponseEntity<HttpStatus> writeRecordsToFirebase() {
         return firebaseInitialization.readRecordsFromLocalAndWriteToRemote()
@@ -71,6 +74,7 @@ public class MainController {
         return new ResponseEntity<>(result.getStatusCode());
     }
 
+    @LogMethodExecutionTime
     @PostMapping(value = "/seedElasticSearchDBHeroku")
     public ResponseEntity<HttpStatus> seedElasticSearchDBHeroku() {
         return herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()

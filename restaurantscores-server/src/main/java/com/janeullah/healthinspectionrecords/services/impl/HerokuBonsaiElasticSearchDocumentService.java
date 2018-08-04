@@ -42,6 +42,18 @@ public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchab
         this.restaurantRepository = restaurantRepository;
     }
 
+    @PostConstruct
+    public Map<String, String> getAuthHeaders() {
+        Base64.Encoder encoder = Base64.getEncoder();
+        String base64EncodedValue =
+                new String(
+                        encoder.encode(
+                                (herokuBonsaiUserName + ":" + herokuBonsaiPassword).getBytes(UTF_8)));
+        this.httpHeaders = ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
+        return this.httpHeaders;
+    }
+
+    @Override
     public boolean handleProcessingOfData() {
         List<FlattenedRestaurant> flattenedRestaurants =
                 restaurantRepository.findAllFlattenedRestaurants();
@@ -76,24 +88,17 @@ public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchab
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (HerokuClientException e) {
             log.error("Error saving restaurantId={} to Heroku errorType={}", id, e.getErrorType(), e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            log.error("Unexpected error saving to bonsai", e);
         }
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @PostConstruct
-    public Map<String, String> getAuthHeaders() {
-        Base64.Encoder encoder = Base64.getEncoder();
-        String base64EncodedValue =
-                new String(
-                        encoder.encode(
-                                (herokuBonsaiUserName + ":" + herokuBonsaiPassword).getBytes(UTF_8)));
-        this.httpHeaders = ImmutableMap.of("Authorization", "Basic " + base64EncodedValue);
-        return this.httpHeaders;
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public boolean isIndexSetupOkay() {
         try {
+            // when indices are being snapshotted, deletion fails (presumably creation would too
+            // need to handle this better
             if (isIndexPresent()) {
                 // delete index first and then create api
                 herokuBonsaiServices.deleteRestaurantsIndex(httpHeaders);

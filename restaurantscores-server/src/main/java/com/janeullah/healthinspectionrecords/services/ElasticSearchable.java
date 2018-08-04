@@ -10,6 +10,10 @@ import java.util.List;
  */
 public interface ElasticSearchable<T> {
 
+    default boolean handleProcessingOfData() {
+        return false;
+    }
+
     ResponseEntity<T> addRestaurantDocument(Long id, FlattenedRestaurant restaurant);
 
     ResponseEntity<T> addRestaurantDocuments(List<FlattenedRestaurant> flattenedRestaurants);
