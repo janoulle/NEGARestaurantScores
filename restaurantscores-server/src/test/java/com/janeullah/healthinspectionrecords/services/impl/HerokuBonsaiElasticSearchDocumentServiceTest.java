@@ -5,7 +5,7 @@ import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.dtos.heroku.Acknowledgement;
 import com.janeullah.healthinspectionrecords.domain.dtos.heroku.HerokuIndexResponse;
 import com.janeullah.healthinspectionrecords.exceptions.HerokuClientException;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import com.janeullah.healthinspectionrecords.util.TestUtil;
 import org.junit.Before;
@@ -38,7 +38,7 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
     @Mock
     private HerokuBonsaiServices herokuBonsaiServices;
     @Mock
-    private RestaurantRepository restaurantRepository;
+    private RestaurantService restaurantService;
 
     @Before
     public void setup() {
@@ -78,6 +78,14 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
 
 
     @Test
+    public void testAddRestaurantDocument_UnexpectedException() throws HerokuClientException {
+        when(herokuBonsaiServices.addRestaurantToIndex(anyString(), anyMap(), any(FlattenedRestaurant.class))).thenThrow(new IllegalArgumentException("blah"));
+
+        ResponseEntity<HttpStatus> response = herokuBonsaiElasticSearchDocumentService.addRestaurantDocument(1L, TestUtil.getSingleFlattenedRestaurant());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
     public void testAddRestaurantDocument_Success() throws HerokuClientException {
         when(herokuBonsaiServices.addRestaurantToIndex(anyString(), anyMap(), any(FlattenedRestaurant.class))).thenReturn(Acknowledgement.builder().build());
 
@@ -88,7 +96,7 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
     @Test
     public void testHandleProcessingOfData_Success() throws HerokuClientException, IOException {
         HerokuIndexResponse response = getHerokuIndexResponse();
-        when(restaurantRepository.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
+        when(restaurantService.findAllFlattenedRestaurants()).thenReturn(new ArrayList<>());
         when(herokuBonsaiServices.getRestaurantIndex(anyMap())).thenReturn(response);
 
         assertTrue(herokuBonsaiElasticSearchDocumentService.handleProcessingOfData());
@@ -153,7 +161,7 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
     }
 
     @Test
-    public void testIsIndexPresent_IndexNotFound_Error() throws HerokuClientException, IOException {
+    public void testIsIndexPresent_IndexNotFound_Error() throws HerokuClientException {
 
         HerokuClientException error = new HerokuClientException(404, "index_not_found_exception", TestFileUtil.INDEX_NOT_EXISTING);
         when(herokuBonsaiServices.getRestaurantIndex(anyMap())).thenThrow(error);

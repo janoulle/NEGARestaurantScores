@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd"
+         updateCheck="false" name="ehcache">
+    <!--<sizeOfPolicy maxDepth="2000" maxDepthExceededBehavior="abort"/>-->
+    <!--<defaultCache eternal="true" overflowToDisk="false"/>-->
+    <cache name="allFlattenedRestaurants" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="allRestaurants" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="restaurantsByCounty" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="restaurantsContainingName" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="restaurantsByNameAndCounty" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="restaurantById" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="scoresGreaterThan" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="scoresLesserThan" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="scoresBetweenRange" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="restaurantsWithCriticalViolations" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="violationsById" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="violationsByCategory" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="violationsByRestaurant" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="allViolations" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+    <cache name="allFlattenedRestaurantsFromRepository" copyOnRead="true" copyOnWrite="true" maxEntriesLocalHeap="10000"
+           memoryStoreEvictionPolicy="LFU" timeToLiveSeconds="86400"/>
+</ehcache>

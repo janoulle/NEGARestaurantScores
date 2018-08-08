@@ -1,8 +1,8 @@
 package com.janeullah.healthinspectionrecords.events;
 
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,18 +22,18 @@ public class ScheduledWebEventsTest {
     @Mock
     private WebEventOrchestrator webEventOrchestrator;
     @Mock
-    private RestaurantRepository restaurantRepository;
+    private RestaurantService restaurantService;
     @Mock
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
 
     @Test
     public void testRunAllUpdates_Success() {
-        when(restaurantRepository.count()).thenReturn(10L);
+        when(restaurantService.getCount()).thenReturn(10L);
         when(firebaseInitialization.readRecordsFromLocalAndWriteToRemote()).thenReturn(true);
         when(herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()).thenReturn(true);
 
         assertTrue(scheduledWebEvents.runAllUpdates());
-        verify(restaurantRepository, times(1)).deleteAll();
+        verify(restaurantService, times(1)).deleteAllRecords();
         verify(webEventOrchestrator, times(1)).processAndSaveAllRestaurants();
         verify(firebaseInitialization, times(1)).readRecordsFromLocalAndWriteToRemote();
         verify(herokuBonsaiElasticSearchDocumentService, times(1)).handleProcessingOfData();
@@ -41,10 +41,10 @@ public class ScheduledWebEventsTest {
 
     @Test
     public void testRunAllUpdates_NoRestaurants() {
-        when(restaurantRepository.count()).thenReturn(0L);
+        when(restaurantService.getCount()).thenReturn(0L);
 
         assertFalse(scheduledWebEvents.runAllUpdates());
-        verify(restaurantRepository, times(1)).deleteAll();
+        verify(restaurantService, times(1)).deleteAllRecords();
         verify(webEventOrchestrator, times(1)).processAndSaveAllRestaurants();
         verify(firebaseInitialization, times(0)).readRecordsFromLocalAndWriteToRemote();
         verify(herokuBonsaiElasticSearchDocumentService, times(0)).handleProcessingOfData();
@@ -52,11 +52,11 @@ public class ScheduledWebEventsTest {
 
     @Test
     public void testRunAllUpdates_NoFirebaseSave() {
-        when(restaurantRepository.count()).thenReturn(20L);
+        when(restaurantService.getCount()).thenReturn(20L);
         when(firebaseInitialization.readRecordsFromLocalAndWriteToRemote()).thenReturn(false);
 
         assertFalse(scheduledWebEvents.runAllUpdates());
-        verify(restaurantRepository, times(1)).deleteAll();
+        verify(restaurantService, times(1)).deleteAllRecords();
         verify(webEventOrchestrator, times(1)).processAndSaveAllRestaurants();
         verify(firebaseInitialization, times(1)).readRecordsFromLocalAndWriteToRemote();
         verify(herokuBonsaiElasticSearchDocumentService, times(0)).handleProcessingOfData();
@@ -64,12 +64,12 @@ public class ScheduledWebEventsTest {
 
     @Test
     public void testRunAllUpdates_NoHerokuSave() {
-        when(restaurantRepository.count()).thenReturn(20L);
+        when(restaurantService.getCount()).thenReturn(20L);
         when(firebaseInitialization.readRecordsFromLocalAndWriteToRemote()).thenReturn(true);
         when(herokuBonsaiElasticSearchDocumentService.handleProcessingOfData()).thenReturn(false);
 
         assertFalse(scheduledWebEvents.runAllUpdates());
-        verify(restaurantRepository, times(1)).deleteAll();
+        verify(restaurantService, times(1)).deleteAllRecords();
         verify(webEventOrchestrator, times(1)).processAndSaveAllRestaurants();
         verify(firebaseInitialization, times(1)).readRecordsFromLocalAndWriteToRemote();
         verify(herokuBonsaiElasticSearchDocumentService, times(1)).handleProcessingOfData();

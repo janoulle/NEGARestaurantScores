@@ -7,6 +7,8 @@ import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitializ
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,17 +28,20 @@ public class MainController {
     private FirebaseInitialization firebaseInitialization;
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     private ScheduledWebEvents scheduledWebEvents;
+    private CacheManager cacheManager;
 
     @Autowired
     public MainController(
             WebEventOrchestrator webEventOrchestrator,
             FirebaseInitialization firebaseInitialization,
             HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService,
-            ScheduledWebEvents scheduledWebEvents) {
+            ScheduledWebEvents scheduledWebEvents,
+            CacheManager cacheManager) {
         this.webEventOrchestrator = webEventOrchestrator;
         this.firebaseInitialization = firebaseInitialization;
         this.herokuBonsaiElasticSearchDocumentService = herokuBonsaiElasticSearchDocumentService;
         this.scheduledWebEvents = scheduledWebEvents;
+        this.cacheManager = cacheManager;
     }
 
     @LogMethodExecutionTime
@@ -69,6 +74,16 @@ public class MainController {
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+    }
+
+    @GetMapping(value = "/clearCaches")
+    public ResponseEntity<HttpStatus> clearCaches() {
+        cacheManager.getCacheNames()
+                .forEach(n -> {
+                    Cache cache = cacheManager.getCache(n);
+                    if (cache != null) cache.clear();
+                });
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

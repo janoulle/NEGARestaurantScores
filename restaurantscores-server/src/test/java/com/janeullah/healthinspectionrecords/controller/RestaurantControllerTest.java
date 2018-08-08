@@ -2,7 +2,7 @@ package com.janeullah.healthinspectionrecords.controller;
 
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import com.janeullah.healthinspectionrecords.util.TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,13 +31,13 @@ public class RestaurantControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private RestaurantRepository restaurantRepository;
+    private RestaurantService restaurantService;
 
     @Test
     public void testGetAllFlattenedRestaurants() throws Exception {
         FlattenedRestaurant restaurant = TestUtil.getSingleFlattenedRestaurant();
 
-        when(restaurantRepository.findAllFlattenedRestaurants())
+        when(restaurantService.findAllFlattenedRestaurants())
                 .thenReturn(Collections.singletonList(restaurant));
 
         mvc.perform(get("/restaurants/allFlattened"))
@@ -61,7 +61,7 @@ public class RestaurantControllerTest {
         restaurant.setId(1L);
         restaurant.getEstablishmentInfo().setId(4L);
 
-        when(restaurantRepository.findAll()).thenReturn(Collections.singletonList(restaurant));
+        when(restaurantService.findAll()).thenReturn(Collections.singletonList(restaurant));
 
         mvc.perform(get("/restaurants/all"))
                 .andDo(print())
@@ -81,7 +81,7 @@ public class RestaurantControllerTest {
 
     @Test
     public void testGetRestaurantByCounty() throws Exception {
-        when(restaurantRepository.findByEstablishmentInfoCountyIgnoreCase("Clarke")).thenReturn(new ArrayList<>());
+        when(restaurantService.findByEstablishmentInfoCountyIgnoreCase("Clarke")).thenReturn(new ArrayList<>());
         mvc.perform(get("/restaurants/county/Clarke"))
                 .andDo(print())
                 .andExpect(status().isOk())

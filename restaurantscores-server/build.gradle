@@ -9,6 +9,7 @@ plugins {
     id "jacoco"
     id "war"
     id "eclipse"
+    id "groovy"
     id "org.springframework.boot" version "2.0.3.RELEASE"
     id "io.spring.dependency-management" version "1.0.5.RELEASE"
     id "org.sonarqube" version "2.6.2"
@@ -72,12 +73,16 @@ dependencies {
     compile libraries.elasticsearch_rest
 
     compile libraries.spring_devtools
+    compile libraries.ehcache
+    compile libraries.groovy
 
     testCompile libraries.spring_test
+    testCompile libraries.spock
+    testCompile libraries.byte_buddy
+    testCompile libraries.objenesis
 
     //http://www.baeldung.com/spring-boot-testing needed for @datajpatest annotation
     testCompile libraries.h2
-    testCompile libraries.awaitility
 
     runtime libraries.postgresql
     providedRuntime libraries.tomcat
@@ -96,4 +101,9 @@ jacocoTestReport {
             destination "${buildDir}/reports/jacoco/html"
         }
     }
+}
+
+task collectJars(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.testRuntime
 }

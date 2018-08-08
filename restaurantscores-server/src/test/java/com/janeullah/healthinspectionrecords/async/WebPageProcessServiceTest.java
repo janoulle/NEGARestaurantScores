@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.async;
 
-import com.janeullah.healthinspectionrecords.domain.services.RestaurantPersistenceService;
-import com.janeullah.healthinspectionrecords.domain.services.WebPageProcessService;
+import com.janeullah.healthinspectionrecords.services.WebPageProcessService;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ public class WebPageProcessServiceTest {
     private WebPageProcessService webPageProcessService;
 
     @Mock
-    private RestaurantPersistenceService restaurantPersistenceService;
+    private RestaurantService restaurantService;
 
     @Before
     public void setup() {
@@ -40,7 +40,7 @@ public class WebPageProcessServiceTest {
         webPageProcessService.submitFileForProcessing(file.toPath(), latch);
         latch.await();
 
-        verify(restaurantPersistenceService, times(1)).saveAll(anyList());
+        verify(restaurantService, times(1)).saveAll(anyList());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class WebPageProcessServiceTest {
 
         latch.await();
 
-        verify(restaurantPersistenceService, times(10)).saveAll(anyList());
+        verify(restaurantService, times(10)).saveAll(anyList());
     }
 
     @Test
