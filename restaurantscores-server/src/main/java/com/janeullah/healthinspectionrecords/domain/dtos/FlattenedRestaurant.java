@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import static com.janeullah.healthinspectionrecords.external.firebase.FirebaseDataProcessing.replaceInvalidCharsInKey;
@@ -14,7 +15,8 @@ import static com.janeullah.healthinspectionrecords.external.firebase.FirebaseDa
 @AllArgsConstructor
 @Builder
 @Data
-public class FlattenedRestaurant {
+public class FlattenedRestaurant implements Serializable {
+    private static final long serialVersionUID = 2733266129767670423L;
     private Long id;
     private int score;
     private int criticalViolations;

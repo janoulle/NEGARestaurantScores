@@ -7,9 +7,6 @@ public class CacheConstants {
     public static final String RESTAURANTS_CONTAINING_NAME = "restaurantsContainingName";
     public static final String RESTAURANTS_BY_NAME_AND_COUNTY = "restaurantsByNameAndCounty";
     public static final String RESTAURANT_BY_ID = "restaurantById";
-    public static final String RESTAURANTS_WITH_SCORES_GREATER_THAN = "scoresGreaterThan";
-    public static final String RESTAURANTS_WITH_SCORES_LESSER_THAN = "scoresLesserThan";
-    public static final String RESTAURANTS_WITH_SCORES_BETWEEN = "scoresBetweenRange";
     public static final String RESTAURANTS_WITH_CRITICAL_VIOLATIONS = "restaurantsWithCriticalViolations";
     public static final String VIOLATION_BY_ID = "violationsById";
     public static final String VIOLATIONS_BY_CATEGORY = "violationsByCategory";

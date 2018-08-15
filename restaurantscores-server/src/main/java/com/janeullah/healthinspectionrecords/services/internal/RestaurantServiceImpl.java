@@ -59,19 +59,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    @Cacheable(value = CacheConstants.RESTAURANTS_WITH_SCORES_GREATER_THAN, key = "#score")
     public List<Restaurant> findRestaurantsWithScoresGreaterThanOrEqual(int score) {
         return restaurantRepository.findRestaurantsWithScoresGreaterThanOrEqual(score);
     }
 
     @Override
-    @Cacheable(value = CacheConstants.RESTAURANTS_WITH_SCORES_LESSER_THAN, key = "#score")
     public List<Restaurant> findRestaurantsWithScoresLessThanOrEqual(int score) {
         return restaurantRepository.findRestaurantsWithScoresLessThanOrEqual(score);
     }
 
     @Override
-    @Cacheable(value = CacheConstants.RESTAURANTS_WITH_SCORES_BETWEEN, key = "#lower + '-' + #upper")
     public List<Restaurant> findRestaurantsWithScoresBetween(int lower, int upper) {
         return restaurantRepository.findRestaurantsWithScoresBetween(lower, upper);
     }
