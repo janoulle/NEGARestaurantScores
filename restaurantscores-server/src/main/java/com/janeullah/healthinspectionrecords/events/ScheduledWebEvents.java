@@ -50,11 +50,10 @@ public class ScheduledWebEvents {
         if (restaurantCount > 0L) {
 
             firebaseSave = firebaseInitialization.readRecordsFromLocalAndWriteToRemote();
-            log.info("firebaseSave={}", firebaseSave);
 
             herokuSave = firebaseSave && herokuBonsaiElasticSearchDocumentService.handleProcessingOfData();
-            log.info("herokuSave={}", herokuSave);
         }
+        log.info("restaurantCount={} firebaseSave={} herokuSave={}", restaurantCount, firebaseSave, herokuSave);
 
         return firebaseSave && herokuSave;
 
