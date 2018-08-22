@@ -16,6 +16,7 @@ import java.io.Serializable;
 @Table(name = "ir_establishmentinfo")
 public class EstablishmentInfo implements Serializable {
 
+    private static final long serialVersionUID = 1228415070527155322L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
