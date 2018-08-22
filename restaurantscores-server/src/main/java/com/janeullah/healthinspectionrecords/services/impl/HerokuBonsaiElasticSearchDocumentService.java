@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchab
     @Value("${BONSAI_PASSWORD}")
     private String herokuBonsaiPassword;
 
-    private Map<String, String> httpHeaders = getAuthHeaders();
+    private Map<String, String> httpHeaders = new HashMap<>();
 
     private HerokuBonsaiServices herokuBonsaiServices;
     private RestaurantService restaurantService;
@@ -43,7 +44,7 @@ public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchab
     }
 
     @PostConstruct
-    public Map<String, String> getAuthHeaders() {
+    public Map<String, String> generateAndGetAuthHeaders() {
         Base64.Encoder encoder = Base64.getEncoder();
         String base64EncodedValue =
                 new String(

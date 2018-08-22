@@ -108,7 +108,7 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
 
         ReflectionTestUtils.setField(herokuBonsaiElasticSearchDocumentService, "herokuBonsaiUserName", "smart");
         ReflectionTestUtils.setField(herokuBonsaiElasticSearchDocumentService, "herokuBonsaiPassword", "lady");
-        Map<String, String> expectedResult = herokuBonsaiElasticSearchDocumentService.getAuthHeaders();
+        Map<String, String> expectedResult = herokuBonsaiElasticSearchDocumentService.generateAndGetAuthHeaders();
         assertEquals("Basic c21hcnQ6bGFkeQ==", expectedResult.get("Authorization"));
     }
 
@@ -117,7 +117,7 @@ public class HerokuBonsaiElasticSearchDocumentServiceTest {
 
         ReflectionTestUtils.setField(herokuBonsaiElasticSearchDocumentService, "herokuBonsaiUserName", "smart");
         ReflectionTestUtils.setField(herokuBonsaiElasticSearchDocumentService, "herokuBonsaiPassword", "lady");
-        Map<String, String> expectedResult = herokuBonsaiElasticSearchDocumentService.getAuthHeaders();
+        Map<String, String> expectedResult = herokuBonsaiElasticSearchDocumentService.generateAndGetAuthHeaders();
         assertEquals("Basic c21hcnQ6bGFkeQ==", expectedResult.get("Authorization"));
     }
 
