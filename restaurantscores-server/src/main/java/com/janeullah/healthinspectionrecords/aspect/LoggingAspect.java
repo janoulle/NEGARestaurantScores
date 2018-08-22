@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
  * https://docs.spring.io/spring/docs/4.3.15.RELEASE/spring-framework-reference/html/aop.html
  * https://stackoverflow.com/questions/8224465/use-of-proxies-in-spring-aop
  */
+@SuppressWarnings("squid:S1186")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Aspect
 @Component
@@ -26,45 +27,20 @@ public class LoggingAspect {
 
     // Kinded designator
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.services..*.*(..))")
-    private void serviceCalls() {
-        /*
-         * no implementation needed
-         */
-
-    }
+    private void serviceCalls() { }
 
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.external..*.*(..))")
-    private void externalServicesCalls() {
-        /*
-         * no implementation needed
-         */
-
-    }
+    private void externalServicesCalls() { }
 
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.controller..*.*(..))")
-    private void restControllerCalls() {
-        /*
-         * no implementation needed
-         */
-
-    }
+    private void restControllerCalls() { }
 
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.events..*.*(..))")
-    private void internalEvents() {
-        /*
-         * no implementation needed
-         */
-
-    }
+    private void internalEvents() { }
 
     // Scoping designator
     @Pointcut("within(com.janeullah.healthinspectionrecords..*)")
-    private void inHealthInspectionRecordsPackage() {
-        /*
-         * no implementation needed
-         */
-
-    }
+    private void inHealthInspectionRecordsPackage() { }
 
     // Contextual designator
     @Pointcut("@annotation(com.janeullah.healthinspectionrecords.annotation.LogMethodExecutionTime)")
@@ -72,16 +48,15 @@ public class LoggingAspect {
         /*
          * no implementation needed
          */
-
     }
 
     /**
      * Uses reflection to access the injected 'log' field on the target. This means the target object must have the
      * Slf4J lombok annotation or a log field defined.
      *
-     * @param proceedingJoinPoint
-     * @return
-     * @throws Throwable
+     * @param proceedingJoinPoint allows us to control before & after
+     * @return the result of the target object's method execution
+     * @throws Throwable passing up the error
      */
     @Around("inHealthInspectionRecordsPackage() && withLogMethodExecutionTimeAnnotation() && (serviceCalls() || externalServicesCalls() || internalEvents() || restControllerCalls())")
     public Object logMethodExecutionTime(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {

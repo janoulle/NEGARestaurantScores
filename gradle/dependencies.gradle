@@ -13,6 +13,7 @@ ext {
             spring_test            : 'org.springframework.boot:spring-boot-starter-test',
             spring_rest            : 'org.springframework.boot:spring-boot-starter-data-rest',
             spring_openfeign       : 'org.springframework.cloud:spring-cloud-starter-openfeign',
+            spring_devtools        : 'org.springframework.boot:spring-boot-devtools',
             guava                  : 'com.google.guava:guava:25.1-jre',
             junit                  : 'junit:junit:4.12',
             javax_inject           : 'javax.inject:javax.inject:1',
@@ -25,9 +26,13 @@ ext {
             amazon_aws_sdk_ec2     : 'com.amazonaws:aws-java-sdk-ec2',
             amazon_aws_sdk_dynamodb: 'com.amazonaws:aws-java-sdk-dynamodb',
             elasticsearch_rest     : 'org.elasticsearch.client:elasticsearch-rest-client-sniffer:5.6.1',
-            spring_devtools        : 'org.springframework.boot:spring-boot-devtools',
             h2                     : 'com.h2database:h2',
-            awaitility             : 'org.awaitility:awaitility:3.1.2',
-            jsonpath               : 'com.jayway.jsonpath:json-path:2.3.0'
+            //http://search.maven.org/#search%7Cga%7C1%7Ca%3Aehcache-core
+            ehcache                : 'net.sf.ehcache:ehcache-core:2.6.11',
+            //https://github.com/spockframework/spock-example/blob/master/build.gradle
+            groovy                 : 'org.codehaus.groovy:groovy-all:2.4.15',
+            spock                  : 'org.spockframework:spock-core:1.1-groovy-2.4',
+            byte_buddy             : 'net.bytebuddy:byte-buddy:1.6.5',          // allows mocking of classes (in addition to interfaces)
+            objenesis              : 'org.objenesis:objenesis:2.5.1'// allows mocking of classes without default constructor (together with CGLIB)
     ]
 }

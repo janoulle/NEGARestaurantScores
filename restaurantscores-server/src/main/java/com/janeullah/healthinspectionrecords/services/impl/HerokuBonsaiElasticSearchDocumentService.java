@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.dtos.heroku.HerokuIndexResponse;
 import com.janeullah.healthinspectionrecords.exceptions.HerokuClientException;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.ElasticSearchable;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,20 +31,20 @@ public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchab
     @Value("${BONSAI_PASSWORD}")
     private String herokuBonsaiPassword;
 
-    private Map<String, String> httpHeaders = getAuthHeaders();
+    private Map<String, String> httpHeaders = new HashMap<>();
 
     private HerokuBonsaiServices herokuBonsaiServices;
-    private RestaurantRepository restaurantRepository;
+    private RestaurantService restaurantService;
 
     @Autowired
     public HerokuBonsaiElasticSearchDocumentService(HerokuBonsaiServices herokuBonsaiServices,
-                                                    RestaurantRepository restaurantRepository) {
+                                                    RestaurantService restaurantService) {
         this.herokuBonsaiServices = herokuBonsaiServices;
-        this.restaurantRepository = restaurantRepository;
+        this.restaurantService = restaurantService;
     }
 
     @PostConstruct
-    public Map<String, String> getAuthHeaders() {
+    public Map<String, String> generateAndGetAuthHeaders() {
         Base64.Encoder encoder = Base64.getEncoder();
         String base64EncodedValue =
                 new String(
@@ -56,7 +57,7 @@ public class HerokuBonsaiElasticSearchDocumentService implements ElasticSearchab
     @Override
     public boolean handleProcessingOfData() {
         List<FlattenedRestaurant> flattenedRestaurants =
-                restaurantRepository.findAllFlattenedRestaurants();
+                restaurantService.findAllFlattenedRestaurants();
         ResponseEntity<HttpStatus> result = addRestaurantDocuments(flattenedRestaurants);
         return result.getStatusCode().is2xxSuccessful();
     }

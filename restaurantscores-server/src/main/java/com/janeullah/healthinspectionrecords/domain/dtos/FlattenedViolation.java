@@ -6,12 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class FlattenedViolation {
+public class FlattenedViolation  implements Serializable {
+    private static final long serialVersionUID = -8757266972065591423L;
     private Long violationId;
     private String severity;
     private String category;

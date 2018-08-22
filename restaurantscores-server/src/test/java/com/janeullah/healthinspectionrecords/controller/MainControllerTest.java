@@ -3,13 +3,14 @@ package com.janeullah.healthinspectionrecords.controller;
 import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
 import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
 import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,13 +27,15 @@ public class MainControllerTest {
     private MockMvc mvc;
 
     @MockBean
+    private CacheManager cacheManager;
+    @MockBean
     private WebEventOrchestrator webEventOrchestrator;
     @MockBean
     private FirebaseInitialization firebaseInitialization;
     @MockBean
     private HerokuBonsaiElasticSearchDocumentService herokuBonsaiElasticSearchDocumentService;
     @MockBean
-    private RestaurantRepository restaurantRepository;
+    private RestaurantService restaurantService;
     @MockBean
     private ScheduledWebEvents scheduledWebEvents;
 

@@ -10,7 +10,7 @@ import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedViolation;
 import com.janeullah.healthinspectionrecords.domain.entities.InspectionReport;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Violation;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Component
 public class FirebaseDataProcessing {
     private static final String FORBIDDEN_SEQUENCE = "/.#$[]";
-    private RestaurantRepository restaurantRepository;
+    private RestaurantService restaurantService;
     /**
      * http://www.baeldung.com/guava-string-charmatcher
      */
@@ -95,8 +95,8 @@ public class FirebaseDataProcessing {
             };
 
     @Autowired
-    public FirebaseDataProcessing(RestaurantRepository restaurantRepository) {
-        this.restaurantRepository = restaurantRepository;
+    public FirebaseDataProcessing(RestaurantService restaurantService) {
+        this.restaurantService = restaurantService;
     }
 
     public static String replaceInvalidCharsInKey(String key) {
@@ -109,7 +109,7 @@ public class FirebaseDataProcessing {
         Map<String, County> countiesAndRestaurants = new HashMap<>();
         for (String county : NEGACounties.getAllNEGACounties()) {
             List<Restaurant> restaurantsInCounty =
-                    restaurantRepository.findByEstablishmentInfoCountyIgnoreCase(county);
+                    restaurantService.findByEstablishmentInfoCountyIgnoreCase(county);
             mapOfCountiesToRestaurants.put(county, restaurantsInCounty);
             Map<String, FlattenedRestaurant> mapOfRestaurantsInCounty =
                     restaurantsInCounty

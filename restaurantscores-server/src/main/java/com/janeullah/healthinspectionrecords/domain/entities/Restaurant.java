@@ -29,7 +29,7 @@ public class Restaurant implements Serializable {
     @OneToMany(
             mappedBy = "restaurant",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     private List<InspectionReport> inspectionReports = new ArrayList<>();

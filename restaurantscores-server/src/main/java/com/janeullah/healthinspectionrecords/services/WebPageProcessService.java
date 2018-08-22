@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.domain.services;
+package com.janeullah.healthinspectionrecords.services;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.janeullah.healthinspectionrecords.async.WebPageProcessAsync;
 import com.janeullah.healthinspectionrecords.domain.FileToBeProcessed;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,11 @@ import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.EXECUTOR_S
 @Service
 public class WebPageProcessService {
 
-    private RestaurantPersistenceService restaurantPersistenceService;
+    private RestaurantService restaurantService;
 
     @Autowired
-    public WebPageProcessService(RestaurantPersistenceService restaurantPersistenceService) {
-        this.restaurantPersistenceService = restaurantPersistenceService;
+    public WebPageProcessService(RestaurantService restaurantService) {
+        this.restaurantService = restaurantService;
     }
 
     public void submitFileForProcessing(@NotNull Path file, CountDownLatch countDownLatch) {
@@ -62,7 +63,7 @@ public class WebPageProcessService {
         @Override
         public void onSuccess(List<Restaurant> result) {
             log.info("Web Page Processing completed for county: {} size: {}", countyFile, result.size());
-            restaurantPersistenceService.saveAll(result);
+            restaurantService.saveAll(result);
             countDownLatch.countDown();
         }
 

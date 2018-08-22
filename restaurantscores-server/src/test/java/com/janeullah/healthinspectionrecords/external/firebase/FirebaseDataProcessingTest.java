@@ -5,7 +5,7 @@ import com.janeullah.healthinspectionrecords.domain.dtos.County;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedInspectionReport;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import com.janeullah.healthinspectionrecords.repository.RestaurantRepository;
+import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import com.janeullah.healthinspectionrecords.util.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class FirebaseDataProcessingTest {
     private FirebaseDataProcessing firebaseDataProcessing;
 
     @Mock
-    private RestaurantRepository restaurantRepository;
+    private RestaurantService restaurantService;
 
     @Before
     public void setup() {
@@ -40,7 +40,7 @@ public class FirebaseDataProcessingTest {
     @Test
     public void testCreateAndRetrieveMapOfCounties() {
 
-        when(restaurantRepository.findByEstablishmentInfoCountyIgnoreCase("Walton"))
+        when(restaurantService.findByEstablishmentInfoCountyIgnoreCase("Walton"))
                 .thenReturn(TestUtil.getRestaurants());
 
         Map<String, County> results = firebaseDataProcessing.createAndRetrieveMapOfCounties(anyMap());
