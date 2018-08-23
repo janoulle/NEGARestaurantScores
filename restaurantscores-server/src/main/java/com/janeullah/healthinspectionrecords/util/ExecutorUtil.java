@@ -10,6 +10,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * http://stackoverflow.com/questions/4524063/make-simultaneous-web-requests-in-java
+ * http://nohack.eingenetzt.com/java/java-executorservice-and-threadpoolexecutor-tutorial/
+ * http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
+ * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
  * http://stackoverflow.com/questions/4912228/when-should-i-use-a-completionservice-over-an-executorservice
  * Author: Jane Ullah Date: 9/18/2016
  */

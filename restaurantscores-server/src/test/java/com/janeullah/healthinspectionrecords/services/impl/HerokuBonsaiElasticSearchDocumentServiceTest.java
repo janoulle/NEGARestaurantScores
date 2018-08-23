@@ -5,6 +5,8 @@ import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.dtos.heroku.Acknowledgement;
 import com.janeullah.healthinspectionrecords.domain.dtos.heroku.HerokuIndexResponse;
 import com.janeullah.healthinspectionrecords.exceptions.HerokuClientException;
+import com.janeullah.healthinspectionrecords.services.external.heroku.HerokuBonsaiElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.external.heroku.HerokuBonsaiServices;
 import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import com.janeullah.healthinspectionrecords.util.TestUtil;

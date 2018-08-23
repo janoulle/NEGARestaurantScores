@@ -1,5 +1,6 @@
 package com.janeullah.healthinspectionrecords.events;
 
+import com.janeullah.healthinspectionrecords.async.WebPageDownloadAsync;
 import com.janeullah.healthinspectionrecords.constants.counties.NEGACounties;
 import com.janeullah.healthinspectionrecords.domain.PathVariables;
 import org.joda.time.DateTime;
@@ -15,9 +16,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -35,6 +38,9 @@ public class WebPageDownloaderTest {
 
     @Mock
     private PathVariables pathVariables;
+
+    @Mock
+    private WebPageDownloadAsync webPageDownloadAsync;
 
     @Before
     public void setup() {
@@ -91,6 +97,7 @@ public class WebPageDownloaderTest {
         }
 
         ReflectionTestUtils.setField(webPageDownloader, "mapOfUrlsToDownloads", map);
+        when(webPageDownloadAsync.downloadWebPage(anyString())).thenReturn(CompletableFuture.completedFuture(true));
 
         //Commented out for unhappy path (this method never gets called) as an unnecessary stubbing
         //when(pathVariables.getDefaultFilePath(anyString())).thenReturn(new File("downloads/test/file.html"));
@@ -98,5 +105,6 @@ public class WebPageDownloaderTest {
         webPageDownloader.initiateDownloadsAndProcessFiles();
 
         verify(webPageProcessing, times(1)).startProcessingOfDownloadedFiles();
+        verify(webPageDownloadAsync, times(10)).downloadWebPage(anyString());
     }
 }

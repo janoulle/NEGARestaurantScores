@@ -1,7 +1,9 @@
 package com.janeullah.healthinspectionrecords.events;
 
+import com.janeullah.healthinspectionrecords.async.WebPageProcessingAsync;
+import com.janeullah.healthinspectionrecords.domain.FileToBeProcessed;
 import com.janeullah.healthinspectionrecords.domain.PathVariables;
-import com.janeullah.healthinspectionrecords.services.WebPageProcessService;
+import com.janeullah.healthinspectionrecords.exceptions.WebPageProcessAsyncException;
 import com.janeullah.healthinspectionrecords.util.TestFileUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +14,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.concurrent.CountDownLatch;
 
 import static org.mockito.Mockito.*;
 
@@ -27,7 +27,7 @@ public class WebPageProcessingTest {
     private PathVariables pathVariables;
 
     @Mock
-    private WebPageProcessService webPageProcessService;
+    private WebPageProcessingAsync webPageProcessingAsync;
 
     @Before
     public void setup() {
@@ -35,14 +35,14 @@ public class WebPageProcessingTest {
     }
 
     @Test
-    public void testWebPageProcessingSuccessful() throws InterruptedException {
+    public void testWebPageProcessingSuccessful() throws WebPageProcessAsyncException {
         File[] files = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages");
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(files);
 
+
         webPageProcessing.startProcessingOfDownloadedFiles();
 
-        verify(webPageProcessService, times(10)).submitFileForProcessing(any(Path.class), any(CountDownLatch.class));
-        verify(webPageProcessService, times(1)).waitForAllProcessing(any(CountDownLatch.class));
+        verify(webPageProcessingAsync, times(10)).processWebPage(any(FileToBeProcessed.class));
 
     }
 

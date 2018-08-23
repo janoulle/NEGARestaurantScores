@@ -6,14 +6,17 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import feign.Response;
 import feign.Util;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
+@Getter
 @Slf4j
 public class HerokuClientException extends Exception {
+    private static final long serialVersionUID = -8836461401798995942L;
     private final int status;
     private final String errorType;
     private final String jsonResponse;
@@ -24,14 +27,6 @@ public class HerokuClientException extends Exception {
         Optional<JsonObject> jsonErrorData = getResponseDataAsJsonObject(responseBody);
         this.errorType = jsonErrorData.map(this::getErrorFromResponse).orElse("");
         this.jsonResponse = jsonErrorData.isPresent() ? jsonErrorData.toString() : "";
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getErrorType() {
-        return errorType;
     }
 
     private Optional<JsonObject> getResponseDataAsJsonObject(Response.Body responseBody) {

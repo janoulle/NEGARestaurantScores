@@ -1,6 +1,6 @@
 package com.janeullah.healthinspectionrecords.controller;
 
-import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseInitialization;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,4 +40,5 @@ public class HealthCheckController {
 
         return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
     }
+
 }

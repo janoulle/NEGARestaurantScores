@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.external.firebase;
+package com.janeullah.healthinspectionrecords.services.external.firebase;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -11,7 +11,7 @@ import com.janeullah.healthinspectionrecords.domain.dtos.County;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedInspectionReport;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
-import com.janeullah.healthinspectionrecords.external.aws.AmazonS3ClientForFirebaseOperations;
+import com.janeullah.healthinspectionrecords.services.external.aws.AmazonS3ClientForFirebaseOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

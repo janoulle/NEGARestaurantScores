@@ -1,6 +1,6 @@
 package com.janeullah.healthinspectionrecords.controller;
 
-import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseInitialization;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
