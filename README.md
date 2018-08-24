@@ -12,7 +12,9 @@
 2. To build, tag, and push the restaurantscores-server docker image, run ```gradlew buildAndTagImage --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION -PpathToRepos=/path/to/empty.json```. The `pathToRepos` property should be .json file containing a map of key:value pairs where the value is the remote repository name. You can create an empty json file containing an empty map i.e. `{}` to skip the remote tagging/pushing steps
 3. To just build the restaurantscores-server image, run ```gradlew docker --console=plain --stacktrace -PdockerImageVersion=YOUR_VERSION```
 4. Note: the --console and --stacktrace flags are for troubleshooting purposes
-5. To manually build this image i.e. with the docker commands, this application takes in three build args. Here's a sample working command: ```gradlew clean build && docker build --build-arg JAR_FILE=build\libs\restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 -t restaurantscores-server:YOUR_VERSION -f docker\restaurantscores-server\Dockerfile .```
+5. To manually build this image i.e. with the docker commands, this application takes in two build args.
+    1. Here's a sample working command: ```gradlew clean bootJar && docker build --build-arg JAR_FILE=build/libs/restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 -t restaurantscores-server:YOUR_VERSION -f docker/Dockerfile .```
+    2. Be mindful of the path depending on your OS
 
 
 # Docker run instructions
