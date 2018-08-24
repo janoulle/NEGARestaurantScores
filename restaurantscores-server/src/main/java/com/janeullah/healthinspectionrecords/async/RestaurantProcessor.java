@@ -123,6 +123,7 @@ class RestaurantProcessor {
             if (lastDigits.isPresent()) {
                 String matchedVal = StringUtils.trimToEmpty(lastDigits.get().group());
                 // https://stackoverflow.com/questions/3265948/nullpointerexception-with-autoboxing-in-ternary-expression
+                @SuppressWarnings("squid:S2129")
                 Integer scoreVal =
                         StringUtils.isNumeric(matchedVal) ? Ints.tryParse(matchedVal) : new Integer(0);
                 return scoreVal != null ? scoreVal : 0;
