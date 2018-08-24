@@ -37,6 +37,13 @@ public class WebPageProcessingAsync {
         this.restaurantService = restaurantService;
     }
 
+    /**
+     * 'Hidden' divs on the html webpage contain additional details about (typically critical) violations. These
+     * hidden divs have ids that are related to the data in the html tables. This data is used to construct additional
+     * details about what the critical violation was about
+     * @param doc Document jsoup-parsed document
+     * @return Elements representing a collection of html elements
+     */
     public Elements retrieveHiddenDivs(Document doc) {
         try {
             return
