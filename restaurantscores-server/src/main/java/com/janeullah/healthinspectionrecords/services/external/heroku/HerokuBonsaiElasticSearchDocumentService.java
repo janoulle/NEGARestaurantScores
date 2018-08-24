@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.services.impl;
+package com.janeullah.healthinspectionrecords.services.external.heroku;
 
 import com.google.common.collect.ImmutableMap;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;

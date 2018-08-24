@@ -2,7 +2,9 @@ package com.janeullah.healthinspectionrecords.external.firebase
 
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
-import com.janeullah.healthinspectionrecords.external.aws.AmazonS3ClientForFirebaseOperations
+import com.janeullah.healthinspectionrecords.services.external.aws.AmazonS3ClientForFirebaseOperations
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseDataProcessing
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseInitialization
 import com.janeullah.healthinspectionrecords.util.TestFileUtil
 import org.slf4j.Logger
 import spock.lang.Specification

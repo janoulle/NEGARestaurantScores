@@ -2,8 +2,8 @@ package com.janeullah.healthinspectionrecords.controller;
 
 import com.janeullah.healthinspectionrecords.events.ScheduledWebEvents;
 import com.janeullah.healthinspectionrecords.events.WebEventOrchestrator;
-import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization;
-import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService;
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseInitialization;
+import com.janeullah.healthinspectionrecords.services.external.heroku.HerokuBonsaiElasticSearchDocumentService;
 import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

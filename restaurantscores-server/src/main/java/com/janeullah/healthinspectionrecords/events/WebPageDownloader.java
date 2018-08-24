@@ -1,6 +1,6 @@
 package com.janeullah.healthinspectionrecords.events;
 
-import com.janeullah.healthinspectionrecords.async.WebPageRequestAsync;
+import com.janeullah.healthinspectionrecords.async.WebPageDownloadAsync;
 import com.janeullah.healthinspectionrecords.constants.WebPageConstants;
 import com.janeullah.healthinspectionrecords.constants.counties.NEGACounties;
 import com.janeullah.healthinspectionrecords.domain.PathVariables;
@@ -12,32 +12,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.Map;
-import java.util.Objects;
-import java.util.OptionalLong;
-import java.util.concurrent.CompletionService;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
-import static com.janeullah.healthinspectionrecords.util.ExecutorUtil.EXECUTOR_SERVICE;
-
 /**
+ * ttps://stackoverflow.com/questions/10156191/real-life-examples-for-countdownlatch-and-cyclicbarrier/32416323
  * Author: Jane Ullah Date: 9/17/2016
  */
 @Slf4j
 @Component
 public class WebPageDownloader {
-    private static final CompletionService<String> webPageDownloadCompletionService =
-            new ExecutorCompletionService<>(EXECUTOR_SERVICE);
-
-    // https://stackoverflow.com/questions/10156191/real-life-examples-for-countdownlatch-and-cyclicbarrier/32416323
-    // contains count of tasks to be completed. Unrelated to the count of threads being used to
-    // perform work
-    private static final CountDownLatch COUNT_DOWN_LATCH =
-            new CountDownLatch(NEGACounties.getCountOfCounties());
     private static Map<String, String> mapOfUrlsToDownloads;
 
     // Return Map of County Name to County URL
@@ -48,6 +35,7 @@ public class WebPageDownloader {
         }
     }
 
+    private WebPageDownloadAsync webPageDownloadAsync;
     private WebPageProcessing webPageProcessing;
     private PathVariables pathVariables;
 
@@ -61,9 +49,10 @@ public class WebPageDownloader {
     private String userAgent;
 
     @Autowired
-    public WebPageDownloader(WebPageProcessing webPageProcessing, PathVariables pathVariables) {
+    public WebPageDownloader(WebPageProcessing webPageProcessing, PathVariables pathVariables, WebPageDownloadAsync webPageDownloadAsync) {
         this.webPageProcessing = webPageProcessing;
         this.pathVariables = pathVariables;
+        this.webPageDownloadAsync = webPageDownloadAsync;
     }
 
     /**
@@ -111,34 +100,19 @@ public class WebPageDownloader {
 
     // TODO: include some way to verify the downloads were actually successful e.g. via callBacks
     void initiateDownloadsAndProcessFiles() {
-        try {
-            asyncDownloadWebPages();
 
-            COUNT_DOWN_LATCH.await();
+        springAsyncDownloadWebPages();
 
-            log.info("event=file_download message=\"file downloads completed.\"");
-            log.info("event=file_processing message=\"Initiating processing of downloaded files\"");
-
-            webPageProcessing.startProcessingOfDownloadedFiles();
-        } catch (InterruptedException e) {
-            log.error("Interrupt while waiting for downloads to complete", e);
-            Thread.currentThread().interrupt();
-        }
+        webPageProcessing.startProcessingOfDownloadedFiles();
     }
 
-    /**
-     * http://stackoverflow.com/questions/4524063/make-simultaneous-web-requests-in-java
-     * http://nohack.eingenetzt.com/java/java-executorservice-and-threadpoolexecutor-tutorial/
-     * http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/
-     * http://nohack.eingenetzt.com/java/java-guava-librarys-listeningexecutorservice-tutorial/
-     */
-    private void asyncDownloadWebPages() {
-        mapOfUrlsToDownloads.forEach(
-                (key, value) -> {
-                    WebPageRequestAsync request =
-                            new WebPageRequestAsync(value, key, userAgent, COUNT_DOWN_LATCH, pathVariables);
-                    webPageDownloadCompletionService.submit(request);
-                    log.info("Download request submitted for {}", request.getName());
-                });
+    private void springAsyncDownloadWebPages() {
+        List<CompletableFuture<Boolean>> downloads = new ArrayList<>();
+        for (String countyName : mapOfUrlsToDownloads.keySet()) {
+            downloads.add(webPageDownloadAsync.downloadWebPage(countyName));
+        }
+
+        CompletableFuture.allOf(downloads.toArray(new CompletableFuture[0])).join();
+        log.info("event=file_download message=\"file downloads completed.\"");
     }
 }

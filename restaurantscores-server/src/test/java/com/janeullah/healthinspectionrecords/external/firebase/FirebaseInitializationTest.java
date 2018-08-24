@@ -1,7 +1,9 @@
 package com.janeullah.healthinspectionrecords.external.firebase;
 
 import com.google.firebase.database.DatabaseReference;
-import com.janeullah.healthinspectionrecords.external.aws.AmazonS3ClientForFirebaseOperations;
+import com.janeullah.healthinspectionrecords.services.external.aws.AmazonS3ClientForFirebaseOperations;
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseDataProcessing;
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseInitialization;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

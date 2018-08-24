@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import static com.janeullah.healthinspectionrecords.external.firebase.FirebaseDataProcessing.replaceInvalidCharsInKey;
+import static com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseDataProcessing.replaceInvalidCharsInKey;
 
 @NoArgsConstructor
 @AllArgsConstructor

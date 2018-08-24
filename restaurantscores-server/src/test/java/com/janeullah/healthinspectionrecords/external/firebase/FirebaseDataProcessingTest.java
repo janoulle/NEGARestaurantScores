@@ -5,6 +5,7 @@ import com.janeullah.healthinspectionrecords.domain.dtos.County;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedInspectionReport;
 import com.janeullah.healthinspectionrecords.domain.dtos.FlattenedRestaurant;
 import com.janeullah.healthinspectionrecords.domain.entities.Restaurant;
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseDataProcessing;
 import com.janeullah.healthinspectionrecords.services.internal.RestaurantService;
 import com.janeullah.healthinspectionrecords.util.TestUtil;
 import org.junit.Before;

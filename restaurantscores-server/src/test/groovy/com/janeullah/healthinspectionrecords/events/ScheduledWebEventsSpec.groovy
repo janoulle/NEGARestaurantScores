@@ -1,7 +1,7 @@
 package com.janeullah.healthinspectionrecords.events
 
-import com.janeullah.healthinspectionrecords.external.firebase.FirebaseInitialization
-import com.janeullah.healthinspectionrecords.services.impl.HerokuBonsaiElasticSearchDocumentService
+import com.janeullah.healthinspectionrecords.services.external.firebase.FirebaseInitialization
+import com.janeullah.healthinspectionrecords.services.external.heroku.HerokuBonsaiElasticSearchDocumentService
 import com.janeullah.healthinspectionrecords.services.internal.RestaurantService
 import spock.lang.Narrative
 import spock.lang.Specification

@@ -1,4 +1,4 @@
-package com.janeullah.healthinspectionrecords.external.aws;
+package com.janeullah.healthinspectionrecords.services.external.aws;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

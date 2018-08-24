@@ -35,15 +35,17 @@ public class PathVariables {
     public File[] getFilesInDefaultDirectory() {
         try {
 
-            File original = Paths.get(getPath()).toFile();
-            File[] filesInDirectory = original.listFiles();
-            if (filesInDirectory != null) {
-                return filesInDirectory;
+            File fileDir = Paths.get(getPath()).toFile();
+            if (fileDir.isDirectory()) {
+                File[] filesInDirectory = fileDir.listFiles();
+                if (filesInDirectory != null) {
+                    return filesInDirectory;
+                }
             }
 
-            log.error("Failed to fetch files in directory");
+            log.error("Failed to fetch files in directory={}",getPath());
         } catch (InvalidPathException | SecurityException e) {
-            log.error("Failed to load directory with {] ", getPath(), e);
+            log.error("Failed to load directory with {} ", getPath(), e);
         }
         return new File[0];
     }
