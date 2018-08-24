@@ -14,6 +14,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.Mockito.*;
 
@@ -39,6 +41,7 @@ public class WebPageProcessingTest {
         File[] files = TestFileUtil.getFilesInDirectory("./src/test/resources/downloads/webpages");
         when(pathVariables.getFilesInDefaultDirectory()).thenReturn(files);
 
+        when(webPageProcessingAsync.processWebPage(any(FileToBeProcessed.class))).thenReturn(CompletableFuture.completedFuture(new ArrayList<>()));
 
         webPageProcessing.startProcessingOfDownloadedFiles();
 

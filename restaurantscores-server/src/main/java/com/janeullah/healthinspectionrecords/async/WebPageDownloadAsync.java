@@ -28,8 +28,12 @@ public class WebPageDownloadAsync {
         this.pathVariables = pathVariables;
     }
 
-    //todo: investigate jdk way of coping html to file
-    //https://www.baeldung.com/guava-write-to-file-read-from-file
+    /**
+     * https://www.baeldung.com/guava-write-to-file-read-from-file
+     * https://www.baeldung.com/java-write-to-file
+     * @param countyName
+     * @return
+     */
     @Async
     public CompletableFuture<Boolean> downloadWebPage(String countyName) {
         try {
