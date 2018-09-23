@@ -29,9 +29,6 @@ public class LoggingAspect {
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.services..*.*(..))")
     private void serviceCalls() { }
 
-    @Pointcut("execution(* com.janeullah.healthinspectionrecords.external..*.*(..))")
-    private void externalServicesCalls() { }
-
     @Pointcut("execution(* com.janeullah.healthinspectionrecords.controller..*.*(..))")
     private void restControllerCalls() { }
 
@@ -44,11 +41,7 @@ public class LoggingAspect {
 
     // Contextual designator
     @Pointcut("@annotation(com.janeullah.healthinspectionrecords.annotation.LogMethodExecutionTime)")
-    private void withLogMethodExecutionTimeAnnotation() {
-        /*
-         * no implementation needed
-         */
-    }
+    private void withLogMethodExecutionTimeAnnotation() { }
 
     /**
      * Uses reflection to access the injected 'log' field on the target. This means the target object must have the
@@ -58,7 +51,7 @@ public class LoggingAspect {
      * @return the result of the target object's method execution
      * @throws Throwable passing up the error
      */
-    @Around("inHealthInspectionRecordsPackage() && withLogMethodExecutionTimeAnnotation() && (serviceCalls() || externalServicesCalls() || internalEvents() || restControllerCalls())")
+    @Around("inHealthInspectionRecordsPackage() && withLogMethodExecutionTimeAnnotation() && (serviceCalls() || internalEvents() || restControllerCalls())")
     public Object logMethodExecutionTime(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
