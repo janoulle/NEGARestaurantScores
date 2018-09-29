@@ -18,6 +18,9 @@ ARG JAR_FILE
 # Must pass in the port
 ARG PORT
 
+# Heroku file
+ARG HEROKU_FILE_NAME
+
 # https://stackoverflow.com/questions/17466699/not-able-to-build-a-specific-dockerfile
 # https://www.ctl.io/developers/blog/post/dockerfile-add-vs-copy/
 # Copy the current directory contents into the container at /app
@@ -26,7 +29,7 @@ COPY ${JAR_FILE} app.jar
 # Not working atm. Will revisit later
 # https://devcenter.heroku.com/articles/exec#enabling-docker-support
 # COPY ${HEROKU_EXEC_FILE} /app/.profile.d
-ADD heroku-exec.sh /app/.profile.d/heroku-exec.sh
+ADD ${HEROKU_FILE_NAME} /app/.profile.d/heroku-exec.sh
 
 # Setting environment variables
 # Note: this application relies on environment variables that contain secrets. Can pass along to image via:

@@ -27,7 +27,8 @@ docker {
 
     //passing in the jar file location via --build-arg key=value
     buildArgs(['JAR_FILE'        : artifact,
-               'PORT'            : '8080'
+               'PORT'            : '8080',
+               'HEROKU_FILE_NAME': 'heroku-exec.sh'
     ])
 
     pull false

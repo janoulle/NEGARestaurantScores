@@ -110,7 +110,7 @@ jobs:
             echo $CIRCLE_BRANCH
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ls -ltr ./restaurantscores-server/docker/
-              docker build --build-arg JAR_FILE=restaurantscores-server/build/libs/restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 -t restaurantscores-server:latest -f restaurantscores-server/docker/Dockerfile .
+              docker build --build-arg JAR_FILE=restaurantscores-server/build/libs/restaurantscores-server-0.0.1-SNAPSHOT.jar --build-arg PORT=8080 --build-arg HEROKU_FILE_NAME=restaurantscores-server/build/docker/heroku-exec.sh -t restaurantscores-server:latest -f restaurantscores-server/docker/Dockerfile .
               docker tag restaurantscores-server:latest $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
               docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker push $DOCKER_HUB_RESTAURANTSCORES_REPO:latest
