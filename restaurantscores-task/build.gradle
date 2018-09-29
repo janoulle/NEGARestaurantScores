@@ -36,6 +36,9 @@ dependencies {
     compile libraries.spring_cache
     compile libraries.spring_actuator
     compile libraries.spring_web
+    compile libraries.quartzscheduler
+    compile libraries.rabbitmqclient
+
     testCompile libraries.spring_test
     testCompile libraries.junit
 
@@ -44,14 +47,12 @@ dependencies {
 jacocoTestReport {
     dependsOn test
     reports {
-        xml{
-            enabled true
-            destination "${buildDir}/reports/jacoco/xml/jacoco.xml"
-        }
+        xml.destination file("${buildDir}/reports/jacoco/xml/jacoco.xml")
         csv.enabled false
-        html{
-            enabled true
-            destination "${buildDir}/reports/jacoco/html"
-        }
+        html.destination file("${buildDir}/reports/jacoco/html")
     }
+}
+
+springBoot {
+    mainClassName = 'com.janeullah.healthinspectionrecords.RestaurantScoresTaskApplication'
 }
