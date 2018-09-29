@@ -12,6 +12,13 @@ RUN apk add --no-cache bash
 RUN apk add --update --no-cache python
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
+#https://medium.com/@mccode/processes-in-containers-should-not-run-as-root-2feae3f0df3b
+#https://devcenter.heroku.com/articles/container-registry-and-runtime#testing-an-image-locally
+#https://github.com/heroku/alpinehelloworld/blob/master/Dockerfile
+# Run the image as a non-root user
+RUN adduser -D appuser
+USER appuser
+
 # Must pass the jar file location to docker at run time via --build-arg JAR_FILE=relativePath/to/jarfile.jar
 ARG JAR_FILE
 
@@ -28,8 +35,7 @@ COPY ${JAR_FILE} app.jar
 
 # Not working atm. Will revisit later
 # https://devcenter.heroku.com/articles/exec#enabling-docker-support
-# COPY ${HEROKU_EXEC_FILE} /app/.profile.d
-ADD ${HEROKU_FILE_NAME} /app/.profile.d/heroku-exec.sh
+COPY ${HEROKU_FILE_NAME} /app/.profile.d/heroku-exec.sh
 
 # Setting environment variables
 # Note: this application relies on environment variables that contain secrets. Can pass along to image via:
