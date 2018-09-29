@@ -10,6 +10,7 @@ RUN apk add --no-cache curl
 RUN apk add --update --no-cache openssh
 RUN apk add --no-cache bash
 RUN apk add --update --no-cache python
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Must pass the jar file location to docker at run time via --build-arg JAR_FILE=relativePath/to/jarfile.jar
 ARG JAR_FILE
@@ -25,8 +26,7 @@ COPY ${JAR_FILE} app.jar
 # Not working atm. Will revisit later
 # https://devcenter.heroku.com/articles/exec#enabling-docker-support
 # COPY ${HEROKU_EXEC_FILE} /app/.profile.d
-# ADD ./.profile.d /app/.profile.d
-# RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+ADD heroku-exec.sh /app/.profile.d/heroku-exec.sh
 
 # Setting environment variables
 # Note: this application relies on environment variables that contain secrets. Can pass along to image via:

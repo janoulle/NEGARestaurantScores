@@ -22,7 +22,8 @@ docker {
     //copies the jar from the build/libs folder and Dockerfile artifacts to build/docker
     def artifact = "$projectName-${projectVersion}.jar"
 
-    files "$libsDir/$artifact"
+    //copies artifacts to docker build context
+    files "$libsDir/$artifact", "$projectDir/docker/heroku/heroku-exec.sh"
 
     //passing in the jar file location via --build-arg key=value
     buildArgs(['JAR_FILE'        : artifact,
