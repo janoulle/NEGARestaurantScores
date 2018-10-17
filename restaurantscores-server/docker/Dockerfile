@@ -10,6 +10,7 @@ MAINTAINER "Jane Ullah <janeullah@gmail.com>"
 # https://pkgs.alpinelinux.org/package/v3.4/main/x86_64/openssh
 # https://pkgs.alpinelinux.org/packages?name=openssh&branch=v3.4&repo=main&arch=x86_64
 # https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management#Packages_and_Repositories
+# https://superuser.com/questions/1055060/how-to-install-a-specific-package-version-in-alpine
 RUN apk add --no-cache openssh-keygen
 RUN apk add --no-cache openssh-client=7.2_p2-r5 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.4/main --allow-untrusted
 RUN apk add --no-cache openssh-sftp-server=7.2_p2-r5 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.4/main --allow-untrusted

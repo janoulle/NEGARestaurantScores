@@ -1,0 +1,118 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: restaurantscores
+  labels:
+    app: restaurantscores
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restaurantscores
+  template:
+    metadata:
+      labels:
+        app: restaurantscores
+    spec:
+      containers:
+      - image: restaurantscores-server:latest
+        name: restaurantscores
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: postgresql
+        - name: APP_DATA_FOLDER
+          value: /usr/local/tomcat
+        - name: RELATIVE_PATH_TO_PAGE_STORAGE
+          value: downloads/webpages/
+        - name: SERVER_PORT
+          value: 8080
+        - name: AWS_ES_URL
+          value: a
+        - name: AWS_ES_REGION_NAME
+          value: us-east-1
+        - name: AWS_ES_SERVICE_NAME
+          value: es
+        - name: USER_AGENT
+          value: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36
+        - name: DATA_EXPIRATION_IN_DAYS
+          value: 7
+        - name: NEGA_BUCKET_NAME_READONLY
+          valueFrom:
+            secretKeyRef:
+              name: google_secrets
+              key: firebase_config_readonly
+        - name: NEGA_BUCKET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: google_secrets
+              key: firebase_config_file
+        - name: NEGA_FIREBASE_DB
+          valueFrom:
+            secretKeyRef:
+              name: google_secrets
+              key: firebase_db
+        - name: BONSAI_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: heroku_secrets
+              key: bonsai_username
+        - name: BONSAI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: heroku_secrets
+              key: bonsai_password
+        - name: BONSAI_URL
+          valueFrom:
+            secretKeyRef:
+              name: heroku_secrets
+              key: bonsai_url
+        - name: AWS_ES_URL
+          valueFrom:
+            secretKeyRef:
+              name: aws_secrets
+              key: es_url
+        - name: NEGA_BUCKET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws_secrets
+              key: s3_accesskey
+        - name: NEGA_BUCKET_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws_secrets
+              key: s3_accesskey
+        - name: AWS_ES_NEGA_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws_secrets
+              key: es_accesskey
+        - name: AWS_ES_NEGA_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: aws_secrets
+              key: es_secretkey
+        - name: JDBC_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: dburl
+        - name: JDBC_DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: dbuser
+        - name: JDBC_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql
+              key: dbpassword
+        ports:
+        - containerPort: 80
+          name: restaurantscores
+        volumeMounts:
+        - name: restaurantscores-persistent-storage
+          mountPath: /usr/local/tomcat
+      volumes:
+      - name: restaurantscores-persistent-storage
+        persistentVolumeClaim:
+          claimName: restaurantscores-volumeclaim
