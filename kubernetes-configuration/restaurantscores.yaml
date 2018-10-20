@@ -108,7 +108,7 @@ spec:
               key: dbpassword
         ports:
         - containerPort: 80
-          name: restaurantscores
+          name: rscores
         volumeMounts:
         - name: restaurantscores-persistent-storage
           mountPath: /usr/local/tomcat
