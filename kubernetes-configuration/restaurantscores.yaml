@@ -19,23 +19,23 @@ spec:
         name: restaurantscores
         env:
         - name: SPRING_PROFILES_ACTIVE
-          value: postgresql
+          value: 'postgresql'
         - name: APP_DATA_FOLDER
-          value: /usr/local/tomcat
+          value: '/usr/local/tomcat'
         - name: RELATIVE_PATH_TO_PAGE_STORAGE
-          value: downloads/webpages/
+          value: 'downloads/webpages/'
         - name: SERVER_PORT
-          value: 8080
+          value: '8080'
         - name: AWS_ES_URL
-          value: a
+          value: 'a'
         - name: AWS_ES_REGION_NAME
-          value: us-east-1
+          value: 'us-east-1'
         - name: AWS_ES_SERVICE_NAME
-          value: es
+          value: 'es'
         - name: USER_AGENT
-          value: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36
+          value: 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
         - name: DATA_EXPIRATION_IN_DAYS
-          value: 7
+          value: '7'
         - name: NEGA_BUCKET_NAME_READONLY
           valueFrom:
             secretKeyRef:
