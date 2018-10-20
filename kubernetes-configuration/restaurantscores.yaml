@@ -15,7 +15,7 @@ spec:
         app: restaurantscores
     spec:
       containers:
-      - image: restaurantscores-server:latest
+      - image: janoulle/com.janeullah.healthinspectionrecords:restaurantscores-server:latest
         name: restaurantscores
         env:
         - name: SPRING_PROFILES_ACTIVE
