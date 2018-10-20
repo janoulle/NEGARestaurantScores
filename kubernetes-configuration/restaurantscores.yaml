@@ -15,8 +15,8 @@ spec:
         app: restaurantscores
     spec:
       containers:
-      - image: janoulle/com.janeullah.healthinspectionrecords:restaurantscores-server:latest
-        name: restaurantscores
+      - image: janoulle/com.janeullah.healthinspectionrecords:latest
+        name: restaurantscores-server
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: 'postgresql'
