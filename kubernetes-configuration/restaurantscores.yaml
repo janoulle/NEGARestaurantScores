@@ -39,48 +39,48 @@ spec:
         - name: NEGA_BUCKET_NAME_READONLY
           valueFrom:
             secretKeyRef:
-              name: google_secrets
+              name: google-secrets
               key: firebase_config_readonly
         - name: NEGA_BUCKET_KEY
           valueFrom:
             secretKeyRef:
-              name: google_secrets
+              name: google-secrets
               key: firebase_config_file
         - name: NEGA_FIREBASE_DB
           valueFrom:
             secretKeyRef:
-              name: google_secrets
+              name: google-secrets
               key: firebase_db
         - name: BONSAI_USERNAME
           valueFrom:
             secretKeyRef:
-              name: heroku_secrets
+              name: heroku-secrets
               key: bonsai_username
         - name: BONSAI_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: heroku_secrets
+              name: heroku-secrets
               key: bonsai_password
         - name: BONSAI_URL
           valueFrom:
             secretKeyRef:
-              name: heroku_secrets
+              name: heroku-secrets
               key: bonsai_url
         - name: AWS_ES_URL
           valueFrom:
             secretKeyRef:
-              name: aws_secrets
+              name: aws-secrets
               key: es_url
         - name: NEGA_BUCKET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: aws_secrets
+              name: aws-secrets
               key: s3_accesskey
         - name: NEGA_BUCKET_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: aws_secrets
-              key: s3_accesskey
+              key: s3_secretkey
         - name: AWS_ES_NEGA_ACCESS_KEY
           valueFrom:
             secretKeyRef:
