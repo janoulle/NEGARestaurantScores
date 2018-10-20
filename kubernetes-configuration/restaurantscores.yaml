@@ -116,3 +116,5 @@ spec:
       - name: restaurantscores-persistent-storage
         persistentVolumeClaim:
           claimName: restaurantscores-volumeclaim
+      imagePullSecrets:
+      - name: regcred
