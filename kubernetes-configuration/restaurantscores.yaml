@@ -79,17 +79,17 @@ spec:
         - name: NEGA_BUCKET_SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: aws_secrets
+              name: aws-secrets
               key: s3_secretkey
         - name: AWS_ES_NEGA_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: aws_secrets
+              name: aws-secrets
               key: es_accesskey
         - name: AWS_ES_NEGA_SECRET
           valueFrom:
             secretKeyRef:
-              name: aws_secrets
+              name: aws-secrets
               key: es_secretkey
         - name: JDBC_DATABASE_URL
           valueFrom:
